@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, JSX } from "react";
+import { useState, JSX } from "react";
 import { Orbit } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -19,9 +19,9 @@ export default function FloatingNavbar(): JSX.Element {
   };
 
   return (
-    <nav className="fixed top-6 left-1/2 z-[100] -translate-x-1/2 group">
+    <nav className="fixed top-6 left-1/2 z-100 -translate-x-1/2 group">
       {/* COSMIC GLOW */}
-      <div className="absolute -inset-[1px] rounded-full bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-blue-500 opacity-20 blur-md group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute -inset-px rounded-full bg-linear-to-r from-cyan-400 via-fuchsia-500 to-blue-500 opacity-20 blur-md group-hover:opacity-100 transition-opacity duration-500" />
 
       <div className="relative flex items-center justify-between gap-4 rounded-full bg-zinc-950 px-3 py-2 shadow-2xl border border-white/10">
         
@@ -41,7 +41,7 @@ export default function FloatingNavbar(): JSX.Element {
           {NAV_LINKS.map((link) => (
             <motion.li 
               key={link} 
-              className="px-2 cursor-pointer [perspective:1000px]"
+              className="px-2 cursor-pointer perspective-[1000px]"
               initial="initial"
               whileHover="hover" // Trigger child animation from parent
             >
@@ -51,9 +51,9 @@ export default function FloatingNavbar(): JSX.Element {
                   hover: { rotateX: 360, color: "#ffffff" }
                 }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
-                className="text-sm font-medium [transform-style:preserve-3d]"
+                className="text-sm font-medium transform-3d"
               >
-                <span className="block [backface-visibility:hidden]">
+                <span className="block backface-hidden">
                   {link}
                 </span>
               </motion.div>
@@ -66,7 +66,7 @@ export default function FloatingNavbar(): JSX.Element {
           onClick={handleCopy}
           initial="initial"
           whileHover="hover" // Trigger child flip from parent button
-          className="relative h-10 min-w-[165px] flex items-center justify-center rounded-full bg-white px-6 text-sm font-bold text-black hover:bg-zinc-100 transition-colors [perspective:1000px] overflow-hidden"
+          className="relative h-10 min-w-41.25 flex items-center justify-center rounded-full bg-white px-6 text-sm font-bold text-black hover:bg-zinc-100 transition-colors perspective-[1000px] overflow-hidden"
         >
           <AnimatePresence mode="wait">
             {!copied ? (
@@ -78,7 +78,7 @@ export default function FloatingNavbar(): JSX.Element {
                 }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="block [transform-style:preserve-3d] [backface-visibility:hidden]"
+                className="block transform-3d backface-hidden"
               >
                 {email}
               </motion.span>
