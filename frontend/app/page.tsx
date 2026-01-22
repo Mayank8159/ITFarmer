@@ -1,22 +1,28 @@
 import FloatingNavbar from "@/components/Navbar";
+import HeroPage from "@/components/Hero"; 
+import NextSection from "@/components/Body"; // Import the Operating System section
 import { JSX } from "react";
 
 export default function HomePage(): JSX.Element {
   return (
-    <main className="relative min-h-screen bg-zinc-100">
-      {/* Floating Navbar */}
+    /* Ensure the background is black (#020202) to match the components.
+       The "relative" class allows the navbar to float correctly.
+    */
+    <main className="relative min-h-screen bg-[#020202] selection:bg-blue-500/30 overflow-x-hidden">
+      
+      {/* 1. Floating Navbar - Always stays on top */}
       <FloatingNavbar />
 
-      {/* Page Content */}
-      <section className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
-        <h1 className="text-4xl font-semibold tracking-tight text-zinc-900 md:text-5xl">
-          Building delightful digital experiences
-        </h1>
+      {/* 2. Hero Section - The high-end SaaS entry point */}
+      <HeroPage />
 
-        <p className="mt-4 max-w-xl text-base text-zinc-600 md:text-lg">
-          A playground for ideas, experiments, and thoughtful design systems.
-        </p>
-      </section>
+      {/* 3. The "How It Works / OS" Section (Body.tsx) 
+          This replaces your previous placeholder section to maintain the 
+          cinematic tech studio design language.
+      */}
+      <NextSection />
+
+      {/* 4. Optional: Footer / Final CTA could go here */}
     </main>
   );
 }
