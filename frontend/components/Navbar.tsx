@@ -42,7 +42,7 @@ export default function FloatingNavbar() {
         z-[100] w-[90%] md:w-auto max-w-fit group
       "
     >
-      {/* MOVING COSMIC GLOW */}
+      {/* COSMIC ROTATING GLOW */}
       <div className="absolute -inset-[2px] rounded-full overflow-hidden blur-md opacity-30 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <motion.div
           animate={{ rotate: [0, 360] }}
@@ -52,8 +52,8 @@ export default function FloatingNavbar() {
       </div>
 
       <div className="relative flex items-center justify-between gap-2 md:gap-4 rounded-full bg-zinc-950 p-1.5 md:px-3 md:py-2 shadow-2xl border border-white/10 backdrop-blur-md">
-        
-        {/* LOGO & MOBILE TOGGLE */}
+
+        {/* LOGO + MOBILE MENU */}
         <div className="flex items-center gap-1">
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -63,15 +63,25 @@ export default function FloatingNavbar() {
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
 
+          {/* METALLIC LOGO */}
           <div
             onClick={() => navigate("/")}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white shrink-0 overflow-hidden"
+            className="
+              relative flex h-10 w-10 cursor-pointer items-center justify-center
+              rounded-full shrink-0 overflow-hidden
+              bg-gradient-to-br from-white via-zinc-100 to-zinc-300
+              shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_6px_20px_rgba(0,0,0,0.35)]
+            "
           >
+            {/* Metallic highlight */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-30 pointer-events-none" />
+
             <motion.div
               whileHover={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+              className="relative z-10"
             >
-              <Orbit className="h-5 w-5 text-black" strokeWidth={2.5} />
+              <Orbit className="h-5 w-5 text-zinc-800" strokeWidth={2.5} />
             </motion.div>
           </div>
         </div>
@@ -100,13 +110,24 @@ export default function FloatingNavbar() {
           ))}
         </ul>
 
-        {/* EMAIL BUTTON */}
+        {/* METALLIC EMAIL BUTTON */}
         <motion.button
           onClick={handleCopy}
           initial="initial"
           whileHover="hover"
-          className="relative h-10 flex items-center justify-center rounded-full bg-white text-black hover:bg-zinc-100 transition-colors perspective-[1000px] overflow-hidden px-4 md:px-6 md:min-w-[160px]"
+          className="
+            relative h-10 flex items-center justify-center rounded-full
+            bg-gradient-to-br from-white via-zinc-100 to-zinc-300
+            text-black
+            shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_8px_24px_rgba(0,0,0,0.35)]
+            hover:brightness-105 active:brightness-95
+            transition-all perspective-[1000px] overflow-hidden
+            px-4 md:px-6 md:min-w-[160px]
+          "
         >
+          {/* Metallic highlight */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-30 pointer-events-none" />
+
           <AnimatePresence mode="wait">
             {copied ? (
               <motion.span
@@ -114,7 +135,7 @@ export default function FloatingNavbar() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="text-blue-600 font-extrabold text-xs md:text-sm"
+                className="relative z-10 text-blue-600 font-extrabold text-xs md:text-sm"
               >
                 COPIED!
               </motion.span>
@@ -126,7 +147,7 @@ export default function FloatingNavbar() {
                   hover: { rotateX: 360 },
                 }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
-                className="flex items-center justify-center transform-3d backface-hidden"
+                className="relative z-10 flex items-center justify-center transform-3d backface-hidden"
               >
                 <span className="hidden md:block text-sm font-bold">
                   {email}
