@@ -17,7 +17,7 @@ export default function FloatingNavbar() {
   const [copied, setCopied] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const email = "ihyaet@gmail.com";
+  const email = "team.techserve55@gmail.com";
 
   const handleCopy = async () => {
     try {
