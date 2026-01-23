@@ -3,7 +3,7 @@
 import React, { JSX } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Mail, Github, Linkedin } from "lucide-react";
+import { Mail, Github, Linkedin, Phone } from "lucide-react";
 
 /* EXISTING COMPONENTS */
 import FloatingNavbar from "@/components/Navbar";
@@ -71,6 +71,9 @@ export default function AboutPage(): JSX.Element {
             name="Mayank Kumar Sharma"
             role="Co-Founder & Full-Stack Developer"
             email="team.techserve55@gmail.com"
+            phone="+918159842418"
+            githubUrl="https://github.com/Mayank8159"
+            linkedinUrl="https://www.linkedin.com/in/mayank-kumar-sharma-900318318/"
             imageSrc="/founders/Mayank.png"
             description="System architecture, AI platforms, and scalable product engineering."
           />
@@ -79,7 +82,10 @@ export default function AboutPage(): JSX.Element {
             name="Shreyan Mitra"
             role="Co-Founder & Software Developer"
             email="team.techserve55@gmail.com"
-            imageSrc="/founders/Mayank.png"
+            phone="+918240591893"
+            githubUrl="https://github.com/shreyan"
+            linkedinUrl="https://linkedin.com/in/shreyan"
+            imageSrc="/founders/shreyan.jpeg"
             description="Backend engineering, performance optimization, and reliability."
           />
         </div>
@@ -99,7 +105,6 @@ function AnimatedBorderCard({ children }: { children: React.ReactNode }) {
       transition={{ duration: 0.8 }}
       className="relative rounded-3xl p-[1.5px] overflow-hidden"
     >
-      {/* MOVING BORDER LIGHT */}
       <motion.div
         animate={{ backgroundPosition: ["0% 50%", "200% 50%"] }}
         transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
@@ -108,10 +113,8 @@ function AnimatedBorderCard({ children }: { children: React.ReactNode }) {
           bg-[length:200%_100%]"
       />
 
-      {/* SOFT GLOW */}
       <div className="absolute inset-0 rounded-3xl bg-white/10 blur-2xl opacity-30" />
 
-      {/* CONTENT */}
       <div className="relative bg-zinc-950/80 border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl">
         {children}
       </div>
@@ -125,33 +128,28 @@ function FounderCard({
   name,
   role,
   email,
+  phone,
   description,
   imageSrc,
+  githubUrl,
+  linkedinUrl,
 }: {
   name: string;
   role: string;
   email: string;
+  phone: string;
   description: string;
   imageSrc: string;
+  githubUrl: string;
+  linkedinUrl: string;
 }) {
   return (
     <AnimatedBorderCard>
       {/* PROFILE */}
       <div className="flex items-center gap-6 mb-6">
-        <div
-          className="relative h-20 w-20 rounded-full overflow-hidden
-          bg-gradient-to-br from-zinc-100 via-zinc-300 to-zinc-500
-          p-[2px] shadow-[0_0_25px_rgba(255,255,255,0.2)]"
-        >
+        <div className="relative h-20 w-20 rounded-full overflow-hidden bg-gradient-to-br from-zinc-100 via-zinc-300 to-zinc-500 p-[2px] shadow-[0_0_25px_rgba(255,255,255,0.2)]">
           <div className="relative h-full w-full rounded-full overflow-hidden bg-black">
-            <Image
-              src={imageSrc}
-              alt={name}
-              fill
-              className="object-cover"
-              sizes="80px"
-              priority
-            />
+            <Image src={imageSrc} alt={name} fill className="object-cover" />
           </div>
         </div>
 
@@ -161,24 +159,25 @@ function FounderCard({
         </div>
       </div>
 
-      {/* ABOUT */}
-      <p className="text-zinc-400 leading-relaxed mb-6">
-        {description}
-      </p>
+      <p className="text-zinc-400 leading-relaxed mb-6">{description}</p>
 
       {/* CONTACT */}
-      <div className="flex items-center gap-4">
-        <a
-          href={`mailto:${email}`}
-          className="flex items-center gap-2 text-zinc-300 hover:text-white transition"
-        >
-          <Mail className="h-4 w-4" />
-          <span className="text-sm">{email}</span>
+      <div className="flex flex-wrap items-center gap-4">
+        <a href={`mailto:${email}`} className="flex items-center gap-2 text-zinc-300 hover:text-white">
+          <Mail className="h-4 w-4" /> <span className="text-sm">{email}</span>
+        </a>
+
+        <a href={`tel:${phone}`} className="flex items-center gap-2 text-zinc-300 hover:text-white">
+          <Phone className="h-4 w-4" /> <span className="text-sm">Call</span>
         </a>
 
         <div className="flex gap-3 ml-auto">
-          <Github className="h-5 w-5 text-zinc-500 hover:text-white cursor-pointer transition" />
-          <Linkedin className="h-5 w-5 text-zinc-500 hover:text-white cursor-pointer transition" />
+          <a href={githubUrl} target="_blank">
+            <Github className="h-5 w-5 text-zinc-500 hover:text-white transition" />
+          </a>
+          <a href={linkedinUrl} target="_blank">
+            <Linkedin className="h-5 w-5 text-zinc-500 hover:text-white transition" />
+          </a>
         </div>
       </div>
     </AnimatedBorderCard>
