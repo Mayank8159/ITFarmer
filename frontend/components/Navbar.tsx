@@ -4,18 +4,22 @@ import { useState, JSX } from "react";
 import { Orbit, Mail, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const NAV_LINKS = ["Work", "About", "Playground", "Resource"];
+const NAV_LINKS: string[] = ["Work", "About", "Playground", "Resource"];
 
 export default function FloatingNavbar(): JSX.Element {
-  const [copied, setCopied] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const email = "ihyaet@gmail.com";
+  const [copied, setCopied] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const email: string = "ihyaet@gmail.com";
 
-  const handleCopy = () => {
+  const handleCopy = async (): Promise<void> => {
     if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(email);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      try {
+        await navigator.clipboard.writeText(email);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error("Failed to copy!", err);
+      }
     }
   };
 
@@ -24,14 +28,8 @@ export default function FloatingNavbar(): JSX.Element {
       {/* MOVING COSMIC GLOW */}
       <div className="absolute -inset-[2px] rounded-full overflow-hidden blur-md opacity-30 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <motion.div
-          animate={{
-            rotate: [0, 360],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "linear",
-          }}
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
           style={{ willChange: "transform" }}
           className="absolute inset-[-150%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_90deg,#22d3ee_180deg,#d946ef_270deg,transparent_360deg)]"
         />
@@ -44,7 +42,7 @@ export default function FloatingNavbar(): JSX.Element {
           <button 
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle Menu"
-            className="flex h-10 w-10 md:hidden items-center justify-center rounded-full text-zinc-400 hover:text-white transition-colors active:scale-90"
+            className="flex h-10 w-10 md:hidden items-center justify-center rounded-full text-zinc-400 hover:text-white transition-colors active:scale-95"
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -111,7 +109,6 @@ export default function FloatingNavbar(): JSX.Element {
                 transition={{ duration: 0.6, ease: "easeInOut" }}
                 className="flex items-center justify-center transform-3d backface-hidden"
               >
-                {/* Desktop Text / Mobile Icon */}
                 <span className="hidden md:block text-sm font-bold">{email}</span>
                 <Mail className="block md:hidden h-5 w-5" />
               </motion.div>
@@ -127,7 +124,7 @@ export default function FloatingNavbar(): JSX.Element {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="absolute top-full mt-4 left-0 right-0 p-4 rounded-3xl bg-zinc-900/90 backdrop-blur-xl border border-white/10 shadow-xl md:hidden flex flex-col gap-4 items-center"
+            className="absolute top-full mt-4 left-0 right-0 p-4 rounded-3xl bg-zinc-900/95 backdrop-blur-2xl border border-white/10 shadow-2xl md:hidden flex flex-col gap-4 items-center"
           >
             {NAV_LINKS.map((link) => (
               <a 
