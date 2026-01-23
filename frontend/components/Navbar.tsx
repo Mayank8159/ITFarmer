@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Orbit, Mail, Menu, X } from "lucide-react";
+import { Orbit, Mail, Menu, X, LogIn, LogOut, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 
 const NAV_LINKS = [
   { label: "Home", path: "/" },
@@ -14,6 +15,7 @@ const NAV_LINKS = [
 
 export default function FloatingNavbar() {
   const router = useRouter();
+  const { isLoggedIn, logout } = useAuth();
   const [copied, setCopied] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -35,13 +37,8 @@ export default function FloatingNavbar() {
   };
 
   return (
-    <nav
-      className="
-        fixed top-4 left-4
-        md:top-6 md:left-1/2 md:-translate-x-1/2
-        z-[100] w-[90%] md:w-auto max-w-fit group
-      "
-    >
+    <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[92%] md:w-auto max-w-fit group">
+      
       {/* COSMIC ROTATING GLOW */}
       <div className="absolute -inset-[2px] rounded-full overflow-hidden blur-md opacity-30 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <motion.div
@@ -52,8 +49,8 @@ export default function FloatingNavbar() {
       </div>
 
       <div className="relative flex items-center justify-between gap-2 md:gap-4 rounded-full bg-zinc-950 p-1.5 md:px-3 md:py-2 shadow-2xl border border-white/10 backdrop-blur-md">
-
-        {/* LOGO + MOBILE MENU */}
+        
+        {/* LEFT: LOGO + MOBILE TOGGLE */}
         <div className="flex items-center gap-1">
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -63,121 +60,136 @@ export default function FloatingNavbar() {
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
 
-          {/* METALLIC LOGO */}
           <div
             onClick={() => navigate("/")}
-            className="
-              relative flex h-10 w-10 cursor-pointer items-center justify-center
-              rounded-full shrink-0 overflow-hidden
-              bg-gradient-to-br from-white via-zinc-100 to-zinc-300
-              shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_6px_20px_rgba(0,0,0,0.35)]
-            "
+            className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full shrink-0 overflow-hidden bg-gradient-to-br from-white via-zinc-100 to-zinc-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_6px_20px_rgba(0,0,0,0.35)]"
           >
-            {/* Metallic highlight */}
             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-30 pointer-events-none" />
-
-            <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-              className="relative z-10"
-            >
+            <motion.div whileHover={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }} className="relative z-10">
               <Orbit className="h-5 w-5 text-zinc-800" strokeWidth={2.5} />
             </motion.div>
           </div>
         </div>
 
-        {/* DESKTOP NAV */}
-        <ul className="hidden md:flex items-center gap-2">
+        {/* MIDDLE: DESKTOP LINKS (Hidden on Mobile) */}
+        <ul className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map(({ label, path }) => (
             <motion.li
               key={label}
               onClick={() => navigate(path)}
-              className="px-2 cursor-pointer perspective-[1000px]"
-              initial="initial"
-              whileHover="hover"
+              className="px-3 py-1.5 cursor-pointer rounded-full hover:bg-white/5 transition-colors"
+              whileHover={{ scale: 1.05 }}
             >
-              <motion.div
-                variants={{
-                  initial: { rotateX: 0, color: "#a1a1aa" },
-                  hover: { rotateX: 360, color: "#ffffff" },
-                }}
-                transition={{ duration: 0.6, ease: "easeInOut" }}
-                className="text-sm font-medium transform-3d"
-              >
-                <span className="block backface-hidden">{label}</span>
-              </motion.div>
+              <div className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 hover:text-white transition-colors">
+                {label}
+              </div>
             </motion.li>
           ))}
         </ul>
 
-        {/* METALLIC EMAIL BUTTON */}
-        <motion.button
-          onClick={handleCopy}
-          initial="initial"
-          whileHover="hover"
-          className="
-            relative h-10 flex items-center justify-center rounded-full
-            bg-gradient-to-br from-white via-zinc-100 to-zinc-300
-            text-black
-            shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_8px_24px_rgba(0,0,0,0.35)]
-            hover:brightness-105 active:brightness-95
-            transition-all perspective-[1000px] overflow-hidden
-            px-4 md:px-6 md:min-w-[160px]
-          "
-        >
-          {/* Metallic highlight */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-30 pointer-events-none" />
+        {/* RIGHT: ACTIONS (Auth & Hidden Contact on Mobile) */}
+        <div className="flex items-center gap-2">
+          
+          {/* Desktop Only Email Button */}
+          <motion.button
+            onClick={handleCopy}
+            className="relative h-9 hidden md:flex items-center justify-center rounded-full bg-zinc-900 border border-white/10 px-4 text-zinc-400 hover:text-white transition-all overflow-hidden"
+          >
+            <AnimatePresence mode="wait">
+              {copied ? (
+                <motion.span key="copied" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-[10px] font-bold text-blue-400 uppercase">Copied!</motion.span>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5" />
+                  <span className="text-[10px] font-mono hidden lg:block uppercase tracking-widest">{email}</span>
+                </div>
+              )}
+            </AnimatePresence>
+          </motion.button>
 
+          <div className="h-6 w-px bg-white/10 hidden md:block mx-1" />
+
+          {/* AUTH SECTION - Optimized for Mobile Scale */}
           <AnimatePresence mode="wait">
-            {copied ? (
-              <motion.span
-                key="copied"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="relative z-10 text-blue-600 font-extrabold text-xs md:text-sm"
+            {!isLoggedIn ? (
+              <motion.button
+                key="login-btn"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                onClick={() => navigate("/login")}
+                className="
+                  relative h-9 md:h-10 flex items-center gap-2 rounded-full
+                  bg-gradient-to-br from-white via-zinc-100 to-zinc-300
+                  text-black px-4 md:px-6 shadow-lg active:scale-95 transition-all
+                "
               >
-                COPIED!
-              </motion.span>
+                <LogIn className="h-3.5 w-3.5" strokeWidth={3} />
+                <span className="text-[10px] md:text-[11px] font-black uppercase tracking-tighter">Login</span>
+              </motion.button>
             ) : (
-              <motion.div
-                key="email"
-                variants={{
-                  initial: { rotateX: 0 },
-                  hover: { rotateX: 360 },
-                }}
-                transition={{ duration: 0.6, ease: "easeInOut" }}
-                className="relative z-10 flex items-center justify-center transform-3d backface-hidden"
+              <motion.div 
+                key="user-profile"
+                initial={{ opacity: 0, x: 5 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-1.5 md:gap-2"
               >
-                <span className="hidden md:block text-sm font-bold">
-                  {email}
-                </span>
-                <Mail className="block md:hidden h-5 w-5" />
+                <div className="h-9 w-9 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                  <User className="h-4 w-4" />
+                </div>
+
+                <button
+                  onClick={() => { logout(); navigate("/"); }}
+                  className="h-9 w-9 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-500 hover:text-red-500 transition-colors"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
-        </motion.button>
+        </div>
       </div>
 
-      {/* MOBILE MENU */}
+      {/* MOBILE OVERLAY MENU - Fixed UI for smaller screens */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="absolute top-full mt-4 left-0 right-0 p-4 rounded-3xl bg-zinc-900/95 backdrop-blur-2xl border border-white/10 shadow-2xl md:hidden flex flex-col gap-4 items-center"
-          >
-            {NAV_LINKS.map(({ label, path }) => (
-              <button
-                key={label}
-                onClick={() => navigate(path)}
-                className="text-zinc-400 hover:text-white text-lg font-medium transition-colors w-full text-center py-2"
+          <>
+            {/* Backdrop Blur to focus on menu */}
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm -z-10 md:hidden"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              className="absolute top-full mt-3 left-0 right-0 p-5 rounded-[2.5rem] bg-zinc-950 border border-white/10 shadow-2xl md:hidden flex flex-col gap-2 overflow-hidden"
+            >
+              {/* Menu Links */}
+              {NAV_LINKS.map(({ label, path }) => (
+                <button
+                  key={label}
+                  onClick={() => navigate(path)}
+                  className="w-full py-4 text-left px-6 rounded-2xl hover:bg-white/5 text-zinc-400 hover:text-white text-xs font-mono uppercase tracking-[0.3em] transition-all border-b border-white/5 last:border-none"
+                >
+                  {label}
+                </button>
+              ))}
+
+              {/* Mobile Only: Quick Email Action */}
+              <button 
+                onClick={handleCopy}
+                className="mt-2 flex items-center justify-between w-full py-4 px-6 rounded-2xl bg-white/5 text-zinc-300 active:bg-white/10"
               >
-                {label}
+                <span className="text-[10px] font-mono uppercase tracking-widest">{copied ? "Copied!" : "Copy Contact"}</span>
+                <Mail className="h-4 w-4 text-zinc-500" />
               </button>
-            ))}
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </nav>
