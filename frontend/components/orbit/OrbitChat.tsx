@@ -1,382 +1,223 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Terminal, Shield, ChevronRight, Activity, Cpu } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { X, Send, Terminal, Activity, Bot, Command, Cpu, ShieldCheck, Zap } from "lucide-react";
 
-// --- 1. TYPES ---
-type Sender = 'system' | 'user';
-type MessageType = 'text' | 'options' | 'input-text' | 'input-email';
-
-interface Option {
-  label: string;
-  value: string;
-  action: string;
-}
-
+type Role = 'system' | 'user' | 'assistant';
 interface Message {
   id: string;
-  sender: Sender;
-  type: MessageType;
-  content: string[];
-  options?: Option[];
-  timestamp: number;
+  role: Role;
+  content: string;
 }
 
-interface OrbitState {
-  isOpen: boolean;
-  flowStep: 'IDLE' | 'INTAKE' | 'DETAILS' | 'AUTH' | 'COMPLETE';
-  history: Message[];
-  userData: {
-    intent?: string;
-    details?: string;
-    name?: string;
-    email?: string;
-  };
-}
-
-// --- 2. UTILS ---
-const generateId = () => Math.random().toString(36).substr(2, 9);
-
-// --- 3. SUB-COMPONENT: The Floating Orb ---
-const OrbitOrb = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <motion.button
-      onClick={onClick}
-      className="fixed bottom-8 right-8 z-9999 group cursor-pointer"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-    >
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-        className="absolute -inset-2 rounded-full border border-blue-500/30 border-dashed w-[calc(100%+16px)] h-[calc(100%+16px)]"
-      />
-      <motion.div
-        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="absolute -inset-1 rounded-full bg-blue-500/20 w-[calc(100%+8px)] h-[calc(100%+8px)]"
-      />
-      <div className="relative w-14 h-14 rounded-full bg-black border border-blue-500/50 flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.6)] backdrop-blur-md overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-tr from-blue-900/50 to-transparent opacity-80" />
-        <Cpu className="w-6 h-6 text-blue-400 z-10 relative" />
-        <motion.div 
-          className="absolute bottom-1 w-1 h-1 bg-green-400 rounded-full z-20"
-          animate={{ opacity: [0, 1, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        />
-      </div>
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <span className="text-[10px] font-mono text-blue-400 tracking-[0.2em] bg-black/80 px-2 py-1 rounded">ORBIT ONLINE</span>
-      </div>
-    </motion.button>
-  );
-};
-
-// --- 4. MAIN COMPONENT ---
 export default function OrbitChat() {
-  const [state, setState] = useState<OrbitState>({
-    isOpen: false,
-    flowStep: 'IDLE',
-    history: [],
-    userData: {}
-  });
-  
+  const [isOpen, setIsOpen] = useState(false);
+  const [history, setHistory] = useState<Message[]>([{
+    id: 'init',
+    role: 'assistant',
+    content: "ORBIT CORE ONLINE. Biometric uplink verified. State your deployment objective for the IT Farm."
+  }]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const hasInitialized = useRef(false); // Prevents double-firing in Strict Mode
 
-  // Scroll helper
+  // Parallax Effect for the Panel
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseXSpring = useSpring(x);
+  const mouseYSpring = useSpring(y);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    x.set(mouseX / width - 0.5);
+    y.set(mouseY / height - 0.5);
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [state.history, isTyping, state.isOpen]);
+  }, [history, isTyping]);
 
-  // SYSTEM TYPING SIMULATION
-  const addSystemMessage = useCallback((message: Omit<Message, 'timestamp'>) => {
-    setIsTyping(true);
-    const delay = 800; // Fixed delay for consistency
-    
-    setTimeout(() => {
-      setIsTyping(false);
-      setState(prev => ({ 
-        ...prev, 
-        history: [...prev.history, { ...message, timestamp: Date.now() }] 
-      }));
-    }, delay);
-  }, []);
-
-  // INITIALIZATION
-  useEffect(() => {
-    if (state.isOpen && state.history.length === 0 && !hasInitialized.current) {
-      hasInitialized.current = true;
-      setTimeout(() => {
-        addSystemMessage({
-          id: 'init',
-          sender: 'system',
-          type: 'options',
-          content: [
-            "ORBIT // COMMAND INTERFACE V1.0.4",
-            "SYSTEM ONLINE. SECURE CONNECTION ESTABLISHED.",
-            "AWAITING DEPLOYMENT PROTOCOLS."
-          ],
-          options: [
-            { label: "Build New Product", value: "product", action: "details" },
-            { label: "Scale Remote Team", value: "team", action: "details" },
-            { label: "AI Infrastructure", value: "ai", action: "details" },
-            { label: "Audit Systems", value: "audit", action: "details" }
-          ]
-        });
-      }, 0);
-    }
-  }, [state.isOpen, state.history.length, addSystemMessage]);
-
-  // HANDLERS
-  const handleOptionSelect = (option: Option) => {
-    // 1. Add User Selection
-    const userMsg: Message = {
-      id: generateId(),
-      sender: 'user',
-      type: 'text',
-      content: [`Protocol Selected: ${option.label}`],
-      timestamp: 0 // Will be set in setState below
-    };
-
-    setState(prev => {
-      const now = Date.now();
-      return {
-        ...prev,
-        history: [
-          ...prev.history,
-          { ...userMsg, timestamp: now }
-        ],
-        userData: { ...prev.userData, intent: option.value },
-        flowStep: 'DETAILS'
-      };
-    });
-
-    // 2. Trigger System Response
-    setTimeout(() => {
-      addSystemMessage({
-        id: generateId(),
-        sender: 'system',
-        type: 'input-text',
-        content: [
-          `PROTOCOL CONFIRMED: ${option.value.toUpperCase()}`,
-          "PLEASE DEFINE MISSION PARAMETERS.",
-          "BRIEFLY DESCRIBE SCOPE & REQUIREMENTS."
-        ]
-      });
-    }, 200);
-  };
-
-  const handleInputSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const handleCommand = (e: React.FormEvent) => {
+    e.preventDefault();
     if (!inputValue.trim()) return;
-
-    const userMsg: Message = {
-      id: generateId(),
-      sender: 'user',
-      type: 'text',
-      content: [inputValue],
-      timestamp: Date.now()
-    };
-
-    const nextState = { ...state, history: [...state.history, userMsg] };
+    setHistory(prev => [...prev, { id: Math.random().toString(), role: 'user', content: inputValue }]);
     setInputValue("");
-    
-    if (state.flowStep === 'DETAILS') {
-      nextState.userData.details = inputValue;
-      nextState.flowStep = 'AUTH';
-      setState(nextState);
-
-      setTimeout(() => {
-        addSystemMessage({
-          id: generateId(),
-          sender: 'system',
-          type: 'input-text',
-          content: [
-            "PARAMETERS LOGGED.",
-            "INITIALIZING AUTHORIZATION SEQUENCE.",
-            "ENTER OPERATIVE ID (EMAIL ADDRESS)."
-          ]
-        });
-      }, 200);
-
-    } else if (state.flowStep === 'AUTH') {
-      nextState.userData.email = inputValue;
-      nextState.flowStep = 'COMPLETE';
-      setState(nextState);
-
-      setTimeout(() => {
-        addSystemMessage({
-          id: generateId(),
-          sender: 'system',
-          type: 'text',
-          content: [
-            "IDENTITY VERIFIED.",
-            "ENCRYPTED PACKET TRANSMITTED TO HQ.",
-            "STANDBY FOR INCOMING TRANSMISSION.",
-            "ORBIT OUT."
-          ]
-        });
-      }, 200);
-    }
+    // Backend simulation for now
+    setIsTyping(true);
+    setTimeout(() => setIsTyping(false), 2000);
   };
 
   return (
     <>
-      <AnimatePresence mode="wait">
-        {!state.isOpen && (
+      <AnimatePresence>
+        {!isOpen && (
           <motion.div
-            key="orb"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            layoutId="orbit-container"
+            className="fixed bottom-12 right-12 z-9999"
           >
-            <OrbitOrb onClick={() => setState(p => ({...p, isOpen: true}))} />
+            <motion.button
+              onClick={() => setIsOpen(true)}
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
+              className="relative w-20 h-20 flex items-center justify-center"
+            >
+              {/* Spinning Neural Rings */}
+              <motion.div 
+                animate={{ rotate: 360 }} 
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 border-2 border-dashed border-blue-500/40 rounded-full" 
+              />
+              <motion.div 
+                animate={{ rotate: -360 }} 
+                transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-2 border border-dotted border-cyan-400/30 rounded-full" 
+              />
+              
+              {/* The Core */}
+              <div className="relative w-14 h-14 rounded-2xl bg-black border border-blue-500/50 flex items-center justify-center shadow-[0_0_50px_rgba(59,130,246,0.5)] backdrop-blur-xl overflow-hidden group">
+                <div className="absolute inset-0 bg-linear-to-tr from-blue-600/20 to-transparent group-hover:opacity-100 transition-opacity" />
+                <Bot className="w-8 h-8 text-blue-400 z-10" />
+                <motion.div 
+                  animate={{ opacity: [0, 1, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute bottom-1 w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_10px_#22d3ee]" 
+                />
+              </div>
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {state.isOpen && (
+        {isOpen && (
           <motion.div
-            key="panel"
-            initial={{ opacity: 0, y: 100, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 100, scale: 0.9, transition: { duration: 0.2 } }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed bottom-4 right-4 md:bottom-8 md:right-8 w-[95vw] md:w-112.5 h-150 max-h-[80vh] bg-[#050505]/95 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-[0_0_50px_-10px_rgba(0,0,0,0.8)] overflow-hidden z-9999 flex flex-col font-sans"
+            layoutId="orbit-container"
+            onMouseMove={handleMouseMove}
+            style={{ rotateX, rotateY, perspective: 1000 }}
+            initial={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
+            className="fixed bottom-10 right-10 w-[95vw] md:w-120 h-175 max-h-[85vh] bg-zinc-950/90 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] backdrop-blur-3xl z-9999 flex flex-col overflow-hidden ring-1 ring-white/20"
           >
-            {/* --- VISUAL FX LAYER --- */}
-            {/* Grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-size-[24px_24px] pointer-events-none" />
-            {/* Top Glow */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-blue-500 to-transparent opacity-50" />
-            {/* Scanline Animation */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.2)_50%)] bg-size-[100%_4px] opacity-10 pointer-events-none" />
+            {/* UI SCANLINES EFFECT */}
+            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-size-[100%_4px,3px_100%] z-50 opacity-20" />
 
-            {/* --- HEADER --- */}
-            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5 relative z-10">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_#22c55e]" />
-                <span className="font-mono text-xs text-blue-400 tracking-[0.2em] font-bold">ORBIT // COMMAND</span>
+            {/* HEADER: COMMAND CENTER STYLE */}
+            <div className="relative p-6 border-b border-white/5 bg-white/2 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                    <Cpu className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-zinc-950 rounded-full animate-pulse" />
+                </div>
+                <div>
+                  <h3 className="font-mono text-xs font-bold text-white tracking-[0.3em] uppercase">Orbit // System</h3>
+                  <p className="text-[10px] font-mono text-zinc-500 uppercase flex items-center gap-2">
+                    <Activity className="w-3 h-3 text-green-500" /> Secure Uplink: Active
+                  </p>
+                </div>
               </div>
               <button 
-                onClick={() => setState(p => ({...p, isOpen: false}))}
-                className="text-zinc-500 hover:text-white transition-colors"
+                onClick={() => setIsOpen(false)} 
+                className="w-10 h-10 rounded-full hover:bg-white/5 flex items-center justify-center transition-colors text-zinc-500 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* --- CHAT HISTORY --- */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-              {state.history.map((msg) => (
-                <div 
+            {/* MESSAGE FEED: SPATIAL INTERFACE */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-8 scrollbar-hide">
+              {history.map((msg) => (
+                <motion.div 
+                  initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
+                  animate={{ opacity: 1, x: 0 }}
                   key={msg.id} 
-                  className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <span className="text-[10px] font-mono text-zinc-600 mb-1 tracking-wider uppercase">
-                    {msg.sender === 'system' ? 'ORBIT CORE' : 'OPERATOR'}
-                  </span>
-
-                  <motion.div
-                    initial={{ opacity: 0, x: msg.sender === 'system' ? -20 : 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className={`max-w-[90%] rounded-lg p-4 text-sm leading-relaxed border backdrop-blur-sm ${
-                      msg.sender === 'system' 
-                        ? 'bg-blue-900/10 border-blue-500/20 text-blue-100 rounded-tl-none shadow-[0_0_15px_rgba(59,130,246,0.1)]' 
-                        : 'bg-zinc-800/50 border-white/10 text-white rounded-tr-none'
-                    }`}
-                  >
-                    {/* System Icon Decor */}
-                    {msg.sender === 'system' && (
-                      <div className="mb-2 flex items-center gap-2 opacity-50">
-                        <Terminal className="w-3 h-3" />
-                        <div className="h-px w-8 bg-blue-500/50" />
-                      </div>
-                    )}
-
-                    {/* Lines */}
-                    <div className="space-y-1 font-mono text-xs md:text-sm">
-                      {msg.content.map((line, i) => (
-                        <p key={i} className={i === 0 && msg.sender === 'system' ? "text-blue-400 font-bold mb-2" : ""}>
-                          {msg.sender === 'system' ? `> ${line}` : line}
-                        </p>
-                      ))}
+                  <div className={`max-w-[85%] group ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
+                    <div className="flex items-center gap-2 mb-2 opacity-30 group-hover:opacity-100 transition-opacity">
+                      {msg.role !== 'user' && <Command className="w-3 h-3 text-blue-400" />}
+                      <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-400">
+                        {msg.role === 'user' ? 'Operative' : 'Orbit_Core'}
+                      </span>
                     </div>
-
-                    {/* Interactive Options */}
-                    {msg.type === 'options' && msg.options && (
-                      <div className="mt-4 grid grid-cols-1 gap-2">
-                        {msg.options.map((opt) => (
-                          <button
-                            key={opt.value}
-                            onClick={() => handleOptionSelect(opt)}
-                            className="group flex items-center justify-between w-full p-3 bg-blue-500/5 border border-blue-500/20 hover:bg-blue-500/10 hover:border-blue-500/50 text-left transition-all rounded"
-                          >
-                            <span className="text-xs font-mono text-blue-300 group-hover:text-blue-200 uppercase tracking-wider">
-                              {opt.label}
-                            </span>
-                            <ChevronRight className="w-3 h-3 text-blue-500 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </motion.div>
-                </div>
+                    <div className={`relative p-5 rounded-2xl font-mono text-xs leading-relaxed transition-all ${
+                      msg.role === 'user' 
+                      ? 'bg-blue-600 text-white shadow-[0_10px_30px_rgba(37,99,235,0.3)]' 
+                      : 'bg-white/3 border border-white/10 text-zinc-300 backdrop-blur-md'
+                    }`}>
+                      {msg.role === 'assistant' && <span className="text-blue-400 mr-2 animate-pulse">{">"}</span>}
+                      {msg.content}
+                      {/* Subtle Glass Glare */}
+                      <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent pointer-events-none rounded-2xl" />
+                    </div>
+                  </div>
+                </motion.div>
               ))}
-
-              {/* Typing Loader */}
+              
               {isTyping && (
-                <div className="flex items-center gap-2 text-blue-500/50 p-2">
-                  <Activity className="w-4 h-4 animate-pulse" />
-                  <span className="text-[10px] font-mono animate-pulse">PROCESSING DATA STREAM...</span>
+                <div className="flex items-center gap-4 text-blue-500/50 font-mono text-[10px] p-2">
+                  <div className="flex gap-1">
+                    <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1 h-3 bg-blue-500" />
+                    <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1 h-3 bg-blue-500" />
+                    <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1 h-3 bg-blue-500" />
+                  </div>
+                  <span className="animate-pulse tracking-[0.2em]">ANALYZING DATA PACKETS...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* --- INPUT AREA --- */}
-            <div className="p-4 border-t border-white/10 bg-black/40 backdrop-blur-xl relative z-20">
-              {state.flowStep !== 'COMPLETE' ? (
-                <form 
-                  onSubmit={handleInputSubmit}
-                  className="flex items-center gap-2 bg-zinc-900/50 border border-white/10 rounded-lg p-2 focus-within:border-blue-500/50 transition-colors"
-                >
-                  <span className="text-blue-500 pl-2 animate-pulse">{`>`}</span>
+            {/* INPUT UNIT: NEON COMMAND LINE */}
+            <div className="p-8 bg-zinc-900/50 border-t border-white/5 backdrop-blur-2xl">
+              <form onSubmit={handleCommand} className="relative group">
+                <div className="absolute -inset-1 bg-linear-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity" />
+                <div className="relative flex items-center bg-black border border-white/10 rounded-xl overflow-hidden focus-within:border-blue-500/50 transition-all">
+                  <div className="pl-4 flex items-center gap-2">
+                    <Terminal className="w-4 h-4 text-zinc-600" />
+                  </div>
                   <input
-                    type={state.flowStep === 'AUTH' ? "email" : "text"}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    placeholder={state.flowStep === 'AUTH' ? "Enter email authorization..." : "Input command..."}
-                    className="flex-1 bg-transparent border-none outline-none text-sm text-white font-mono placeholder:text-zinc-700 h-8"
-                    autoFocus
+                    placeholder="Input mission parameter..."
+                    className="flex-1 bg-transparent py-4 px-3 text-sm font-mono text-white outline-none placeholder:text-zinc-700"
                     disabled={isTyping}
                   />
                   <button 
-                    type="submit"
-                    disabled={!inputValue.trim() || isTyping}
-                    className="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    type="submit" 
+                    disabled={!inputValue.trim()} 
+                    className="px-6 py-4 bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-20 transition-all flex items-center gap-2"
                   >
-                    <Send className="w-3 h-3" />
+                    <Send className="w-4 h-4" />
+                    <span className="hidden md:inline text-[10px] font-black uppercase tracking-widest">Execute</span>
                   </button>
-                </form>
-              ) : (
-                <div className="flex items-center justify-center gap-2 text-green-500 font-mono text-xs p-3 border border-green-500/20 bg-green-500/5 rounded">
-                  <Shield className="w-4 h-4" />
-                  <span>SESSION SECURED. TICKET #9482</span>
                 </div>
-              )}
+              </form>
+              <div className="mt-4 flex justify-between items-center px-2">
+                 <div className="flex gap-4">
+                    <div className="flex items-center gap-1.5 opacity-30">
+                       <ShieldCheck className="w-3 h-3 text-zinc-400" />
+                       <span className="text-[8px] font-mono text-zinc-400 uppercase">Encrypted</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 opacity-30">
+                       <Zap className="w-3 h-3 text-zinc-400" />
+                       <span className="text-[8px] font-mono text-zinc-400 uppercase">Quantum-Link</span>
+                    </div>
+                 </div>
+                 <span className="text-[8px] font-mono text-zinc-600 uppercase tracking-widest">V4.02-ORBIT</span>
+              </div>
             </div>
           </motion.div>
         )}
