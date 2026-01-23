@@ -90,7 +90,7 @@ export default function AuthPage() {
   }
 
   return (
-    <main className="min-h-screen w-full flex flex-col items-center relative bg-[#020202] selection:bg-blue-500/30 overflow-x-hidden">
+    <main className="min-h-screen mb-20 w-full flex flex-col items-center relative bg-[#020202] selection:bg-blue-500/30 overflow-x-hidden">
       <div className="fixed inset-0 z-0 pointer-events-none">
         <SmokeBackground />
       </div>
