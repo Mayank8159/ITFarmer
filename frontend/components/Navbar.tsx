@@ -5,9 +5,6 @@ import { useRouter } from "next/navigation";
 import { Orbit, Mail, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-/**
- * ROUTE CONFIG (APP ROUTER)
- */
 const NAV_LINKS = [
   { label: "Home", path: "/" },
   { label: "About", path: "/about" },
@@ -38,7 +35,13 @@ export default function FloatingNavbar() {
   };
 
   return (
-    <nav className="fixed top-6 left-1/2 z-[100] -translate-x-1/2 w-[90%] md:w-auto max-w-fit group">
+    <nav
+      className="
+        fixed top-4 left-4
+        md:top-6 md:left-1/2 md:-translate-x-1/2
+        z-[100] w-[90%] md:w-auto max-w-fit group
+      "
+    >
       {/* MOVING COSMIC GLOW */}
       <div className="absolute -inset-[2px] rounded-full overflow-hidden blur-md opacity-30 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <motion.div
