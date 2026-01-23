@@ -13,7 +13,11 @@ export const OrbitOrb: React.FC<OrbitOrbProps> = ({ onClick }) => {
   return (
     <motion.button
       onClick={onClick}
-      className="fixed bottom-8 right-8 z-50 group cursor-pointer"
+      className="
+        fixed top-4 right-4
+        md:top-auto md:bottom-8
+        z-50 group cursor-pointer
+      "
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
@@ -23,7 +27,7 @@ export const OrbitOrb: React.FC<OrbitOrbProps> = ({ onClick }) => {
         transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
         className="absolute inset-[-8px] rounded-full border border-blue-500/30 border-dashed w-[calc(100%+16px)] h-[calc(100%+16px)]"
       />
-      
+
       {/* Inner Pulse Ring */}
       <motion.div
         animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
@@ -41,15 +45,18 @@ export const OrbitOrb: React.FC<OrbitOrbProps> = ({ onClick }) => {
         <Cpu className="w-6 h-6 text-blue-400 z-10 relative" />
         
         {/* Active State Indicator */}
-        <motion.div 
+        <motion.div
           className="absolute bottom-1 w-1 h-1 bg-green-400 rounded-full z-20"
           animate={{ opacity: [0, 1, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         />
       </div>
-      
+
+      {/* Tooltip */}
       <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <span className="text-[10px] font-mono text-blue-400 tracking-[0.2em]">ORBIT ONLINE</span>
+        <span className="text-[10px] font-mono text-blue-400 tracking-[0.2em]">
+          ORBIT ONLINE
+        </span>
       </div>
     </motion.button>
   );
