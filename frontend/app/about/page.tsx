@@ -5,28 +5,28 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Mail, Github, Linkedin, Phone } from "lucide-react";
 
-/* EXISTING COMPONENTS */
+/* COMPONENTS */
 import FloatingNavbar from "@/components/Navbar";
 import OrbitChat from "@/components/orbit/OrbitChat";
 import SmokeBackground from "@/components/SmokeBackground";
 
 /**
  * ABOUT PAGE
- * Uses bg-transparent to allow the fixed SmokeBackground to show through.
+ * Main assembly with video background integration.
  */
 export default function AboutPage(): JSX.Element {
   return (
     <main className="relative min-h-screen bg-transparent text-white overflow-hidden">
       
-      {/* BACKGROUND LAYER */}
+      {/* 1. BACKGROUND VIDEO LAYER */}
       <SmokeBackground />
 
-      {/* CONTENT LAYER */}
+      {/* 2. UI LAYER */}
       <div className="relative z-10">
         <FloatingNavbar />
         <OrbitChat />
 
-        {/* SUBTLE BACKGROUND GRID */}
+        {/* SUBTLE OVERLAY GRID */}
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff05_1px,transparent_1px)] [background-size:40px_40px] pointer-events-none" />
 
         {/* HERO SECTION */}
@@ -116,7 +116,6 @@ function AnimatedBorderCard({ children }: { children: React.ReactNode }) {
       transition={{ duration: 0.8 }}
       className="relative rounded-3xl p-[1.5px] overflow-hidden"
     >
-      {/* Rotating Border Glow */}
       <motion.div
         animate={{ backgroundPosition: ["0% 50%", "200% 50%"] }}
         transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
@@ -125,8 +124,7 @@ function AnimatedBorderCard({ children }: { children: React.ReactNode }) {
           bg-[length:200%_100%]"
       />
 
-      {/* Inner Glass Container */}
-      <div className="relative bg-zinc-950/60 border border-white/10 rounded-3xl p-10 backdrop-blur-2xl shadow-2xl">
+      <div className="relative bg-zinc-950/60 border border-white/10 rounded-3xl p-8 md:p-10 backdrop-blur-2xl shadow-2xl">
         {children}
       </div>
     </motion.div>
@@ -172,25 +170,54 @@ function FounderCard({
 
         <div>
           <h3 className="text-xl font-bold tracking-tight">{name}</h3>
-          <p className="text-blue-500 text-xs font-mono uppercase tracking-widest">{role}</p>
+          <p className="text-blue-500 text-[10px] font-mono uppercase tracking-[0.2em]">{role}</p>
         </div>
       </div>
 
-      <p className="text-zinc-400 leading-relaxed mb-8 text-sm">{description}</p>
+      <p className="text-zinc-400 leading-relaxed mb-8 text-sm h-12">
+        {description}
+      </p>
 
-      {/* CONTACT & SOCIALS */}
-      <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-white/5">
-        <a href={`mailto:${email}`} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-          <Mail className="h-4 w-4" /> <span className="text-xs font-mono">{email}</span>
-        </a>
+      {/* CONTACT & SOCIAL FOOTER */}
+      <div className="flex flex-col gap-6 pt-6 border-t border-white/5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          
+          {/* CONTACT ACTIONS */}
+          <div className="flex flex-col gap-3">
+            <a href={`mailto:${email}`} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
+              <Mail className="h-4 w-4 group-hover:text-blue-500 transition-colors" /> 
+              <span className="text-xs font-mono">{email}</span>
+            </a>
+            
+            <a 
+              href={`tel:${phone}`} 
+              className="flex items-center gap-2 w-fit bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-full text-zinc-300 hover:text-white transition-all active:scale-95 group"
+            >
+              <Phone className="h-3.5 w-3.5 text-blue-500 group-hover:animate-pulse" /> 
+              <span className="text-[10px] font-bold uppercase tracking-widest">Call Now</span>
+            </a>
+          </div>
 
-        <div className="flex gap-4 ml-auto">
-          <a href={githubUrl} target="_blank" rel="noopener noreferrer">
-            <Github className="h-5 w-5 text-zinc-500 hover:text-white transition-all" />
-          </a>
-          <a href={linkedinUrl} target="_blank" rel="noopener noreferrer">
-            <Linkedin className="h-5 w-5 text-zinc-500 hover:text-white transition-all" />
-          </a>
+          {/* SOCIAL LINKS */}
+          <div className="flex gap-3">
+            <a 
+              href={githubUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="p-2.5 bg-white/5 rounded-xl border border-white/5 hover:border-white/20 transition-all hover:bg-white/10"
+            >
+              <Github className="h-5 w-5 text-zinc-400 hover:text-white" />
+            </a>
+            <a 
+              href={linkedinUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="p-2.5 bg-white/5 rounded-xl border border-white/5 hover:border-white/20 transition-all hover:bg-white/10"
+            >
+              <Linkedin className="h-5 w-5 text-zinc-400 hover:text-white" />
+            </a>
+          </div>
+
         </div>
       </div>
     </AnimatedBorderCard>
