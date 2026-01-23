@@ -17,7 +17,7 @@
 This repository contains the source code for the frontend interface, featuring the **ORBIT // Command Interface**, holographic service grids, and the "Blueprint to Reality" transformation engine.
 
 ### 🚀 Deployed Environment
-[ **View Live Demo** ](https://itfarm.vercel.app) *(Replace with your actual link)*
+[ **View Live Demo** ](https://it-farmer.vercel.app/)
 
 ---
 
