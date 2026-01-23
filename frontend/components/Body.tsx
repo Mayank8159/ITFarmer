@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, JSX } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Terminal, 
@@ -16,9 +16,27 @@ import {
 } from "lucide-react";
 
 /**
+ * DATA TYPE INTERFACES (For TypeScript Build Success)
+ */
+interface OSModule {
+  title: string;
+  description: string;
+  icon: JSX.Element;
+  color: string;
+}
+
+interface TestimonialData {
+  name: string;
+  role: string;
+  content: string;
+  avatar: string;
+  glow: string;
+}
+
+/**
  * DATA DEFINITIONS
  */
-const OPERATING_SYSTEM_MODULES = [
+const OPERATING_SYSTEM_MODULES: OSModule[] = [
   {
     title: "Talent Engine",
     description: "Multi-stage vetting process ensuring only the top 1% of specialized engineering talent enters our farm.",
@@ -57,7 +75,7 @@ const OPERATING_SYSTEM_MODULES = [
   }
 ];
 
-const TESTIMONIALS = [
+const TESTIMONIALS: TestimonialData[] = [
   {
     name: "Alexander Volkov",
     role: "CTO, Nexus Dynamics",
@@ -96,7 +114,7 @@ const STATS = [
   { label: "Coverage", value: "Global" }
 ];
 
-const SystemCard = ({ module, index }: { module: typeof OPERATING_SYSTEM_MODULES[0], index: number }) => (
+const SystemCard = ({ module, index }: { module: OSModule, index: number }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -118,7 +136,7 @@ const SystemCard = ({ module, index }: { module: typeof OPERATING_SYSTEM_MODULES
   </motion.div>
 );
 
-export default function NextSection() {
+export default function NextSection(): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -178,8 +196,6 @@ export default function NextSection() {
 
         <div className="relative h-[500px] md:h-[400px] flex items-center justify-center overflow-visible">
           {TESTIMONIALS.map((testimonial, i) => {
-            // Logic for "Dial" effect
-            const offset = i - activeIndex;
             const isCenter = i === activeIndex;
             const isLeft = i === (activeIndex - 1 + TESTIMONIALS.length) % TESTIMONIALS.length;
             const isRight = i === (activeIndex + 1) % TESTIMONIALS.length;
@@ -208,7 +224,7 @@ export default function NextSection() {
                 
                 <div className="flex flex-col gap-6 relative z-10">
                   <div className="flex items-center gap-4">
-                    <img src={testimonial.avatar} className="w-16 h-16 rounded-xl border border-white/10" alt="" />
+                    <img src={testimonial.avatar} className="w-16 h-16 rounded-xl border border-white/10" alt={testimonial.name} />
                     <div>
                       <h4 className="font-bold text-white uppercase tracking-wider">{testimonial.name}</h4>
                       <p className="text-xs font-mono text-blue-500 uppercase">{testimonial.role}</p>
@@ -255,8 +271,8 @@ export default function NextSection() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-40">
         {STATS.map((stat, idx) => (
           <motion.div key={idx} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }} className="p-8 rounded-3xl bg-white/5 border border-white/10 text-center group">
-            <span className="text-4xl lg:text-5xl font-black mb-2 text-white group-hover:text-blue-500 transition-colors">{stat.value}</span>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-600 font-bold block uppercase">{stat.label}</span>
+            <span className="text-4xl lg:text-5xl font-black mb-2 text-white group-hover:text-blue-500 transition-colors block">{stat.value}</span>
+            <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-600 font-bold block">{stat.label}</span>
           </motion.div>
         ))}
       </div>
