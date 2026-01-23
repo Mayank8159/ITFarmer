@@ -4,8 +4,8 @@ import React, { JSX } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { 
-  Mail, Github, Linkedin, Phone, Server, ShieldCheck, Zap, 
-  Globe, Users, Cpu, ArrowRight, Database, Lock, Layers, BarChart3, CheckCircle2
+  Mail, Github as GithubIcon, Linkedin as LinkedinIcon, Phone, Server, ShieldCheck, Zap, 
+  Globe, Users, Cpu, ArrowRight, Database, Lock, Layers, BarChart3
 } from "lucide-react";
 
 /* COMPONENTS */
@@ -25,7 +25,7 @@ export default function AboutPage(): JSX.Element {
         <OrbitChat />
 
         {/* SUBTLE OVERLAY GRID */}
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff05_1px,transparent_1px)] bg-[length:40px_40px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff05_1px,transparent_1px)] bg-size-[40px_40px] pointer-events-none" />
 
         {/* 1. HERO SECTION */}
         <section className="relative min-h-[80vh] md:min-h-[90vh] flex flex-col items-center justify-center text-center px-4 pt-32 pb-16">
@@ -117,7 +117,7 @@ export default function AboutPage(): JSX.Element {
                   initial={{ opacity: 0, y: 20 }} 
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="group relative flex flex-col md:flex-row gap-4 md:gap-8 p-6 md:p-10 border border-white/5 rounded-[2rem] hover:border-blue-500/40 hover:bg-white/2 transition-all backdrop-blur-sm"
+                  className="group relative flex flex-col md:flex-row gap-4 md:gap-8 p-6 md:p-10 border border-white/5 rounded-4xl hover:border-blue-500/40 hover:bg-white/2 transition-all backdrop-blur-sm"
                 >
                   <div className="relative z-10 w-12 h-12 rounded-full bg-zinc-950 border border-blue-500/50 flex items-center justify-center text-blue-500 font-mono font-bold shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
                     {item.step}
@@ -136,7 +136,7 @@ export default function AboutPage(): JSX.Element {
         <section className="py-20 md:py-32">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-[10px] font-mono uppercase tracking-[0.4em] text-center mb-16 text-zinc-500">Global Expertise Units</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10 rounded-[2rem] overflow-hidden">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10 rounded-4xl overflow-hidden">
               {[
                 { icon: Globe, label: "Web & SaaS" }, { icon: Cpu, label: "AI & ML" },
                 { icon: Phone, label: "Mobile" }, { icon: Server, label: "Cloud & DevOps" },
@@ -160,7 +160,7 @@ export default function AboutPage(): JSX.Element {
                 <ShieldCheck className="w-12 h-12 text-blue-500 mb-6" />
                 <h3 className="text-3xl md:text-4xl font-bold mb-6">Enterprise Governance.</h3>
                 <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-8">
-                  We enforce a "Compliance-First" mindset. Every line of code passes through rigorous QA pipelines before deployment.
+                  We enforce a &quot;Compliance-First&quot; mindset. Every line of code passes through rigorous QA pipelines before deployment.
                 </p>
                 <div className="space-y-3">
                   {["Peer Code Reviews", "AES-256 Encryption", "IP Confidentiality"].map((text, i) => (
@@ -247,20 +247,31 @@ export default function AboutPage(): JSX.Element {
 
 function AnimatedBorderCard({ children }: { children: React.ReactNode }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative rounded-[2rem] p-[1.5px] overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent,rgba(59,130,246,0.3),transparent)] bg-[length:200%_100%] animate-shimmer" />
-      <div className="relative bg-zinc-950/80 border border-white/10 rounded-[2rem] p-8 md:p-12 backdrop-blur-2xl">
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative rounded-4xl p-[1.5px] overflow-hidden">
+      <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent,rgba(59,130,246,0.3),transparent)] bg-size-[200%_100%] animate-shimmer" />
+      <div className="relative bg-zinc-950/80 border border-white/10 rounded-4xl p-8 md:p-12 backdrop-blur-2xl">
         {children}
       </div>
     </motion.div>
   );
 }
 
-function FounderCard({ name, role, email, phone, description, imageSrc, githubUrl, linkedinUrl }: any) {
+interface FounderCardProps {
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+  description: string;
+  imageSrc: string;
+  githubUrl: string;
+  linkedinUrl: string;
+}
+
+function FounderCard({ name, role, email, phone, description, imageSrc, githubUrl, linkedinUrl }: FounderCardProps) {
   return (
     <AnimatedBorderCard>
       <div className="flex items-center gap-5 mb-6">
-        <div className="relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden bg-white/10 p-[2px]">
+        <div className="relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden bg-white/10 p-0.5">
           <Image src={imageSrc} alt={name} fill className="object-cover rounded-full grayscale hover:grayscale-0 transition-all duration-500" />
         </div>
         <div>
@@ -275,8 +286,8 @@ function FounderCard({ name, role, email, phone, description, imageSrc, githubUr
           <a href={`tel:${phone}`} className="w-fit px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-blue-400 flex items-center gap-2"><Phone className="w-3 h-3" /> Direct Line</a>
         </div>
         <div className="flex gap-4">
-          <a href={githubUrl} target="_blank" className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"><Github className="w-5 h-5 text-zinc-500 hover:text-white" /></a>
-          <a href={linkedinUrl} target="_blank" className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"><Linkedin className="w-5 h-5 text-zinc-500 hover:text-white" /></a>
+          <a href={githubUrl} target="_blank" className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"><GithubIcon className="w-5 h-5 text-zinc-500 hover:text-white" /></a>
+          <a href={linkedinUrl} target="_blank" className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"><LinkedinIcon className="w-5 h-5 text-zinc-500 hover:text-white" /></a>
         </div>
       </div>
     </AnimatedBorderCard>
