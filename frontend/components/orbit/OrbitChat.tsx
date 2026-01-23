@@ -13,6 +13,7 @@ interface Message {
 
 export default function OrbitChat() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [history, setHistory] = useState<Message[]>([{
     id: 'init',
     role: 'assistant',
@@ -22,15 +23,25 @@ export default function OrbitChat() {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Detect mobile to disable laggy features
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Parallax Effect - Optimized with Spring for no lag
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const mouseXSpring = useSpring(x);
-  const mouseYSpring = useSpring(y);
+  const mouseXSpring = useSpring(x, { stiffness: 100, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 100, damping: 30 });
+  
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
+    if (isMobile) return; // Disable 3D tilt on mobile to prevent lag
     const rect = e.currentTarget.getBoundingClientRect();
     x.set((e.clientX - rect.left) / rect.width - 0.5);
     y.set((e.clientY - rect.top) / rect.height - 0.5);
@@ -67,7 +78,7 @@ export default function OrbitChat() {
               <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full animate-pulse" />
               <motion.div 
                 animate={{ rotate: 360 }} 
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0 border-2 border-dashed border-blue-500/40 rounded-full" 
               />
               <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-black border border-blue-500/60 flex items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.6)] backdrop-blur-xl">
@@ -84,27 +95,26 @@ export default function OrbitChat() {
             layoutId="orbit-container"
             onMouseMove={handleMouseMove}
             style={{ 
-              rotateX: typeof window !== 'undefined' && window.innerWidth > 768 ? rotateX : 0, 
-              rotateY: typeof window !== 'undefined' && window.innerWidth > 768 ? rotateY : 0, 
+              rotateX: isMobile ? 0 : rotateX, 
+              rotateY: isMobile ? 0 : rotateY, 
               perspective: 1000 
             }}
-            initial={{ opacity: 0, scale: 0.9, y: 50 }}
+            initial={{ opacity: 0, scale: 0.95, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 50 }}
-            className="fixed bottom-0 right-0 md:bottom-8 md:right-8 w-full md:w-115 h-[90vh] md:h-[620px] bg-zinc-950/95 border-t md:border border-white/20 rounded-t-[2rem] md:rounded-[2.5rem] shadow-[0_0_80px_rgba(0,0,0,0.9)] backdrop-blur-3xl z-[9999] flex flex-col overflow-hidden ring-2 ring-blue-500/20"
+            exit={{ opacity: 0, scale: 0.95, y: 50 }}
+            className="fixed bottom-0 right-0 md:bottom-8 md:right-8 w-full md:w-[440px] h-[85vh] md:h-[620px] bg-zinc-950/95 border-t md:border border-white/20 rounded-t-[2.5rem] md:rounded-[2.5rem] shadow-[0_0_80px_rgba(0,0,0,0.9)] backdrop-blur-3xl z-[9999] flex flex-col overflow-hidden ring-2 ring-blue-500/10"
           >
-            {/* HOLOGRAPHIC OVERLAY & SCANNING ANIMATION */}
-            <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
-               {/* Static CRT Texture */}
-               <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_3px,2px_100%] opacity-20" />
-               
-               {/* Moving Scanning Bar */}
-               <motion.div 
-                 animate={{ y: [-20, 620] }} 
-                 transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                 className="w-full h-[2px] bg-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.4)]" 
-               />
-            </div>
+            {/* HOLOGRAPHIC OVERLAY - Only enabled on Desktop to fix lag */}
+            {!isMobile && (
+              <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_3px,2px_100%] opacity-20" />
+                <motion.div 
+                  animate={{ y: [-20, 620] }} 
+                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                  className="w-full h-[2px] bg-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.4)]" 
+                />
+              </div>
+            )}
 
             {/* HEADER */}
             <div className="relative p-5 md:p-6 border-b border-white/10 bg-white/5 flex items-center justify-between z-10">
@@ -121,7 +131,7 @@ export default function OrbitChat() {
                   </div>
                 </div>
               </div>
-              <button onClick={() => setIsOpen(false)} className="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors text-zinc-500 z-50">
+              <button onClick={() => setIsOpen(false)} className="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors text-zinc-500">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -145,7 +155,7 @@ export default function OrbitChat() {
                     <div className={`relative p-4 md:p-5 rounded-2xl font-mono text-xs md:text-sm leading-relaxed ${
                       msg.role === 'user' 
                       ? 'bg-blue-600 text-white shadow-lg border border-blue-400/30' 
-                      : 'bg-white/5 border border-white/10 text-zinc-200 backdrop-blur-md'
+                      : 'bg-white/5 border border-white/10 text-zinc-200 backdrop-blur-md shadow-xl'
                     }`}>
                       {msg.role === 'assistant' && <span className="text-blue-400 mr-2 animate-pulse">{">"}</span>}
                       {msg.content}
@@ -174,10 +184,7 @@ export default function OrbitChat() {
                     className="flex-1 bg-transparent py-4 md:py-5 px-4 text-sm font-mono text-white outline-none placeholder:text-zinc-800"
                     disabled={isTyping}
                   />
-                  <button 
-                    type="submit" 
-                    className="pr-4 text-blue-500 hover:text-white transition-colors"
-                  >
+                  <button type="submit" className="pr-4 text-blue-500 hover:text-white transition-colors">
                     <Send className="w-5 h-5" />
                   </button>
                 </div>
