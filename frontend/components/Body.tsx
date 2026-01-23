@@ -17,7 +17,6 @@ import {
 
 /**
  * DATA TYPE INTERFACES
- * Defining these explicitly prevents "implicit any" errors during Vercel's Typecheck stage.
  */
 interface OSModule {
   title: string;
@@ -163,12 +162,14 @@ export default function NextSection(): JSX.Element {
   };
 
   return (
-    <section ref={containerRef} className="relative bg-[#020202] text-white py-32 px-6 lg:px-24 overflow-hidden selection:bg-blue-500/30">
-      {/* BACKGROUND GRID */}
-      <div className="absolute inset-0 bg-[radial-gradient(#ffffff05_1px,transparent_1px)] [background-size:40px_40px] pointer-events-none" />
+    // CHANGED: Removed bg-[#020202] and added bg-transparent + relative z-10
+    <section ref={containerRef} className="relative bg-transparent text-white py-32 px-6 lg:px-24 overflow-hidden selection:bg-blue-500/30 z-10">
+      
+      {/* BACKGROUND GRID: Reduced opacity slightly to let video show through more clearly */}
+      <div className="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:40px_40px] pointer-events-none" />
       
       {/* SECTION HEADER */}
-      <div className="max-w-4xl mb-24">
+      <div className="max-w-4xl mb-24 relative z-10">
         <motion.span initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} className="inline-block text-blue-500 font-mono text-xs uppercase tracking-[0.4em] mb-4">
           Operating System
         </motion.span>
@@ -179,20 +180,20 @@ export default function NextSection(): JSX.Element {
       </div>
 
       {/* CORE MODULE GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-32">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-32 relative z-10">
         {OPERATING_SYSTEM_MODULES.map((module, idx) => (
           <SystemCard key={idx} module={module} index={idx} />
         ))}
       </div>
 
       {/* PIPELINE VISUALIZATION */}
-      <div className="relative py-24 border-y border-white/5 bg-zinc-900/10 rounded-[3rem] px-8 overflow-hidden mb-40">
+      <div className="relative py-24 border-y border-white/5 bg-zinc-900/10 rounded-[3rem] px-8 overflow-hidden mb-40 backdrop-blur-md">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-purple-500/5" />
-        <div className="relative grid grid-cols-1 md:grid-cols-5 gap-8 lg:gap-12">
+        <div className="relative grid grid-cols-1 md:grid-cols-5 gap-8 lg:gap-12 z-10">
           <div className="hidden md:block absolute top-[28px] left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-blue-500/20 via-white/10 to-purple-500/20" />
           {PIPELINE_STEPS.map((step, idx) => (
             <motion.div key={`step-${idx}`} initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: idx * 0.15 }} className="relative flex flex-col items-center text-center group">
-              <div className="w-14 h-14 rounded-full bg-[#050505] border border-white/20 flex items-center justify-center mb-6 z-10 transition-all group-hover:border-blue-500 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+              <div className="w-14 h-14 rounded-full bg-[#050505]/80 border border-white/20 flex items-center justify-center mb-6 z-10 transition-all group-hover:border-blue-500 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] backdrop-blur-sm">
                 <span className="text-xs font-bold font-mono text-zinc-500 group-hover:text-blue-400">0{idx + 1}</span>
               </div>
               <h4 className="text-lg font-bold text-white mb-2">{step.title}</h4>
@@ -203,7 +204,7 @@ export default function NextSection(): JSX.Element {
       </div>
 
       {/* TESTIMONIALS DIAL */}
-      <div className="mb-40 relative">
+      <div className="mb-40 relative z-10">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-center mb-20">
           <Quote className="w-12 h-12 text-blue-500/20 mx-auto mb-6" />
           <h3 className="text-4xl lg:text-5xl font-black italic uppercase tracking-tighter">Client Deployments</h3>
@@ -255,8 +256,8 @@ export default function NextSection(): JSX.Element {
         </div>
 
         {/* CONTROLS */}
-        <div className="flex justify-center items-center gap-12 mt-12">
-          <button onClick={prevTestimonial} className="group p-4 rounded-full border border-white/10 bg-zinc-900/50 hover:border-blue-500 hover:text-blue-500 transition-all active:scale-90">
+        <div className="flex justify-center items-center gap-12 mt-12 relative z-10">
+          <button onClick={prevTestimonial} className="group p-4 rounded-full border border-white/10 bg-zinc-900/50 hover:border-blue-500 hover:text-blue-500 transition-all active:scale-90 backdrop-blur-sm">
             <ArrowLeft className="w-6 h-6" />
           </button>
           <div className="flex gap-3">
@@ -264,16 +265,16 @@ export default function NextSection(): JSX.Element {
               <div key={i} className={`h-1.5 transition-all duration-500 rounded-full ${activeIndex === i ? "w-10 bg-blue-500" : "w-2 bg-zinc-800"}`} />
             ))}
           </div>
-          <button onClick={nextTestimonial} className="group p-4 rounded-full border border-white/10 bg-zinc-900/50 hover:border-blue-500 hover:text-blue-500 transition-all active:scale-90">
+          <button onClick={nextTestimonial} className="group p-4 rounded-full border border-white/10 bg-zinc-900/50 hover:border-blue-500 hover:text-blue-500 transition-all active:scale-90 backdrop-blur-sm">
             <ArrowRight className="w-6 h-6" />
           </button>
         </div>
       </div>
 
       {/* STATS STRIP */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-40">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-40 relative z-10">
         {STATS.map((stat, idx) => (
-          <motion.div key={`stat-${idx}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }} className="p-8 rounded-3xl bg-white/5 border border-white/10 text-center group">
+          <motion.div key={`stat-${idx}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }} className="p-8 rounded-3xl bg-white/5 border border-white/10 text-center group backdrop-blur-md">
             <span className="text-4xl lg:text-5xl font-black mb-2 text-white group-hover:text-blue-500 transition-colors block">{stat.value}</span>
             <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-600 font-bold block">{stat.label}</span>
           </motion.div>
@@ -281,10 +282,10 @@ export default function NextSection(): JSX.Element {
       </div>
 
       {/* BOTTOM CTA */}
-      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="flex flex-col items-center justify-center text-center">
+      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="flex flex-col items-center justify-center text-center relative z-10">
         <div className="w-px h-24 bg-gradient-to-b from-blue-500 to-transparent mb-12" />
         <h4 className="text-2xl font-bold text-white mb-8 uppercase tracking-tighter">Ready to deploy your elite squad?</h4>
-        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center gap-4 bg-white text-black px-10 py-5 rounded-full font-black uppercase text-sm tracking-widest">
+        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center gap-4 bg-white text-black px-10 py-5 rounded-full font-black uppercase text-sm tracking-widest shadow-xl">
           Initiate Onboarding <ArrowRight className="w-4 h-4" />
         </motion.button>
       </motion.div>
