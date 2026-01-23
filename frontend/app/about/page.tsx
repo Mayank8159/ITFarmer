@@ -13,10 +13,7 @@ export default function AboutPage(): JSX.Element {
   return (
     <main className="relative min-h-screen bg-[#020202] text-white overflow-hidden">
       
-      {/* NAVBAR */}
       <FloatingNavbar />
-
-      {/* ORBIT CHAT BOT */}
       <OrbitChat />
 
       {/* BACKGROUND GRID */}
@@ -39,29 +36,22 @@ export default function AboutPage(): JSX.Element {
           transition={{ delay: 0.2, duration: 0.8 }}
           className="mt-6 max-w-2xl text-zinc-400 font-light leading-relaxed"
         >
-          We are an IT services and product engineering company focused on
-          building intelligent, scalable, and future-ready digital solutions.
+          We build intelligent, scalable, and future-ready digital products
+          for startups and enterprises.
         </motion.p>
       </section>
 
       {/* MISSION */}
       <section className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="bg-zinc-950/70 border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl"
-        >
+        <AnimatedBorderCard>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Our Mission
           </h2>
           <p className="text-zinc-400 leading-relaxed">
-            Our mission is to help startups and businesses transform ideas into
-            powerful digital products. From modern web platforms to AI-driven
-            systems, we focus on performance, scalability, and long-term impact.
+            Transform ideas into powerful digital products using modern
+            web technologies, AI, and scalable system design.
           </p>
-        </motion.div>
+        </AnimatedBorderCard>
       </section>
 
       {/* FOUNDERS */}
@@ -82,7 +72,7 @@ export default function AboutPage(): JSX.Element {
             role="Co-Founder & Full-Stack Developer"
             email="team.techserve55@gmail.com"
             imageSrc="/founders/Mayank.png"
-            description="Focused on system architecture, AI-powered platforms, and building scalable products with modern technologies."
+            description="System architecture, AI platforms, and scalable product engineering."
           />
 
           <FounderCard
@@ -90,11 +80,42 @@ export default function AboutPage(): JSX.Element {
             role="Co-Founder & Software Developer"
             email="team.techserve55@gmail.com"
             imageSrc="/founders/Mayank.png"
-            description="Specializes in backend engineering, performance optimization, and converting complex ideas into reliable systems."
+            description="Backend engineering, performance optimization, and reliability."
           />
         </div>
       </section>
     </main>
+  );
+}
+
+/* ===================== ANIMATED BORDER CARD ===================== */
+
+function AnimatedBorderCard({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+      className="relative rounded-3xl p-[1.5px] overflow-hidden"
+    >
+      {/* MOVING BORDER LIGHT */}
+      <motion.div
+        animate={{ backgroundPosition: ["0% 50%", "200% 50%"] }}
+        transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
+        className="absolute inset-0 rounded-3xl
+          bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.7),transparent)]
+          bg-[length:200%_100%]"
+      />
+
+      {/* SOFT GLOW */}
+      <div className="absolute inset-0 rounded-3xl bg-white/10 blur-2xl opacity-30" />
+
+      {/* CONTENT */}
+      <div className="relative bg-zinc-950/80 border border-white/10 rounded-3xl p-10 backdrop-blur-xl shadow-2xl">
+        {children}
+      </div>
+    </motion.div>
   );
 }
 
@@ -114,19 +135,13 @@ function FounderCard({
   imageSrc: string;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.7 }}
-      className="relative bg-gradient-to-br from-zinc-900/80 to-black border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl"
-    >
+    <AnimatedBorderCard>
       {/* PROFILE */}
       <div className="flex items-center gap-6 mb-6">
         <div
           className="relative h-20 w-20 rounded-full overflow-hidden
           bg-gradient-to-br from-zinc-100 via-zinc-300 to-zinc-500
-          p-[2px] shadow-[0_0_25px_rgba(255,255,255,0.15)]"
+          p-[2px] shadow-[0_0_25px_rgba(255,255,255,0.2)]"
         >
           <div className="relative h-full w-full rounded-full overflow-hidden bg-black">
             <Image
@@ -166,6 +181,6 @@ function FounderCard({
           <Linkedin className="h-5 w-5 text-zinc-500 hover:text-white cursor-pointer transition" />
         </div>
       </div>
-    </motion.div>
+    </AnimatedBorderCard>
   );
 }
