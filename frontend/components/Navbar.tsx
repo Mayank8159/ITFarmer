@@ -20,9 +20,9 @@ export default function FloatingNavbar(): JSX.Element {
   };
 
   return (
-    <nav className="fixed top-6 left-1/2 z-[100] -translate-x-1/2 w-[90%] max-w-fit group">
+    <nav className="fixed top-6 left-1/2 z-[100] -translate-x-1/2 w-[90%] md:w-auto max-w-fit group">
       {/* MOVING COSMIC GLOW */}
-      <div className="absolute -inset-[2px] rounded-full overflow-hidden blur-md opacity-30 group-hover:opacity-100 transition-opacity duration-500">
+      <div className="absolute -inset-[2px] rounded-full overflow-hidden blur-md opacity-30 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <motion.div
           animate={{
             rotate: [0, 360],
@@ -32,17 +32,19 @@ export default function FloatingNavbar(): JSX.Element {
             repeat: Infinity,
             ease: "linear",
           }}
+          style={{ willChange: "transform" }}
           className="absolute inset-[-150%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_90deg,#22d3ee_180deg,#d946ef_270deg,transparent_360deg)]"
         />
       </div>
 
-      <div className="relative flex items-center justify-between gap-2 md:gap-4 rounded-full bg-zinc-950 p-1.5 md:px-3 md:py-2 shadow-2xl border border-white/10">
+      <div className="relative flex items-center justify-between gap-2 md:gap-4 rounded-full bg-zinc-950 p-1.5 md:px-3 md:py-2 shadow-2xl border border-white/10 backdrop-blur-md">
         
         {/* LOGO & MOBILE MENU TOGGLE */}
         <div className="flex items-center gap-1">
           <button 
             onClick={() => setIsOpen(!isOpen)}
-            className="flex h-10 w-10 md:hidden items-center justify-center rounded-full text-zinc-400 hover:text-white transition-colors"
+            aria-label="Toggle Menu"
+            className="flex h-10 w-10 md:hidden items-center justify-center rounded-full text-zinc-400 hover:text-white transition-colors active:scale-90"
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -58,7 +60,7 @@ export default function FloatingNavbar(): JSX.Element {
           </div>
         </div>
 
-        {/* NAVIGATION LINKS */}
+        {/* DESKTOP NAVIGATION */}
         <ul className="hidden md:flex items-center gap-2">
           {NAV_LINKS.map((link) => (
             <motion.li 
@@ -109,6 +111,7 @@ export default function FloatingNavbar(): JSX.Element {
                 transition={{ duration: 0.6, ease: "easeInOut" }}
                 className="flex items-center justify-center transform-3d backface-hidden"
               >
+                {/* Desktop Text / Mobile Icon */}
                 <span className="hidden md:block text-sm font-bold">{email}</span>
                 <Mail className="block md:hidden h-5 w-5" />
               </motion.div>
@@ -130,7 +133,7 @@ export default function FloatingNavbar(): JSX.Element {
               <a 
                 key={link} 
                 href={`#${link.toLowerCase()}`}
-                className="text-zinc-400 hover:text-white text-lg font-medium transition-colors"
+                className="text-zinc-400 hover:text-white text-lg font-medium transition-colors w-full text-center py-2"
                 onClick={() => setIsOpen(false)}
               >
                 {link}
