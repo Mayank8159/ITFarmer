@@ -1,17 +1,25 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.controllers import chatbot_controller
+from app.controllers import chatbot_controller, auth_controller
 
-app = FastAPI()
+app = FastAPI(title="IT FARM GLOBAL DELIVERY NETWORK API")
 
-# Allow your frontend to call backend
+# 1. CORS CONFIGURATION
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # your Next.js URL
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# include routers
-app.include_router(chatbot_controller.router)
+# 2. ROUTER INCLUSION
+# Chatbot Routes
+app.include_router(chatbot_controller.router, tags=["Chatbot"])
+
+# Authentication Routes (Register & Token)
+app.include_router(auth_controller.router, tags=["Authentication"])
+
+@app.get("/")
+async def root():
+    return {"status": "Online", "network": "IT FARM GLOBAL"}
