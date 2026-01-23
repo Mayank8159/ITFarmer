@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { label: "Home", path: "/" },
   { label: "About", path: "/about" },
   { label: "Services", path: "/services" },
+  { label: "Posts", path: "/posts" },
 ];
 
 export default function FloatingNavbar() {
