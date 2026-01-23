@@ -220,7 +220,7 @@ export default function AboutPage(): JSX.Element {
              <div className="absolute inset-0 bg-blue-600/5 group-hover:bg-blue-600/10 transition-colors" />
              <h2 className="relative text-3xl md:text-7xl font-black italic uppercase tracking-tighter mb-10 leading-tight">Ready to Deploy Your <br /> <span className="text-blue-500">Elite Squad?</span></h2>
              <button className="relative px-12 py-6 bg-white text-black rounded-full font-black uppercase text-xs tracking-[0.2em] flex items-center gap-3 mx-auto group active:scale-95 shadow-2xl">
-               Start Global Build <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+               Start Build <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
              </button>
           </motion.div>
         </section>
