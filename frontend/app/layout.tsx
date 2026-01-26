@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Orbit | Secure Node",
+  title: "NeuralforgeHub",
   description: "IT Farm Secure Node 01",
 };
 
