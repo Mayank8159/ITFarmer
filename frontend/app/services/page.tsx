@@ -14,7 +14,7 @@ import OrbitChat from "@/components/orbit/OrbitChat";
 import SmokeBackground from "@/components/SmokeBackground";
 
 // Configuration
-const BACKEND_URL = "https://your-backend-api.com/inquiry"; 
+const BACKEND_URL = "http://127.0.0.1:8000/inquiry"; 
 
 export default function ServicesPage(): JSX.Element {
   return (
