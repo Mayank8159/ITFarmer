@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, JSX } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { 
   Terminal, 
   ShieldCheck, 
@@ -119,7 +120,7 @@ const PIPELINE_STEPS: PipelineStep[] = [
 
 const STATS: StatItem[] = [
   { label: "Delivery SLA", value: "99.9%" },
-  { label: "Engineers", value: "50+" },
+  { label: "Engineers and Designers", value: "5+" },
   { label: "Uptime Support", value: "24/7" },
   { label: "Coverage", value: "Global" }
 ];
@@ -152,6 +153,8 @@ const SystemCard = ({ module, index }: { module: OSModule, index: number }) => (
 export default function NextSection(): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+
+  const router = useRouter();
 
   const nextTestimonial = () => {
     setActiveIndex((prev) => (prev + 1) % TESTIMONIALS.length);
@@ -285,7 +288,9 @@ export default function NextSection(): JSX.Element {
       <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="flex flex-col items-center justify-center text-center relative z-10">
         <div className="w-px h-24 bg-gradient-to-b from-blue-500 to-transparent mb-12" />
         <h4 className="text-2xl font-bold text-white mb-8 uppercase tracking-tighter">Ready to deploy your elite squad?</h4>
-        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center gap-4 bg-white text-black px-10 py-5 rounded-full font-black uppercase text-sm tracking-widest shadow-xl">
+        <motion.button
+        onClick={() => router.push('/services')}
+        whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center gap-4 bg-white text-black px-10 py-5 rounded-full font-black uppercase text-sm tracking-widest shadow-xl">
           Initiate Onboarding <ArrowRight className="w-4 h-4" />
         </motion.button>
       </motion.div>
