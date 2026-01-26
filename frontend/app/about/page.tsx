@@ -2,6 +2,7 @@
 
 import React, { JSX } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ReactLenis } from "@studio-freight/react-lenis";
 import { 
@@ -15,10 +16,12 @@ import OrbitChat from "@/components/orbit/OrbitChat";
 import SmokeBackground from "@/components/SmokeBackground";
 
 export default function AboutPage(): JSX.Element {
+  const router = useRouter();
+
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5, smoothWheel: true }}>
       <main className="relative min-h-screen bg-black text-white selection:bg-blue-500/30 overflow-x-hidden">
-        
+
         {/* BACKGROUND LAYER */}
         <SmokeBackground />
 
@@ -220,7 +223,9 @@ export default function AboutPage(): JSX.Element {
             <motion.div whileHover={{ scale: 1.01 }} className="relative rounded-[2.5rem] md:rounded-[3.5rem] p-12 md:p-24 overflow-hidden border border-white/10 bg-zinc-950/40 backdrop-blur-3xl text-center group">
                <div className="absolute inset-0 bg-blue-600/5 group-hover:bg-blue-600/10 transition-colors" />
                <h2 className="relative text-3xl md:text-7xl font-black italic uppercase tracking-tighter mb-10 leading-tight">Ready to Deploy Your <br /> <span className="text-blue-500">Elite Squad?</span></h2>
-               <button className="relative px-12 py-6 bg-white text-black rounded-full font-black uppercase text-xs tracking-[0.2em] flex items-center gap-3 mx-auto group active:scale-95 shadow-2xl">
+               <button 
+               onClick={() => router.push('/services')} 
+               className="relative px-12 py-6 bg-white text-black rounded-full font-black uppercase text-xs tracking-[0.2em] flex items-center gap-3 mx-auto group active:scale-95 shadow-2xl">
                  Start Build <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                </button>
             </motion.div>

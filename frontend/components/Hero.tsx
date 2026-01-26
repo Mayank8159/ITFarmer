@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, Variants, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { 
   Code2, Cpu, Cloud, Palette, ArrowRight, ArrowLeft, Star, Zap, Globe, ShieldCheck 
@@ -66,6 +67,7 @@ export default function HeroPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const router = useRouter();
   
   // Parallax Animation Values
   const mouseX = useMotionValue(0);
@@ -177,10 +179,14 @@ export default function HeroPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <button className="px-8 py-4 bg-white text-black rounded-2xl font-black hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-white/20">
+            <button 
+            onClick={() => router.push('/services')} 
+            className="px-8 py-4 bg-white text-black rounded-2xl font-black hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-white/20">
               Hire Talent
             </button>
-            <button className="px-8 py-4 border border-white/10 rounded-2xl font-bold hover:bg-white/5 transition-all backdrop-blur-xl">
+            <button 
+            onClick={() => router.push('/about')} 
+            className="px-8 py-4 border border-white/10 rounded-2xl font-bold hover:bg-white/5 transition-all backdrop-blur-xl">
               Our Stack
             </button>
           </motion.div>
