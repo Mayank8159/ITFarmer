@@ -210,8 +210,8 @@ export default function AboutPage(): JSX.Element {
                 role="Co-Founder & Software"
                 email="team.techserve55@gmail.com"
                 phone="+918240591893"
-                githubUrl="https://github.com/shreyan"
-                linkedinUrl="https://linkedin.com/in/shreyan"
+                githubUrl="https://github.com/MURPHIOP"
+                linkedinUrl="https://www.linkedin.com/in/shreyan-mitra/"
                 imageSrc="/founders/shreyan.jpeg"
                 description="Chief Reliability Officer. Expert in high-performance backends and cloud orchestration."
               />
