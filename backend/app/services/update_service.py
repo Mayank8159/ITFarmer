@@ -2,9 +2,24 @@ from datetime import datetime
 from typing import List, Optional
 
 from app.database import updates_collection
-from app.models.update import update_serializer
 from app.schemas.update_schema import UpdateCreate
 from app.controllers.notifications_controller import notify_admins
+
+
+def update_serializer(update: dict) -> dict:
+    """Serialize an update document for API response."""
+    return {
+        "id": str(update["_id"]),
+        "category": update["category"],
+        "title": update["title"],
+        "description": update["description"],
+        "date": update["date"],
+        "tags": update.get("tags", []),
+        "image": update.get("image"),
+        "role": update.get("role"),
+        "link": update.get("link"),
+        "created_at": update["created_at"].isoformat(),
+    }
 
 
 def _display_date(dt: datetime) -> str:
