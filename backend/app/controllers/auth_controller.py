@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from app.schemas.auth import UserRegister, Token
@@ -13,8 +14,8 @@ router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-SECRET_KEY = "COSMIC_KEY"
-ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("SECRET_KEY", "COSMIC_KEY")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 # 2. HELPER: Verify Token (Must be defined BEFORE the routes that use it)
 async def get_current_user(token: str = Depends(oauth2_scheme)):

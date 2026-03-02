@@ -1,6 +1,10 @@
+import os
 from motor.motor_asyncio import AsyncIOMotorClient
 
-MONGODB_URL = "mongodb+srv://mayankfhacker:Sharma2005@cluster0.wjr2epg.mongodb.net/?appName=Cluster0"
+MONGODB_URL = os.getenv(
+    "MONGODB_URI",
+    "mongodb+srv://mayankfhacker:Sharma2005@cluster0.wjr2epg.mongodb.net/?appName=Cluster0"
+)
 
 client = AsyncIOMotorClient(MONGODB_URL)
 
