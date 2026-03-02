@@ -1,0 +1,23 @@
+{
+  "domains": ["neuralforgehub.tech", "www.neuralforgehub.tech"],
+  "redirects": [
+    {
+      "source": "/admin",
+      "destination": "/admin"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=10, stale-while-revalidate=59"
+        }
+      ]
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@api-url"
+  }
+}
