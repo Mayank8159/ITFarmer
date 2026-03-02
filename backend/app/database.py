@@ -9,3 +9,4 @@ database = client.itfarm
 # Collections
 users_collection = database.get_collection("users")
 inquiry_collection = database.get_collection("inquiries")
+updates_collection = database.get_collection("updates")

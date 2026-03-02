@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IT FARM Frontend
 
-## Getting Started
+Next.js 16 frontend for IT FARM Global Delivery Network.
 
-First, run the development server:
+## Features
+
+- 🎨 Modern UI with Tailwind CSS v4 + Framer Motion
+- 🔐 JWT Authentication (login/register)
+- 💬 ORBIT AI Chatbot interface
+- 👥 Admin Dashboard with real-time updates
+- 📝 Service inquiry forms
+- 🔔 WebSocket notifications
+- 📱 Fully responsive design
+
+## Tech Stack
+
+- Next.js 16.1.4 (App Router)
+- React 19.2.3
+- TypeScript (strict mode)
+- Tailwind CSS v4
+- Framer Motion 12
+- Lenis smooth scroll
+
+## Quick Start
+
+### Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Run dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+Create `.env.local`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+For production:
+```bash
+NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
+```
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+frontend/
+├── app/
+│   ├── layout.tsx        # Root layout
+│   ├── page.tsx          # Home page
+│   ├── login/            # Auth pages
+│   ├── admin/            # Admin dashboard
+│   ├── services/         # Service inquiry
+│   └── posts/            # Updates/blog
+├── components/
+│   ├── Navbar.tsx
+│   ├── Hero.tsx
+│   ├── Footer.tsx
+│   └── orbit/            # Chat widget
+└── context/
+    ├── AuthContext.tsx   # JWT auth state
+    └── BackendContext.tsx # Backend health check
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Key Components
+
+### ORBIT Chat
+AI chatbot with terminal-style UI and persistent chat history.
+
+### Admin Dashboard
+- User management
+- Inquiry tracking
+- Real-time notifications via WebSocket
+- Broadcast updates
+
+### Backend Context
+Global backend availability check that prevents app usage when backend is offline.
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Connect GitHub repo to Vercel
+2. Set environment variable: `NEXT_PUBLIC_API_URL`
+3. Deploy
+
+### Docker
+
+```bash
+docker build -t itfarm-frontend .
+docker run -p 3000:3000 itfarm-frontend
+```
+
+## Notes
+
+- Uses webpack mode (`next dev --webpack`) to avoid Turbopack issues
+- Backend must be running for full functionality
+- WebSocket connection required for notifications
+
+## License
+
+MIT

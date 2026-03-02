@@ -18,6 +18,7 @@ class ChatResponse(BaseModel):
 chatbot_service = ChatbotService()
 
 @router.post("/")
+@router.post("")
 async def chat(request: ChatRequest):
     reply = chatbot_service.get_reply(request.message)
     return ChatResponse(reply=reply)

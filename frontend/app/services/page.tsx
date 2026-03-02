@@ -14,7 +14,7 @@ import OrbitChat from "@/components/orbit/OrbitChat";
 import SmokeBackground from "@/components/SmokeBackground";
 
 // Configuration
-const BACKEND_URL = "http://127.0.0.1:8000/inquiry"; 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function ServicesPage(): JSX.Element {
   return (
@@ -61,7 +61,7 @@ function InquirySection() {
     const data = Object.fromEntries(formData.entries());
 
     try {
-      const response = await fetch(BACKEND_URL, {
+      const response = await fetch(`${API_URL}/inquiry`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -69,8 +69,10 @@ function InquirySection() {
 
       if (response.ok) {
         setIsSuccess(true);
+        (e.target as HTMLFormElement).reset();
       } else {
-        throw new Error("Transmission failed. Please verify connection.");
+        const errData = await response.json();
+        throw new Error(errData.detail || "Transmission failed. Please verify connection.");
       }
     } catch (err: any) {
       setError(err.message);

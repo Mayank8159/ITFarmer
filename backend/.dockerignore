@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Environment files (should use docker-compose env)
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Deployment configs
+render.yaml
+docker-compose.yml
+Dockerfile
+
+# Logs
+*.log
+logs/
+
+# ML Models cache (download at runtime if needed)
+.cache/
+models/
+data/
+
+# Test files
+tests/
+test_*.py
+*_test.py
+
+# Misc
+*.bak
+*.tmp
+*.temp

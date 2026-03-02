@@ -53,6 +53,7 @@ async def register(user: UserRegister):
             "username": user.username,
             "password": hashed_password,
             "full_name": user.full_name,
+            "is_admin": False,
             "role": "user",
             "created_at": datetime.utcnow()
         }
@@ -76,7 +77,11 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         {"sub": user["username"], "exp": datetime.utcnow() + timedelta(hours=24)},
         SECRET_KEY, algorithm=ALGORITHM
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer",
+        "is_admin": user.get("is_admin", False)
+    }
 
 # 4. PROTECTED ENDPOINT: GET ALL USERS
 

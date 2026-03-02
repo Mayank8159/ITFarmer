@@ -15,7 +15,7 @@ const NAV_LINKS = [
 
 export default function FloatingNavbar() {
   const router = useRouter();
-  const { isLoggedIn, logout, user } = useAuth();
+  const { isLoggedIn, logout, user, isAdmin } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -37,6 +37,9 @@ export default function FloatingNavbar() {
   };
 
   const userInitial = user ? user.charAt(0).toUpperCase() : "O";
+  const navLinks = isLoggedIn && isAdmin
+    ? [...NAV_LINKS, { label: "Admin", path: "/admin" }]
+    : NAV_LINKS;
 
   return (
     <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[92%] md:w-auto max-w-fit group">
@@ -92,7 +95,7 @@ export default function FloatingNavbar() {
 
         {/* MIDDLE: DESKTOP LINKS */}
         <ul className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map(({ label, path }) => (
+          {navLinks.map(({ label, path }) => (
             <motion.li
               key={label}
               onClick={() => navigate(path)}
@@ -141,8 +144,8 @@ export default function FloatingNavbar() {
                     <span className="hidden lg:block text-[9px] font-mono text-white uppercase tracking-tighter max-w-[80px] truncate leading-none">
                       {user?.split('@')[0] || "OPERATIVE"}
                     </span>
-                    <span className="hidden lg:block text-[7px] font-mono text-zinc-600 uppercase tracking-widest leading-none mt-1">
-                      Verified
+                    <span className={`hidden lg:block text-[7px] font-mono uppercase tracking-widest leading-none mt-1 ${isAdmin ? "text-red-400" : "text-zinc-600"}`}>
+                      {isAdmin ? "Admin Access" : "Verified"}
                     </span>
                   </div>
                 </div>
@@ -178,7 +181,7 @@ export default function FloatingNavbar() {
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             className="absolute top-full mt-3 left-0 right-0 p-4 rounded-[2rem] bg-black border border-white/10 shadow-2xl md:hidden flex flex-col gap-1 backdrop-blur-2xl"
           >
-            {NAV_LINKS.map(({ label, path }) => (
+            {navLinks.map(({ label, path }) => (
               <button
                 key={label}
                 onClick={() => navigate(path)}
