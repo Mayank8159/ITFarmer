@@ -32,7 +32,7 @@ import SmokeBackground from "@/components/SmokeBackground";
 import FloatingNavbar from "@/components/Navbar";
 import { useAuth } from "@/context/AuthContext";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://itfarmer-94dz.onrender.com";
 
 type AdminTab = "broadcast" | "manage" | "users";
 

@@ -10,7 +10,7 @@ import FloatingNavbar from "@/components/Navbar";
 import OrbitChat from "@/components/orbit/OrbitChat";
 import SmokeBackground from "@/components/SmokeBackground";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://itfarmer-94dz.onrender.com";
 
 export default function AuthPage(): JSX.Element {
   const { login, isLoggedIn } = useAuth();
