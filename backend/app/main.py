@@ -83,6 +83,8 @@ app.add_middleware(
         "https://*.vercel.app",
         "https://*.netlify.app",
         "https://*.onrender.com",
+        "https://neuralforgehub.tech",
+        "https://www.neuralforgehub.tech",
     ],
     allow_credentials=True,
     allow_methods=["*"],

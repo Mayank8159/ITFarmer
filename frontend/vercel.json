@@ -15,6 +15,6 @@
     }
   ],
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://farm-backend.onrender.com"
+    "NEXT_PUBLIC_API_URL": "https://itfarmer-94dz.onrender.com"
   }
 }
