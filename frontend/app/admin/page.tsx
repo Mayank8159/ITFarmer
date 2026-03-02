@@ -159,12 +159,13 @@ export default function AdminDashboard(): JSX.Element {
       try {
         const payload = JSON.parse(event.data) as { type?: string; data?: Inquiry };
         if (payload.type === "new_inquiry" && payload.data) {
-          setInquiries((prev) => [payload.data as Inquiry, ...prev]);
+          const inquiryData = payload.data as Inquiry;
+          setInquiries((prev) => [inquiryData, ...prev]);
           setNotifications((prev) => [
             {
-              id: `${payload.data.id}-${Date.now()}`,
+              id: `${inquiryData.id}-${Date.now()}`,
               title: "New Inquiry Received",
-              body: `${payload.data.name} requested ${payload.data.service}`,
+              body: `${inquiryData.name} requested ${inquiryData.service}`,
               at: new Date().toLocaleTimeString(),
             },
             ...prev,

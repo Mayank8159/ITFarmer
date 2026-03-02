@@ -1,9 +1,13 @@
 {
-  "domains": ["neuralforgehub.tech", "www.neuralforgehub.tech"],
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "framework": "nextjs",
   "redirects": [
     {
-      "source": "/admin",
-      "destination": "/admin"
+      "source": "/(.*)",
+      "destination": "/$1",
+      "permanent": false
     }
   ],
   "headers": [
@@ -17,7 +21,10 @@
       ]
     }
   ],
-  "env": {
-    "NEXT_PUBLIC_API_URL": "@api-url"
-  }
+  "env": [
+    {
+      "key": "NEXT_PUBLIC_API_URL",
+      "value": "https://farm-backend.onrender.com"
+    }
+  ]
 }
