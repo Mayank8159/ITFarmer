@@ -21,10 +21,7 @@
       ]
     }
   ],
-  "env": [
-    {
-      "key": "NEXT_PUBLIC_API_URL",
-      "value": "https://farm-backend.onrender.com"
-    }
-  ]
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://farm-backend.onrender.com"
+  }
 }
