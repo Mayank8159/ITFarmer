@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "name": "Mayank",
+    "role": "Founder & DevOps Architect",
+    "image": "/founders/Mayank.png",
+    "description": "Architecting unbreakable cloud infrastructures and CI/CD pipelines."
+  },
+  {
+    "id": "2",
+    "name": "Priyanshu",
+    "role": "Co-Founder & Lead AI/ML Engineer",
+    "image": "/founders/Priyanshu.jpg",
+    "description": "Engineering predictive models and state-of-the-art LLM architectures."
+  },
+  {
+    "id": "3",
+    "name": "Shreyan",
+    "role": "Co-Founder & Full Stack Architect",
+    "image": "/founders/shreyan.jpeg",
+    "description": "Building high-performance, seamless end-to-end web applications."
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "headline": "Neural Forge Hub",
+  "subheadline": "We build crash-resilient AI workflows, custom software, and zero-trust digital infrastructure for teams that demand precision, privacy, and performance.",
+  "primaryCta": {
+    "label": "Request Technical Consultation",
+    "href": "/contact"
+  },
+  "secondaryCta": {
+    "label": "Explore Our Stack",
+    "href": "#stack-section"
+  },
+  "trustStack": [
+    "Edge AI",
+    "RAG Architectures",
+    "Secure Hosting",
+    "Predictive Marketing",
+    "PyTorch",
+    "Next.js"
+  ],
+  "metrics": [
+    "99.99% Uptime",
+    "Zero-Remote Inference Deployed",
+    "100% Data Sovereignty"
+  ]
+}

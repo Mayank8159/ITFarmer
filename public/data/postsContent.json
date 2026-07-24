@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "title": "Quantum Compute Cluster Online",
+    "description": "We have successfully deployed the first iteration of our Edge AI ecosystem. The terminal is online and processing sub-millisecond inferencing.",
+    "category": "Project",
+    "date": "2026-07-24",
+    "tags": ["AI", "Edge", "Quantum"],
+    "image": "https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop"
+  },
+  {
+    "id": "2",
+    "title": "New Commander Added to Arsenal",
+    "description": "Welcoming our new Head of Cybersecurity to lead our zero-trust infrastructure initiatives globally.",
+    "category": "Team",
+    "date": "2026-07-22",
+    "tags": ["Security", "Expansion"],
+    "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop"
+  },
+  {
+    "id": "3",
+    "title": "System Update v10.4",
+    "description": "Major overhaul of our continuous integration pipelines. Latency reduced by 40% across all automated testing nodes.",
+    "category": "Update",
+    "date": "2026-07-15",
+    "tags": ["DevOps", "Performance", "CI/CD"],
+    "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2000&auto=format&fit=crop"
+  },
+  {
+    "id": "4",
+    "title": "Next-Gen Fintech Core Deployed",
+    "description": "Successfully migrated a multi-national banking system to our proprietary high-frequency resilient core.",
+    "category": "Project",
+    "date": "2026-07-01",
+    "tags": ["Fintech", "Enterprise"],
+    "image": "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?q=80&w=2000&auto=format&fit=crop"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1721868512345",
+    "timestamp": "2026-07-24T10:15:30.000Z",
+    "name": "Alex Mercer",
+    "company": "NeuroTech Solutions",
+    "email": "alex.mercer@neurotech.io",
+    "budget": "$150k - $250k",
+    "date": "2026-08-01",
+    "time": "14:00",
+    "service": "Edge AI",
+    "message": "We need to deploy a highly secure, offline AI inference cluster for our medical research labs. It must be completely air-gapped with no telemetry sent to external servers. High priority."
+  },
+  {
+    "id": "1721868545678",
+    "timestamp": "2026-07-24T11:45:00.000Z",
+    "name": "Sarah Vance",
+    "company": "Vance Logistics",
+    "email": "svance@vancelogistics.global",
+    "budget": "$50k - $100k",
+    "date": "2026-08-05",
+    "time": "09:30",
+    "service": "Custom Software",
+    "message": "Looking to overhaul our internal CI/CD pipelines to ensure unbreakable deployments. Currently experiencing 10% downtime due to botched rollouts."
+  },
+  {
+    "id": "1721868601234",
+    "timestamp": "2026-07-24T16:20:15.000Z",
+    "name": "Elias Thorne",
+    "company": "Thorne Capital",
+    "email": "elias@thornecap.com",
+    "budget": "$500k+",
+    "date": "2026-08-10",
+    "time": "11:00",
+    "service": "Secure Hosting",
+    "message": "Our infrastructure is under constant threat. We require a zero-trust architecture from the ground up, with full data sovereignty."
+  }
+]
