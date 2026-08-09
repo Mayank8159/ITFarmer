@@ -56,9 +56,6 @@ export const metadata: Metadata = {
     description: "Advanced AI Infrastructure Laboratory",
     images: ["/twitter-image.jpg"],
   },
-  verification: {
-    google: "Mxww6WF0MmcbUdG2w9JmR1_mC-CzuxB1C315DrCmSSo",
-  },
 };
 
 export default function RootLayout({
@@ -80,6 +77,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="Mxww6WF0MmcbUdG2w9JmR1_mC-CzuxB1C315DrCmSSo" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
