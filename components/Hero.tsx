@@ -6,6 +6,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { ArrowRight, Terminal } from "lucide-react";
 
 import Hero3DModel from "@/components/hero/Hero3DModel";
+import BrutalistMarquee from "@/components/Marquee";
 
 export default function HeroPage() {
   const heroRef = useRef<HTMLElement>(null);
@@ -17,9 +18,30 @@ export default function HeroPage() {
       className="relative min-h-screen w-full flex flex-col items-center justify-center text-black overflow-hidden pt-28 pb-10 z-10 border-b border-black/15 bg-[#e5e5e5]"
     >
       {/* BACKGROUND EFFECTS */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Strict Brutalist Grid */}
         <div className="absolute inset-0 grid-background opacity-100" />
+        
+        {/* Floating Brutalist Shapes */}
+        <motion.div 
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+          className="absolute top-1/4 left-[10%] w-32 h-32 border-4 border-black/10 flex items-center justify-center"
+        >
+          <div className="w-16 h-16 border-2 border-[#ff6b00]/20" />
+        </motion.div>
+        
+        <motion.div 
+          animate={{ y: [0, -50, 0], rotate: [0, 45, 0] }}
+          transition={{ repeat: Infinity, duration: 15, ease: "easeInOut" }}
+          className="absolute bottom-1/4 right-[40%] w-20 h-20 bg-black/5"
+        />
+
+        <motion.div 
+          animate={{ x: [0, 100, 0], rotate: -360 }}
+          transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
+          className="absolute top-1/3 right-[10%] w-24 h-24 border-2 border-dashed border-black/15 rounded-full"
+        />
       </div>
 
       {/* CONTENT CONTAINER */}
@@ -122,6 +144,21 @@ export default function HeroPage() {
            </div>
         </motion.div>
         
+      </div>
+
+      {/* INFINITE MARQUEE STRIP */}
+      <div className="absolute bottom-0 left-0 w-full z-20">
+        <BrutalistMarquee 
+          items={[
+            "AUTONOMOUS AGENTS ONLINE",
+            "GPU CLUSTERS ALLOCATED",
+            "NEURAL PIPELINES ACTIVE",
+            "C++ KERNELS COMPILED",
+            "HIPAA COMPLIANT TELEMETRY",
+            "SUB-10MS LATENCY"
+          ]}
+          speed={30}
+        />
       </div>
     </section>
   );
