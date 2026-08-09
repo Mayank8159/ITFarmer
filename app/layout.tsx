@@ -27,16 +27,21 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.neuralforgehub.tech'),
   title: "Neural Forge Hub | Advanced AI Infrastructure",
   description: "Enterprise-grade GPU compute clusters and autonomous swarm intelligence orchestration for the next generation of AI research.",
+  keywords: ["AI Infrastructure", "GPU Compute", "Agentic Swarms", "Machine Learning", "Autonomous Agents", "Cloud GPUs", "Neural Networks"],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: "Neural Forge Hub",
     description: "Advanced AI Infrastructure Laboratory & Swarm Telemetry",
-    url: "https://neuralforge.hub",
+    url: "https://www.neuralforgehub.tech",
     siteName: "Neural Forge Hub",
     images: [
       {
-        url: "https://neuralforge.hub/og-image.jpg",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Neural Forge Hub Dashboard",
@@ -49,7 +54,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Neural Forge Hub",
     description: "Advanced AI Infrastructure Laboratory",
-    images: ["https://neuralforge.hub/twitter-image.jpg"],
+    images: ["/twitter-image.jpg"],
   },
 };
 
@@ -58,8 +63,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // JSON-LD structured data for rich snippets
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Neural Forge Hub",
+    "url": "https://www.neuralforgehub.tech",
+    "logo": "https://www.neuralforgehub.tech/favicon.ico",
+    "description": "Advanced AI Infrastructure Laboratory & Swarm Telemetry",
+    "sameAs": []
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${inter.variable} ${spaceMono.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#e5e5e5] min-h-screen text-black cursor-none`}
       >
