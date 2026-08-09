@@ -67,10 +67,10 @@ export default function HeroPage() {
             </motion.div>
             
             <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[100px] font-black leading-[0.9] tracking-tighter text-black uppercase flex flex-col">
-              <ScrambleText text="BUILD." delay={0.4} />
-              <ScrambleText text="CONNECT." delay={0.8} />
+              <ScrambleText text="BUILD." delay={3.2} />
+              <ScrambleText text="CONNECT." delay={3.6} />
               <span className="text-[#ff6b00]">
-                <ScrambleText text="INFER." delay={1.2} />
+                <ScrambleText text="INFER." delay={4.0} />
               </span>
             </h1>
           </div>
