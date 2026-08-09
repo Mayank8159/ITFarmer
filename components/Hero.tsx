@@ -49,7 +49,7 @@ export default function HeroPage() {
       <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
         {/* LEFT COLUMN: Copy & CTAs */}
-        <div className="flex flex-col items-start text-left order-2 lg:order-1 pt-10 lg:pt-0">
+        <div className="flex flex-col items-start text-left order-1 pt-10 lg:pt-0">
           
           <div className="border border-black px-3 py-1 mb-10 bg-white inline-flex items-center gap-2">
             <div className="w-2 h-2 bg-[#ff6b00]" />
@@ -116,7 +116,7 @@ export default function HeroPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="order-1 lg:order-2 w-full flex justify-center lg:justify-end"
+          className="order-2 w-full flex justify-center lg:justify-end"
         >
            {/* Brutalist Hero Graphic */}
            <div className="relative w-full aspect-square max-w-[500px] border border-black bg-white flex flex-col p-8">
