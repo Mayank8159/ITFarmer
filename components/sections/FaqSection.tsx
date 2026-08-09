@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, Zap } from "lucide-react";
 
 const FAQS = [
   {
@@ -62,22 +62,13 @@ export default function FaqSection() {
             </div>
             
             {/* Brutalist Decorative element */}
-            <div className="hidden lg:flex w-32 h-32 border-2 border-black relative bg-[#111] items-center justify-center overflow-hidden">
-               <motion.div 
-                 animate={{ rotate: 360, scale: [1, 1.2, 1] }} 
-                 transition={{ repeat: Infinity, duration: 4, ease: "linear" }} 
-                 className="w-16 h-16 border-4 border-[#ff6b00]" 
-               />
-               <motion.div 
-                 animate={{ rotate: -360 }} 
-                 transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
-                 className="absolute w-24 h-24 border border-white/20" 
-               />
-               <motion.div 
-                 animate={{ scale: [1, 0.5, 1], opacity: [1, 0.5, 1] }}
-                 transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                 className="absolute w-4 h-4 bg-white" 
-               />
+            <div className="flex w-24 h-24 sm:w-32 sm:h-32 border-2 border-black relative bg-[#111] items-center justify-center overflow-hidden shrink-0 mt-8">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
+                className="absolute inset-0 border-[8px] border-dashed border-[#ff6b00]/30 rounded-full scale-[1.5]"
+              />
+              <Zap className="w-8 h-8 sm:w-12 sm:h-12 text-[#ff6b00] relative z-10" />
             </div>
           </div>
 

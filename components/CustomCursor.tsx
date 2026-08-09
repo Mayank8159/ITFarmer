@@ -41,7 +41,7 @@ export default function CustomCursor() {
     <>
       {/* Primary Dot (instant) */}
       <motion.div
-        className="fixed top-0 left-0 w-3 h-3 bg-[#ff6b00] rounded-none pointer-events-none z-[99999] mix-blend-difference"
+        className="hidden md:block fixed top-0 left-0 w-3 h-3 bg-[#ff6b00] rounded-none pointer-events-none z-[99999] mix-blend-difference"
         animate={{
           x: mousePosition.x - 6,
           y: mousePosition.y - 6,
@@ -52,7 +52,7 @@ export default function CustomCursor() {
       
       {/* Brutalist Frame (delayed spring) */}
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 border-2 border-black pointer-events-none z-[99998] flex items-center justify-center mix-blend-difference bg-white/20"
+        className="hidden md:flex fixed top-0 left-0 w-8 h-8 border-2 border-black pointer-events-none z-[99998] items-center justify-center mix-blend-difference bg-white/20"
         animate={{
           x: mousePosition.x - 16,
           y: mousePosition.y - 16,

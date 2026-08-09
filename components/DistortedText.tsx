@@ -186,6 +186,17 @@ export default function DistortedText({ text }: DistortedTextProps) {
     }
   };
 
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (rect && e.touches.length > 0) {
+      mouseRef.current = {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top,
+        radius: 100
+      };
+    }
+  };
+
   const handleMouseLeave = () => {
     mouseRef.current = { x: -1000, y: -1000, radius: 100 };
   };
@@ -194,9 +205,12 @@ export default function DistortedText({ text }: DistortedTextProps) {
     <div className="relative w-full overflow-hidden py-10">
       <div 
         ref={containerRef}
-        className="relative w-full flex items-center justify-between px-6 border-y border-black/10"
+        className="relative w-full flex items-center justify-between px-6 border-y border-black/10 touch-none"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        onTouchMove={handleTouchMove}
+        onTouchStart={handleTouchMove}
+        onTouchEnd={handleMouseLeave}
       >
         <div className="w-2 h-2 bg-[#ff6b00]" />
         

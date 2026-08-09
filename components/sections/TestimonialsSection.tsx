@@ -71,7 +71,7 @@ export default function TestimonialsSection() {
             </h2>
           </div>
           
-          <div className="flex items-center gap-6 border-l-4 border-black pl-6 hidden md:flex">
+          <div className="flex items-center gap-6 border-l-4 border-black pl-6 mt-6 md:mt-0">
             <Quote className="w-8 h-8 text-black/20" />
             <p className="font-mono text-sm text-black/70 max-w-xs font-bold">
               Don't take our word for it. Trusted by industry leaders building next-generation architecture.
