@@ -5,13 +5,29 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function LoadingScreen() {
   const [isLoading, setIsLoading] = useState(true);
+  const [counter, setCounter] = useState(0);
 
   useEffect(() => {
+    // Rapid counter effect
+    const interval = setInterval(() => {
+      setCounter((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + Math.floor(Math.random() * 15) + 5; // Random jumps for hacker feel
+      });
+    }, 50);
+
     // Unmount after animation finishes to free up DOM
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2500);
-    return () => clearTimeout(timer);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, []);
 
   // Use 6 columns for the staggered curtain effect
@@ -34,11 +50,14 @@ export default function LoadingScreen() {
             initial={{ opacity: 1 }}
             animate={{ opacity: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
-            className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
+            className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none"
           >
-            <h1 className="text-white text-5xl md:text-8xl font-black uppercase tracking-tighter drop-shadow-lg mix-blend-difference">
+            <h1 className="text-white text-5xl md:text-8xl font-black uppercase tracking-tighter drop-shadow-lg mix-blend-difference mb-4">
               SYSTEM BOOT
             </h1>
+            <div className="text-[#ff6b00] font-mono text-4xl md:text-6xl font-bold tracking-widest drop-shadow-lg">
+              {Math.min(counter, 100)}%
+            </div>
           </motion.div>
 
           {/* Staggered Columns */}

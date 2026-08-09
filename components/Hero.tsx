@@ -7,6 +7,7 @@ import { ArrowRight, Terminal } from "lucide-react";
 
 import Hero3DModel from "@/components/hero/Hero3DModel";
 import BrutalistMarquee from "@/components/Marquee";
+import ScrambleText from "@/components/ScrambleText";
 
 export default function HeroPage() {
   const heroRef = useRef<HTMLElement>(null);
@@ -65,16 +66,13 @@ export default function HeroPage() {
               NEURAL FORGE HUB / AI INFRASTRUCTURE
             </motion.div>
             
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-6xl sm:text-7xl md:text-8xl lg:text-[100px] font-black leading-[0.9] tracking-tighter text-black uppercase"
-            >
-              BUILD.<br/>
-              CONNECT.<br/>
-              <span className="text-[#ff6b00]">INFER.</span>
-            </motion.h1>
+            <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[100px] font-black leading-[0.9] tracking-tighter text-black uppercase flex flex-col">
+              <ScrambleText text="BUILD." delay={0.4} />
+              <ScrambleText text="CONNECT." delay={0.8} />
+              <span className="text-[#ff6b00]">
+                <ScrambleText text="INFER." delay={1.2} />
+              </span>
+            </h1>
           </div>
 
           <motion.p

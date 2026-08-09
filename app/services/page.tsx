@@ -11,8 +11,12 @@ export default function ServicesPage() {
   
   const [selectedScope, setSelectedScope] = useState<string | null>(null);
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
+  const [customBudget, setCustomBudget] = useState("");
   
   const [formData, setFormData] = useState({ name: "", email: "", details: "" });
+
+  const [captchaParams, setCaptchaParams] = useState({ v1: Math.floor(Math.random() * 10), v2: Math.floor(Math.random() * 10) });
+  const [captchaInput, setCaptchaInput] = useState("");
   
   const { formatBudget } = useCurrency();
 
@@ -26,7 +30,8 @@ export default function ServicesPage() {
   const BUDGETS = [
     "< $2,500",
     "$2,500 - $7,500",
-    "$7,500 - $15,000+"
+    "$7,500 - $15,000+",
+    "CUSTOM"
   ];
 
   const handleExecute = () => {
@@ -37,6 +42,15 @@ export default function ServicesPage() {
   const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.details) return;
+    
+    // Captcha Check
+    if (parseInt(captchaInput) !== (captchaParams.v1 + captchaParams.v2)) {
+      alert("SECURITY OVERRIDE FAILED: Incorrect calculation.");
+      setCaptchaParams({ v1: Math.floor(Math.random() * 10), v2: Math.floor(Math.random() * 10) });
+      setCaptchaInput("");
+      return;
+    }
+
     setStep("loading");
     
     // Simulate backend processing
@@ -112,7 +126,7 @@ export default function ServicesPage() {
                   </div>
 
                   {/* Budgets */}
-                  <div className="flex flex-wrap gap-4 mb-12">
+                  <div className="flex flex-wrap gap-4 mb-4">
                     {BUDGETS.map(budget => (
                       <button
                         key={budget}
@@ -127,6 +141,19 @@ export default function ServicesPage() {
                       </button>
                     ))}
                   </div>
+
+                  {selectedBudget === "CUSTOM" && (
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mb-12">
+                      <input 
+                        type="text" 
+                        placeholder="ENTER CUSTOM ALLOCATION..." 
+                        value={customBudget}
+                        onChange={(e) => setCustomBudget(e.target.value)}
+                        className="w-full bg-black border-2 border-[#ff6b00] text-[#ff6b00] p-4 font-bold tracking-widest focus:outline-none placeholder:text-[#ff6b00]/30"
+                      />
+                    </motion.div>
+                  )}
+                  {selectedBudget !== "CUSTOM" && <div className="mb-12" />}
 
                   <div className="flex justify-end mt-auto border-t border-white/10 pt-6">
                     <button
@@ -180,6 +207,26 @@ export default function ServicesPage() {
                       onChange={(e) => setFormData({...formData, details: e.target.value})}
                       className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30 resize-none"
                     />
+
+                    {/* TERMINAL CAPTCHA */}
+                    <div className="mt-4 border-2 border-[#00ff41]/30 p-4 bg-[#00ff41]/5 flex flex-col md:flex-row md:items-center gap-4">
+                      <div className="flex-1">
+                        <p className="text-[#00ff41] font-bold text-xs uppercase tracking-widest">
+                          [SECURITY OVERRIDE] SYSTEM.CALCULATE
+                        </p>
+                        <p className="text-white/70 text-sm mt-1">
+                          Solve equation: {captchaParams.v1} + {captchaParams.v2} = ?
+                        </p>
+                      </div>
+                      <input 
+                        type="number"
+                        required
+                        placeholder="?"
+                        value={captchaInput}
+                        onChange={(e) => setCaptchaInput(e.target.value)}
+                        className="bg-black border border-[#00ff41] text-[#00ff41] font-bold text-center w-24 p-3 focus:outline-none focus:bg-[#00ff41] focus:text-black transition-colors"
+                      />
+                    </div>
                   </form>
 
                   <div className="flex justify-between mt-auto border-t border-white/10 pt-6">
@@ -191,7 +238,7 @@ export default function ServicesPage() {
                     </button>
                     <button
                       onClick={handleSubmitForm}
-                      disabled={!formData.name || !formData.email || !formData.details}
+                      disabled={!formData.name || !formData.email || !formData.details || !captchaInput}
                       className="px-8 py-4 bg-[#ff6b00] text-black font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-colors disabled:opacity-30 disabled:hover:bg-[#ff6b00]"
                     >
                       [DEPLOY PAYLOAD] <ArrowRight className="w-5 h-5" />
@@ -246,8 +293,8 @@ export default function ServicesPage() {
                     >
                       Reset Console
                     </button>
-                    <a href="https://calendly.com" target="_blank" className="px-6 py-3 bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-[#ff6b00] transition-colors flex-1 text-center">
-                      Direct Booking
+                    <a href="https://calendly.com" target="_blank" className="px-6 py-5 bg-[#ff6b00] text-black font-black uppercase tracking-widest text-sm hover:bg-white hover:text-black transition-colors flex-1 text-center shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1">
+                      [ SCHEDULE DEPLOYMENT BRIEFING ]
                     </a>
                   </div>
                 </motion.div>
