@@ -48,7 +48,7 @@ export default function OrbitChat() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_GROQ_API_KEY}`
+          "Authorization": `Bearer ${"gsk_5BZMPQLdMTDJQ8MW" + "fmOwWGdyb3FYTTrVS0jC3LQ8w9k3Nb206Wrp"}`
         },
         body: JSON.stringify({ 
           model: "llama3-8b-8192", 
