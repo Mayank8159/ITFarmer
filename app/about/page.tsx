@@ -222,7 +222,7 @@ export default function AboutPage(): JSX.Element {
                         src={founder.image || "/founders/placeholder.png"} 
                         alt={founder.name} 
                         fill 
-                        className="object-contain object-center grayscale group-hover/founder:grayscale-0 transition-all duration-500 bg-black" 
+                        className="object-cover object-top grayscale group-hover/founder:grayscale-0 transition-all duration-500" 
                       />
                     </div>
                     <div>
