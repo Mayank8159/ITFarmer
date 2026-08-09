@@ -40,7 +40,12 @@ function BrutalistShape() {
 export default function Hero3DModel() {
   return (
     <div className="w-full h-full absolute inset-0 z-0">
-      <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+      <Canvas 
+        camera={{ position: [0, 0, 5], fov: 50 }}
+        dpr={[1, 1.5]} 
+        performance={{ min: 0.5 }}
+        gl={{ antialias: false }}
+      >
         <BrutalistShape />
       </Canvas>
     </div>

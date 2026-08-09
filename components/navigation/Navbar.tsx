@@ -50,7 +50,7 @@ export default function Navbar() {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     // Initial check
     handleScroll();
     

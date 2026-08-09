@@ -1,0 +1,27 @@
+{
+  "metrics": {
+    "activeAgents": 24,
+    "gpuCompute": 1.84,
+    "requests": 2405932
+  },
+  "bentoGrid": {
+    "title": "UNCOMPROMISED PERFORMANCE.",
+    "card1Title": "GPU Compute Architecture",
+    "card1Desc": "Distributed clusters optimized for high-bandwidth model training and low-latency inference.",
+    "card2Title": "Autonomous Agent Network",
+    "card2Desc": "Deploy self-healing agent swarms that scale dynamically with your workload demands.",
+    "card3Title": "Zero-Latency Data Pipeline",
+    "card4Title": "Air-Gapped Security"
+  },
+  "apiPlayground": {
+    "title": "INTEGRATE IN SECONDS."
+  },
+  "marquee": [
+    "AUTONOMOUS AGENTS ONLINE",
+    "GPU CLUSTERS ALLOCATED",
+    "NEURAL PIPELINES ACTIVE",
+    "C++ KERNELS COMPILED",
+    "HIPAA COMPLIANT TELEMETRY",
+    "SUB-10MS LATENCY"
+  ]
+}

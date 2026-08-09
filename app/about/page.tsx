@@ -9,19 +9,21 @@ import BrutalistCard from "@/components/cards/BrutalistCard";
 
 export default function AboutPage(): JSX.Element {
   const [founders, setFounders] = useState<any[]>([]);
+  const [aboutConfig, setAboutConfig] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/data/aboutContent.json?t=' + Date.now())
-      .then(res => res.json())
-      .then(data => {
-        setFounders(data);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.error("Error loading founders data:", err);
-        setIsLoading(false);
-      });
+    Promise.all([
+      fetch('/data/aboutContent.json?t=' + Date.now()).then(res => res.json()),
+      fetch('/data/aboutConfig.json?t=' + Date.now()).then(res => res.json())
+    ]).then(([foundersData, configData]) => {
+      setFounders(foundersData);
+      setAboutConfig(configData);
+      setIsLoading(false);
+    }).catch(err => {
+      console.error("Error loading about data:", err);
+      setIsLoading(false);
+    });
   }, []);
 
   return (
@@ -66,19 +68,21 @@ export default function AboutPage(): JSX.Element {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { icon: Server, title: "Central Governance", desc: "Strategic management from our primary operations hub." },
-              { icon: Users, title: "Elite Squads", desc: "Hand-picked task forces for domain-specific execution." },
-              { icon: Zap, title: "High-Velocity", desc: "Rapid resource allocation to match enterprise pace." }
-            ].map((item, i) => (
-              <BrutalistCard key={i} whiteBg>
-                <div className="w-12 h-12 bg-black flex items-center justify-center mb-6">
-                  <item.icon className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="font-black text-2xl text-black uppercase mb-3">{item.title}</h4>
-                <p className="text-black/70 font-mono text-sm leading-relaxed">{item.desc}</p>
-              </BrutalistCard>
-            ))}
+            {(!isLoading && aboutConfig?.executionLogic ? aboutConfig.executionLogic : []).map((item: any, i: number) => {
+              let IconComponent = Server;
+              if (item.icon === "Users") IconComponent = Users;
+              if (item.icon === "Zap") IconComponent = Zap;
+
+              return (
+                <BrutalistCard key={i} whiteBg>
+                  <div className="w-12 h-12 bg-black flex items-center justify-center mb-6">
+                    <IconComponent className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="font-black text-2xl text-black uppercase mb-3">{item.title}</h4>
+                  <p className="text-black/70 font-mono text-sm leading-relaxed">{item.desc}</p>
+                </BrutalistCard>
+              );
+            })}
           </div>
         </section>
 
@@ -94,60 +98,30 @@ export default function AboutPage(): JSX.Element {
           </div>
           
           <div className="flex flex-col border-4 border-black bg-white shadow-[16px_16px_0px_0px_rgba(0,0,0,1)]">
-            <div className="grid grid-cols-1 md:grid-cols-3 border-b-4 border-black group hover:bg-black transition-colors cursor-crosshair">
-              <div className="col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center bg-[#ff6b00] group-hover:bg-[#ff6b00] transition-colors relative overflow-hidden">
-                <h3 className="font-black text-xl uppercase text-black relative z-10 group-hover:translate-x-2 transition-transform">Multi-Agent AI Pipelines</h3>
-              </div>
-              <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
-                <p className="font-mono text-sm text-black/80 group-hover:text-white leading-relaxed font-bold transition-colors">
-                  Autonomous agentic workflows, RAG systems, and custom FastAPI inference orchestration.
-                </p>
-              </div>
-            </div>
+            {(!isLoading && aboutConfig?.capabilities ? aboutConfig.capabilities : []).map((cap: any, i: number) => {
+              const bgs = ["bg-[#ff6b00]", "bg-[#f0f0f0]", "bg-[#f0f0f0]", "bg-[#f0f0f0]", "bg-[#f0f0f0]"];
+              const hoverBgs = ["group-hover:bg-[#ff6b00]", "group-hover:bg-black", "group-hover:bg-black", "group-hover:bg-black", "group-hover:bg-black"];
+              const hoverTexts = ["group-hover:translate-x-2", "group-hover:text-[#ff6b00] group-hover:translate-x-2", "group-hover:text-[#ff6b00] group-hover:translate-x-2", "group-hover:text-[#ff6b00] group-hover:translate-x-2", "group-hover:text-[#ff6b00] group-hover:translate-x-2"];
+              const hoverPTexts = ["group-hover:text-white", "group-hover:text-white/80", "group-hover:text-white/80", "group-hover:text-white/80", "group-hover:text-white/80"];
+              
+              const isFirst = i === 0;
+              const isLast = i === (aboutConfig?.capabilities?.length || 5) - 1;
 
-            <div className="grid grid-cols-1 md:grid-cols-3 border-b-4 border-black group hover:bg-black transition-colors cursor-crosshair">
-              <div className="col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center bg-[#f0f0f0] group-hover:bg-black transition-colors">
-                <h3 className="font-black text-xl uppercase text-black group-hover:text-[#ff6b00] group-hover:translate-x-2 transition-all">GPU & Infrastructure Porting</h3>
-              </div>
-              <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
-                <p className="font-mono text-sm text-black/80 group-hover:text-white/80 leading-relaxed font-bold transition-colors">
-                  Automated CUDA-to-HIP code translation, hardware abstraction, and compute layer benchmarking.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 border-b-4 border-black group hover:bg-black transition-colors cursor-crosshair">
-              <div className="col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center bg-[#f0f0f0] group-hover:bg-black transition-colors">
-                <h3 className="font-black text-xl uppercase text-black group-hover:text-[#ff6b00] group-hover:translate-x-2 transition-all">High-Throughput Web Systems</h3>
-              </div>
-              <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
-                <p className="font-mono text-sm text-black/80 group-hover:text-white/80 leading-relaxed font-bold transition-colors">
-                  Next.js 16 / React 19 platforms, real-time WebSockets, and stateful client architectures.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 border-b-4 border-black group hover:bg-black transition-colors cursor-crosshair">
-              <div className="col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center bg-[#f0f0f0] group-hover:bg-black transition-colors">
-                <h3 className="font-black text-xl uppercase text-black group-hover:text-[#ff6b00] group-hover:translate-x-2 transition-all">Production Microservices</h3>
-              </div>
-              <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
-                <p className="font-mono text-sm text-black/80 group-hover:text-white/80 leading-relaxed font-bold transition-colors">
-                  Dockerized backends, secure JWT/OAuth flows, and high-concurrency database layer engineering.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 group hover:bg-black transition-colors cursor-crosshair">
-              <div className="col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center bg-[#f0f0f0] group-hover:bg-black transition-colors">
-                <h3 className="font-black text-xl uppercase text-black group-hover:text-[#ff6b00] group-hover:translate-x-2 transition-all">Hardware & Embedded Systems</h3>
-              </div>
-              <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
-                <p className="font-mono text-sm text-black/80 group-hover:text-white/80 leading-relaxed font-bold transition-colors">
-                  Microcontroller interfaces, sensor telemetry, and real-time robotics signal controllers.
-                </p>
-              </div>
-            </div>
+              return (
+                <div key={i} className={`grid grid-cols-1 md:grid-cols-3 group hover:bg-black transition-colors cursor-crosshair ${!isLast ? 'border-b-4 border-black' : ''}`}>
+                  <div className={`col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center ${bgs[i] || "bg-[#f0f0f0]"} ${hoverBgs[i] || "group-hover:bg-black"} transition-colors ${isFirst ? 'relative overflow-hidden' : ''}`}>
+                    <h3 className={`font-black text-xl uppercase text-black ${hoverTexts[i] || "group-hover:text-[#ff6b00] group-hover:translate-x-2"} transition-all ${isFirst ? 'relative z-10' : ''}`}>
+                      {cap.title}
+                    </h3>
+                  </div>
+                  <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
+                    <p className={`font-mono text-sm text-black/80 ${hoverPTexts[i] || "group-hover:text-white/80"} leading-relaxed font-bold transition-colors`}>
+                      {cap.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -165,38 +139,20 @@ export default function AboutPage(): JSX.Element {
           <div className="grid md:grid-cols-3 gap-6 relative">
             <div className="hidden md:block absolute top-[45%] left-[20%] right-[20%] h-1 bg-black z-0 border-y border-white" />
             
-            {/* CURRENT */}
-            <div className="relative z-10 bg-white border-2 border-black p-6 flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform">
-              <div className="bg-black text-white text-[10px] font-mono uppercase tracking-widest py-1 px-3 mb-4 w-fit font-bold">
-                [ CURRENT FOCUS ]
-              </div>
-              <h3 className="font-black text-xl uppercase text-black mb-3 border-b border-black pb-2">Multi-Agent Frameworks</h3>
-              <p className="text-sm font-mono text-black/70 flex-1">
-                Refining custom multi-agent orchestration engines that allow autonomous AI nodes to execute multi-step software and research tasks.
-              </p>
-            </div>
-
-            {/* NEXT */}
-            <div className="relative z-10 bg-[#ff6b00] border-2 border-black p-6 flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform">
-              <div className="bg-black text-white text-[10px] font-mono uppercase tracking-widest py-1 px-3 mb-4 w-fit font-bold">
-                [ NEXT PHASE ]
-              </div>
-              <h3 className="font-black text-xl uppercase text-black mb-3 border-b border-black pb-2">Zero-Latency Edge</h3>
-              <p className="text-sm font-mono text-black flex-1 font-medium">
-                Benchmarking local open-weights LLM deployments on custom hardware clusters to achieve sub-100ms inference response times.
-              </p>
-            </div>
-
-            {/* VISION */}
-            <div className="relative z-10 bg-[#f0f0f0] border-2 border-black p-6 flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform">
-              <div className="bg-black text-white text-[10px] font-mono uppercase tracking-widest py-1 px-3 mb-4 w-fit font-bold">
-                [ LONG-TERM VISION ]
-              </div>
-              <h3 className="font-black text-xl uppercase text-black mb-3 border-b border-black pb-2">Autonomous Hubs</h3>
-              <p className="text-sm font-mono text-black/70 flex-1">
-                Building modular, plug-and-play AI microservice infrastructure that any company can integrate into their existing stack within minutes.
-              </p>
-            </div>
+            {(!isLoading && aboutConfig?.horizon ? aboutConfig.horizon : []).map((item: any, i: number) => {
+              const bgs = ["bg-white", "bg-[#ff6b00]", "bg-[#f0f0f0]"];
+              return (
+                <div key={i} className={`relative z-10 ${bgs[i] || "bg-white"} border-2 border-black p-6 flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform`}>
+                  <div className="bg-black text-white text-[10px] font-mono uppercase tracking-widest py-1 px-3 mb-4 w-fit font-bold">
+                    {item.tag}
+                  </div>
+                  <h3 className="font-black text-xl uppercase text-black mb-3 border-b border-black pb-2">{item.title}</h3>
+                  <p className="text-sm font-mono text-black/70 flex-1">
+                    {item.desc}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </section>
 

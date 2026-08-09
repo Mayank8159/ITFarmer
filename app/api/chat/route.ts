@@ -1,8 +1,35 @@
 import { NextResponse } from 'next/server';
 
+import fs from 'fs/promises';
+import path from 'path';
+
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
+
+    // Read company data
+    const dataDir = path.join(process.cwd(), "public", "data");
+    let founders = [], capabilities = [], posts = [];
+    try {
+      founders = JSON.parse(await fs.readFile(path.join(dataDir, "aboutContent.json"), "utf-8"));
+      capabilities = JSON.parse(await fs.readFile(path.join(dataDir, "aboutConfig.json"), "utf-8")).capabilities || [];
+      posts = JSON.parse(await fs.readFile(path.join(dataDir, "postsContent.json"), "utf-8"));
+    } catch(e) {}
+
+    const founderNames = founders.map((f: any) => `${f.name} (${f.role})`).join(", ");
+    const capNames = capabilities.map((c: any) => c.title).join(", ");
+    const postTitles = posts.slice(0, 5).map((p: any) => p.title).join(", ");
+
+    const systemPrompt = {
+      role: "system",
+      content: `You are ORBIT CORE, the AI assistant for ITFarmer (or Neural/Horizon Protocol). 
+Company Founders: ${founderNames}.
+Core Capabilities: ${capNames}.
+Recent Updates/Projects: ${postTitles}.
+Keep answers concise, professional, and slightly brutalist/cyberpunk in tone.`
+    };
+
+    const finalMessages = [systemPrompt, ...messages];
 
     // Use string splitting to hide API key from GitHub secret scanner
     const keyPart1 = "gsk_5BZMPQLdMTDJQ8MW";
@@ -16,8 +43,8 @@ export async function POST(req: Request) {
         "Authorization": `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "llama3-8b-8192",
-        messages,
+        model: "llama-3.1-8b-instant",
+        messages: finalMessages,
       }),
     });
 

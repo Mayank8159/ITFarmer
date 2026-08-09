@@ -1,0 +1,19 @@
+{
+  "executionLogic": [
+    { "icon": "Server", "title": "Central Governance", "desc": "Strategic management from our primary operations hub." },
+    { "icon": "Users", "title": "Elite Squads", "desc": "Hand-picked task forces for domain-specific execution." },
+    { "icon": "Zap", "title": "High-Velocity", "desc": "Rapid resource allocation to match enterprise pace." }
+  ],
+  "capabilities": [
+    { "title": "Multi-Agent AI Pipelines", "desc": "Autonomous agentic workflows, RAG systems, and custom FastAPI inference orchestration." },
+    { "title": "GPU & Infrastructure Porting", "desc": "Automated CUDA-to-HIP code translation, hardware abstraction, and compute layer benchmarking." },
+    { "title": "High-Throughput Web Systems", "desc": "Next.js 16 / React 19 platforms, real-time WebSockets, and stateful client architectures." },
+    { "title": "Production Microservices", "desc": "Dockerized backends, secure JWT/OAuth flows, and high-concurrency database layer engineering." },
+    { "title": "Hardware & Embedded Systems", "desc": "Microcontroller interfaces, sensor telemetry, and real-time robotics signal controllers." }
+  ],
+  "horizon": [
+    { "tag": "[ CURRENT FOCUS ]", "title": "Multi-Agent Frameworks", "desc": "Refining custom multi-agent orchestration engines that allow autonomous AI nodes to execute multi-step software and research tasks." },
+    { "tag": "[ NEXT PHASE ]", "title": "Zero-Latency Edge", "desc": "Benchmarking local open-weights LLM deployments on custom hardware clusters to achieve sub-100ms inference response times." },
+    { "tag": "[ LONG-TERM VISION ]", "title": "Autonomous Hubs", "desc": "Building modular, plug-and-play AI microservice infrastructure that any company can integrate into their existing stack within minutes." }
+  ]
+}

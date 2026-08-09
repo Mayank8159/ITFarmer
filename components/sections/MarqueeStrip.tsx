@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Zap, Terminal, ShieldCheck, Database, Cpu, Globe, Lock, Server, Activity, Network } from "lucide-react";
 
@@ -21,7 +21,27 @@ const SECONDARY_ITEMS = [
 ];
 
 export default function MarqueeStrip({ variant = "primary" }: { variant?: "primary" | "secondary" }) {
-  const baseItems = variant === "primary" ? PRIMARY_ITEMS : SECONDARY_ITEMS;
+  const [marqueeTexts, setMarqueeTexts] = useState<string[]>([]);
+  const [configLoaded, setConfigLoaded] = useState(false);
+
+  useEffect(() => {
+    fetch('/data/systemConfig.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => {
+        if (data.marquee && data.marquee.length > 0) {
+          setMarqueeTexts(data.marquee);
+        }
+        setConfigLoaded(true);
+      })
+      .catch(err => {
+        console.error("Failed to load marquee config:", err);
+        setConfigLoaded(true);
+      });
+  }, []);
+
+  const baseItems = configLoaded && marqueeTexts.length > 0 
+    ? marqueeTexts.map((text, i) => ({ text, icon: i % 2 === 0 ? <Zap className="w-6 h-6 text-[#ff6b00]" /> : <Cpu className="w-6 h-6 text-[#ff6b00]" /> }))
+    : (variant === "primary" ? PRIMARY_ITEMS : SECONDARY_ITEMS);
   
   // Duplicate items to ensure smooth infinite scrolling
   const SCROLL_ITEMS = [...baseItems, ...baseItems, ...baseItems, ...baseItems];

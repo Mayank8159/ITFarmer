@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Terminal, Upload, Save, X, Activity, Image as ImageIcon,
   Inbox, LayoutDashboard, Users, FileText, LogOut, CheckCircle,
-  Plus, Trash2, ShieldAlert, Star, Quote
+  Plus, Trash2, ShieldAlert, Star, Quote, Server
 } from "lucide-react";
 
 import {
@@ -21,7 +21,14 @@ import {
   clearAllInquiries,
   deleteInquiry,
   getClientsData,
-  saveClientsContent
+  saveClientsContent,
+  getFaqData,
+  saveFaqContent,
+  getEcosystemData,
+  saveEcosystemContent,
+  getSystemConfig,
+  saveSystemConfig,
+  saveAboutConfig
 } from "@/app/actions/adminActions";
 
 // Initial empty fallback data (Harmonized to support both 'text' and 'label' for CTAs)
@@ -34,7 +41,7 @@ const fallbackHero = {
   metrics: []
 };
 
-type ViewMode = "terminal" | "inquiries" | "hero" | "founders" | "posts" | "clients";
+type ViewMode = "terminal" | "inquiries" | "hero" | "founders" | "posts" | "clients" | "faqs" | "ecosystem" | "system" | "about_cms";
 
 interface HistoryLine {
   text: string;
@@ -42,9 +49,9 @@ interface HistoryLine {
   color?: string;
 }
 
-// ROBUST INPUT STYLES (Replaces the missing "input-field" class)
-const inputClass = "w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700]/30 transition-all placeholder:text-zinc-600 font-mono text-sm";
-const textareaClass = "w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700]/30 transition-all placeholder:text-zinc-600 font-mono text-sm resize-none min-h-[100px]";
+// Brutalist styles
+const inputClass = "w-full bg-[var(--deep-surface)] border border-[var(--border-color)] px-4 py-3 text-[var(--text-primary)] outline-none focus:border-[var(--border-active)] transition-all placeholder:text-[var(--text-muted)] font-mono text-sm brutalist-border focus:shadow-[4px_4px_0px_var(--border-color)]";
+const textareaClass = "w-full bg-[var(--deep-surface)] border border-[var(--border-color)] px-4 py-3 text-[var(--text-primary)] outline-none focus:border-[var(--border-active)] transition-all placeholder:text-[var(--text-muted)] font-mono text-sm resize-none min-h-[100px] brutalist-border focus:shadow-[4px_4px_0px_var(--border-color)]";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -55,8 +62,8 @@ export default function AdminDashboard() {
 
   // Terminal State
   const [history, setHistory] = useState<HistoryLine[]>([
-    { text: "IT FARM SECURE TERMINAL v1.0.0", isCommand: false, color: "text-[#00FF41]" },
-    { text: "CONNECTION ESTABLISHED. ROOT ACCESS GRANTED.", isCommand: false, color: "text-zinc-500" }
+    { text: "IT FARM SECURE TERMINAL v1.0.0", isCommand: false, color: "text-[var(--text-primary)] font-bold" },
+    { text: "CONNECTION ESTABLISHED. ROOT ACCESS GRANTED.", isCommand: false, color: "text-[var(--text-muted)]" }
   ]);
   const [cmdInput, setCmdInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -73,18 +80,25 @@ export default function AdminDashboard() {
   const [postsData, setPostsData] = useState<any[]>([]);
   const [inquiriesData, setInquiriesData] = useState<any[]>([]);
   const [clientsData, setClientsData] = useState<any[]>([]);
+  const [faqData, setFaqData] = useState<any[]>([]);
+  const [ecosystemData, setEcosystemData] = useState<any[]>([]);
+  const [systemData, setSystemData] = useState<any>(null);
+  const [aboutConfigData, setAboutConfigData] = useState<any>(null);
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
     const fetchData = async () => {
       try {
-        const [heroRes, aboutRes, postsRes, inqRes, clientsRes] = await Promise.all([
+        const [heroRes, aboutRes, postsRes, inqRes, clientsRes, faqRes, ecoRes, sysRes] = await Promise.all([
           getHeroData(),
           getAboutData(),
           getPostsData(),
           getInquiries(),
-          getClientsData()
+          getClientsData(),
+          getFaqData(),
+          getEcosystemData(),
+          getSystemConfig()
         ]);
 
         if (heroRes) setHeroData({ ...fallbackHero, ...heroRes });
@@ -92,6 +106,9 @@ export default function AdminDashboard() {
         if (postsRes) setPostsData(postsRes);
         if (inqRes) setInquiriesData(inqRes);
         if (clientsRes) setClientsData(clientsRes);
+        if (faqRes) setFaqData(faqRes);
+        if (ecoRes) setEcosystemData(ecoRes);
+        if (sysRes) setSystemData(sysRes);
       } catch (e) {
         console.error("Failed to load CMS data:", e);
       }
@@ -140,7 +157,7 @@ export default function AdminDashboard() {
         router.push("/");
         break;
       default:
-        setHistory(prev => [...prev, { text: `Command not found: ${trimmed}`, isCommand: false, color: "text-red-400" }]);
+        setHistory(prev => [...prev, { text: `Command not found: ${trimmed}`, isCommand: false, color: "text-[var(--neon-cyan)]" }]);
     }
   };
 
@@ -185,6 +202,34 @@ export default function AdminDashboard() {
     triggerSuccess("Client deployments updated.");
   };
 
+  const onSaveFaq = async () => {
+    setIsSaving(true);
+    await saveFaqContent(faqData);
+    setIsSaving(false);
+    triggerSuccess("FAQs updated.");
+  };
+
+  const onSaveEcosystem = async () => {
+    setIsSaving(true);
+    await saveEcosystemContent(ecosystemData);
+    setIsSaving(false);
+    triggerSuccess("Agent ecosystem updated.");
+  };
+
+  const onSaveSystem = async () => {
+    setIsSaving(true);
+    await saveSystemConfig(systemData);
+    setIsSaving(false);
+    triggerSuccess("System variables updated.");
+  };
+
+  const onSaveAboutConfig = async () => {
+    setIsSaving(true);
+    await saveAboutConfig(aboutConfigData);
+    setIsSaving(false);
+    triggerSuccess("About page config updated.");
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, directory: string): Promise<string | null> => {
     const file = e.target.files?.[0];
     if (!file) return null;
@@ -217,10 +262,24 @@ export default function AdminDashboard() {
   };
 
   const addClient = () => {
-    setClientsData([{ id: Date.now().toString(), name: "", role: "", content: "", avatar: "", glow: "rgba(255, 215, 0, 0.5)" }, ...clientsData]);
+    setClientsData([{ id: Date.now().toString(), name: "", role: "", content: "", avatar: "", glow: "rgba(255, 107, 0, 1)" }, ...clientsData]);
   };
   const removeClient = (id: string) => {
     setClientsData(clientsData.filter(d => d.id !== id));
+  };
+
+  const addFaq = () => {
+    setFaqData([{ id: Date.now().toString(), question: "", answer: "" }, ...faqData]);
+  };
+  const removeFaq = (id: string) => {
+    setFaqData(faqData.filter(d => d.id !== id));
+  };
+
+  const addEcosystem = () => {
+    setEcosystemData([{ id: Date.now().toString(), icon: "Terminal", title: "", desc: "", accent: "bg-black text-white border-black" }, ...ecosystemData]);
+  };
+  const removeEcosystem = (id: string) => {
+    setEcosystemData(ecosystemData.filter(d => d.id !== id));
   };
 
   const clearInquiries = async () => {
@@ -254,25 +313,25 @@ export default function AdminDashboard() {
   // --- LOGIN SCREEN ---
   if (!isAuthenticated) {
     return (
-      <main className="min-h-screen bg-[#020202] text-[#00FF41] font-mono flex items-center justify-center selection:bg-[#00FF41]/30">
-        <div className="max-w-md w-full p-8 border border-[#00FF41]/30 bg-[#00FF41]/5 rounded-2xl shadow-[0_0_50px_rgba(0,255,65,0.1)]">
-          <div className="flex items-center gap-3 mb-8 justify-center">
-            <Terminal className="w-8 h-8" />
-            <h1 className="text-2xl font-bold tracking-widest">IT_FARM_SYS</h1>
+      <main className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] font-mono flex items-center justify-center grid-background selection:bg-[var(--neon-cyan)] selection:text-white">
+        <div className="max-w-md w-full p-8 brutalist-panel-white brutalist-border shadow-[8px_8px_0px_var(--text-primary)] relative">
+          <div className="flex items-center gap-3 mb-8 justify-center border-b border-[var(--border-color)] pb-4">
+            <Terminal className="w-8 h-8 text-[var(--neon-cyan)]" />
+            <h1 className="text-2xl font-bold tracking-widest text-[var(--text-primary)] uppercase">IT_FARM_SYS</h1>
           </div>
           <form onSubmit={handleLogin} className="flex flex-col gap-6">
             <div className="space-y-2">
-              <label className="text-[10px] tracking-widest text-zinc-500 uppercase">Authorization Required</label>
+              <label className="text-[10px] tracking-widest text-[var(--text-muted)] uppercase technical-label">Authorization Required</label>
               <input
                 type="password"
                 value={passwordInput}
                 onChange={e => setPasswordInput(e.target.value)}
                 autoFocus
-                className="w-full bg-black border border-[#00FF41]/30 px-4 py-3 outline-none focus:border-[#00FF41] text-[#E5E4E2] font-mono rounded-lg"
+                className="w-full bg-[var(--surface-dark)] border border-[var(--border-color)] px-4 py-3 outline-none focus:border-[var(--neon-cyan)] text-[var(--text-primary)] font-mono focus:shadow-[4px_4px_0px_var(--border-color)] transition-all"
                 placeholder="Enter password..."
               />
             </div>
-            <button type="submit" className="w-full bg-[#00FF41]/20 hover:bg-[#00FF41]/40 border border-[#00FF41] text-[#00FF41] py-3 tracking-widest text-sm font-bold transition-colors rounded-lg">
+            <button type="submit" className="w-full bg-[var(--text-primary)] hover:bg-[var(--neon-cyan)] text-[var(--deep-surface)] py-3 tracking-widest text-sm font-bold transition-colors uppercase border border-[var(--text-primary)] shadow-[4px_4px_0px_var(--border-color)] active:shadow-none active:translate-y-[4px] active:translate-x-[4px]">
               AUTHENTICATE
             </button>
           </form>
@@ -282,35 +341,39 @@ export default function AdminDashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-[#020202] text-[#E5E4E2] font-sans flex selection:bg-[#FFD700]/30 h-screen overflow-hidden">
+    <main className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] font-sans flex grid-background h-screen overflow-hidden selection:bg-[var(--neon-cyan)] selection:text-white">
 
       {/* SIDEBAR */}
-      <aside className="w-64 border-r border-white/5 bg-[#0a0e27]/40 backdrop-blur-3xl flex flex-col shrink-0">
-        <div className="p-6 border-b border-white/5">
+      <aside className="w-64 border-r border-[var(--border-color)] bg-[var(--deep-surface)] flex flex-col shrink-0 shadow-[4px_0px_0px_var(--border-color)] relative z-20">
+        <div className="p-6 border-b border-[var(--border-color)] bg-[var(--surface-dark)]">
           <div className="flex items-center gap-3">
-            <Terminal className="w-6 h-6 text-[#FFD700]" />
-            <h1 className="text-lg font-bold tracking-widest text-white font-serif italic uppercase">Command</h1>
+            <Terminal className="w-6 h-6 text-[var(--neon-cyan)]" />
+            <h1 className="text-lg font-bold tracking-widest text-[var(--text-primary)] font-sans uppercase">Command</h1>
           </div>
-          <div className="mt-2 flex items-center gap-2 text-[9px] font-mono uppercase tracking-widest text-green-400">
+          <div className="mt-2 flex items-center gap-2 text-[9px] font-mono uppercase tracking-widest text-[var(--neon-cyan)]">
             <Activity className="w-3 h-3 animate-pulse" /> Network Secure
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto bg-[var(--deep-surface)]">
           <SidebarBtn active={viewMode === "terminal"} onClick={() => setViewMode("terminal")} icon={Terminal} label="Terminal" />
           <SidebarBtn active={viewMode === "inquiries"} onClick={() => setViewMode("inquiries")} icon={Inbox} label="Inquiries" badge={inquiriesData.length} />
 
-          <div className="pt-6 pb-2 text-[9px] font-mono uppercase tracking-[0.2em] text-zinc-600 px-4">Content System</div>
+          <div className="pt-6 pb-2 technical-label px-4 font-bold">Content System</div>
           <SidebarBtn active={viewMode === "hero"} onClick={() => setViewMode("hero")} icon={LayoutDashboard} label="Hero Editor" />
           <SidebarBtn active={viewMode === "founders"} onClick={() => setViewMode("founders")} icon={Users} label="Founders CMS" />
           <SidebarBtn active={viewMode === "posts"} onClick={() => setViewMode("posts")} icon={FileText} label="Posts CMS" />
           <SidebarBtn active={viewMode === "clients"} onClick={() => setViewMode("clients")} icon={Star} label="Clients CMS" />
+          <SidebarBtn active={viewMode === "faqs"} onClick={() => setViewMode("faqs")} icon={Quote} label="FAQs CMS" />
+          <SidebarBtn active={viewMode === "ecosystem"} onClick={() => setViewMode("ecosystem")} icon={Activity} label="Ecosystem CMS" />
+          <SidebarBtn active={viewMode === "system"} onClick={() => setViewMode("system")} icon={Terminal} label="System Variables" />
+          <SidebarBtn active={viewMode === "about_cms"} onClick={() => setViewMode("about_cms")} icon={FileText} label="About Page CMS" />
         </nav>
 
-        <div className="p-4 border-t border-white/5">
+        <div className="p-4 border-t border-[var(--border-color)] bg-[var(--surface-dark)]">
           <button
             onClick={() => { setIsAuthenticated(false); setPasswordInput(""); router.push("/"); }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-colors text-xs font-bold uppercase tracking-widest"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[var(--text-primary)] bg-[var(--deep-surface)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] transition-colors text-xs font-bold uppercase tracking-widest shadow-[2px_2px_0px_var(--text-primary)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none"
           >
             <LogOut className="w-4 h-4" /> Disconnect
           </button>
@@ -318,13 +381,7 @@ export default function AdminDashboard() {
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <section className="flex-1 relative flex flex-col bg-[#020202]">
-        {/* Subtle noise overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay"
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
-        />
-
+      <section className="flex-1 relative flex flex-col bg-[var(--background)]">
         {/* Global Save Success Toast */}
         <AnimatePresence>
           {saveSuccess && (
@@ -332,9 +389,9 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, y: -20, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: -20, x: "-50%" }}
-              className="absolute top-6 left-1/2 z-50 bg-[#FFD700]/20 border border-[#FFD700] text-[#FFD700] px-6 py-3 rounded-full flex items-center gap-3 shadow-[0_0_30px_rgba(255,215,0,0.2)] backdrop-blur-xl text-xs font-bold uppercase tracking-widest"
+              className="absolute top-6 left-1/2 z-50 brutalist-panel-white border border-[var(--border-active)] px-6 py-3 flex items-center gap-3 shadow-[4px_4px_0px_var(--border-active)] text-xs font-bold uppercase tracking-widest text-[var(--text-primary)]"
             >
-              <CheckCircle className="w-4 h-4" /> {saveSuccess}
+              <CheckCircle className="w-4 h-4 text-[var(--neon-cyan)]" /> {saveSuccess}
             </motion.div>
           )}
         </AnimatePresence>
@@ -344,23 +401,23 @@ export default function AdminDashboard() {
 
             {/* 1. TERMINAL VIEW */}
             {viewMode === "terminal" && (
-              <div className="flex-1 flex flex-col bg-[#050505] border border-[#00FF41]/30 rounded-2xl shadow-[0_0_50px_rgba(0,255,65,0.05)] overflow-hidden font-mono text-[#00FF41]">
-                <div className="bg-[#00FF41]/10 px-4 py-2 border-b border-[#00FF41]/30 text-[10px] tracking-widest uppercase flex items-center gap-2">
-                  <Terminal className="w-3 h-3" /> Root Console
+              <div className="flex-1 flex flex-col brutalist-panel-white brutalist-border shadow-[8px_8px_0px_var(--text-primary)] overflow-hidden font-mono">
+                <div className="bg-[var(--text-primary)] text-[var(--deep-surface)] px-4 py-3 border-b border-[var(--border-color)] text-[10px] tracking-widest uppercase flex items-center gap-2 font-bold">
+                  <Terminal className="w-3 h-3 text-[var(--neon-cyan)]" /> Root Console
                 </div>
-                <div className="flex-1 overflow-y-auto p-4" onClick={() => inputRef.current?.focus()}>
+                <div className="flex-1 overflow-y-auto p-6 bg-[var(--surface-dark)]" onClick={() => inputRef.current?.focus()}>
                   {history.map((line, idx) => (
-                    <div key={idx} className={`${line.color || "text-[#E5E4E2]"}`}>{line.text}</div>
+                    <div key={idx} className={`${line.color || "text-[var(--text-secondary)]"} mb-1`}>{line.text}</div>
                   ))}
-                  <div className="flex items-center gap-2 text-[#E5E4E2]">
-                    <span className="text-[#00FF41]">root@itfarmer:~#</span>
+                  <div className="flex items-center gap-2 text-[var(--text-primary)] mt-2">
+                    <span className="font-bold">root@itfarmer:~#</span>
                     <input
                       ref={inputRef}
                       type="text"
                       value={cmdInput}
                       onChange={(e) => setCmdInput(e.target.value)}
                       onKeyDown={onCmdKeyDown}
-                      className="flex-1 bg-transparent border-none outline-none text-[#E5E4E2]"
+                      className="flex-1 bg-transparent border-none outline-none text-[var(--text-primary)] font-bold"
                       spellCheck={false}
                       autoFocus
                     />
@@ -373,29 +430,29 @@ export default function AdminDashboard() {
             {/* 2. INQUIRIES VIEW */}
             {viewMode === "inquiries" && (
               <div className="space-y-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
-                  <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white font-serif">Mission Inquiries</h2>
-                  <button onClick={clearInquiries} className="text-[10px] text-zinc-500 uppercase tracking-widest hover:text-red-400 transition-colors font-mono flex items-center gap-2 self-start md:self-auto">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--border-color)] pb-6 bg-[var(--background)]">
+                  <h2 className="text-3xl font-black uppercase tracking-tighter text-[var(--text-primary)]">Mission Inquiries</h2>
+                  <button onClick={clearInquiries} className="px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[10px] uppercase tracking-widest hover:bg-[var(--text-primary)] hover:text-white transition-colors font-mono flex items-center gap-2 shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none self-start md:self-auto">
                     <Trash2 className="w-3 h-3" /> Clear Intel
                   </button>
                 </div>
-                <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl">
+                <div className="brutalist-panel-white brutalist-border shadow-[8px_8px_0px_var(--text-primary)] overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm border-collapse">
                       <thead>
-                        <tr className="bg-black/40 border-b border-white/10 text-zinc-500 uppercase tracking-[0.2em] text-[9px] font-mono">
-                          <th className="p-6 font-normal whitespace-nowrap">Date / Time</th>
-                          <th className="p-6 font-normal">Client Identifier</th>
-                          <th className="p-6 font-normal">Service</th>
-                          <th className="p-6 font-normal">Budget</th>
-                          <th className="p-6 font-normal w-1/3">Mission Brief</th>
-                          <th className="p-6 font-normal text-right">Action</th>
+                        <tr className="bg-[var(--surface-dark)] border-b border-[var(--border-color)] text-[var(--text-muted)] technical-label">
+                          <th className="p-6 font-bold whitespace-nowrap">Date / Time</th>
+                          <th className="p-6 font-bold">Client Identifier</th>
+                          <th className="p-6 font-bold">Service</th>
+                          <th className="p-6 font-bold">Budget</th>
+                          <th className="p-6 font-bold w-1/3">Mission Brief</th>
+                          <th className="p-6 font-bold text-right">Action</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5">
+                      <tbody className="divide-y divide-[var(--border-color)] bg-[var(--deep-surface)]">
                         {inquiriesData.length === 0 ? (
                           <tr>
-                            <td colSpan={6} className="p-12 text-center text-zinc-600 font-mono text-[10px] uppercase tracking-widest">
+                            <td colSpan={6} className="p-12 text-center text-[var(--text-muted)] font-mono text-[10px] uppercase tracking-widest bg-[var(--surface-dark)]">
                               <ShieldAlert className="w-8 h-8 mx-auto mb-4 opacity-50" />
                               No incoming intelligence detected.
                             </td>
@@ -407,28 +464,28 @@ export default function AdminDashboard() {
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: index * 0.05 }}
                               key={inq.id}
-                              className="hover:bg-white/5 transition-colors group"
+                              className="hover:bg-[var(--surface-dark)] transition-colors group"
                             >
-                              <td className="p-6">
-                                <div className="text-white font-mono text-xs">{inq.date}</div>
-                                <div className="text-zinc-500 font-mono text-[10px]">{inq.time}</div>
+                              <td className="p-6 border-r border-[var(--border-color)]">
+                                <div className="text-[var(--text-primary)] font-mono text-xs font-bold">{inq.date}</div>
+                                <div className="text-[var(--text-muted)] font-mono text-[10px] mt-1">{inq.time}</div>
                               </td>
-                              <td className="p-6">
-                                <div className="font-bold text-[#FFD700] text-base">{inq.name}</div>
-                                <div className="text-zinc-400 text-xs mt-1">{inq.company || "Unknown Entity"}</div>
-                                <div className="text-zinc-600 font-mono text-[10px] mt-1 break-all">{inq.email}</div>
+                              <td className="p-6 border-r border-[var(--border-color)]">
+                                <div className="font-bold text-[var(--neon-cyan)] text-base uppercase">{inq.name}</div>
+                                <div className="text-[var(--text-secondary)] text-xs mt-1 font-mono">{inq.company || "Unknown Entity"}</div>
+                                <div className="text-[var(--text-muted)] font-mono text-[10px] mt-1 break-all">{inq.email}</div>
                               </td>
-                              <td className="p-6">
-                                <span className="px-3 py-1 bg-white/10 rounded-lg text-white text-[10px] font-bold uppercase tracking-widest group-hover:bg-[#FFD700]/20 group-hover:text-[#FFD700] transition-colors">{inq.service}</span>
+                              <td className="p-6 border-r border-[var(--border-color)]">
+                                <span className="px-3 py-1 bg-[var(--surface-dark)] border border-[var(--border-color)] text-[var(--text-primary)] text-[10px] font-bold uppercase tracking-widest group-hover:bg-[var(--neon-cyan)] group-hover:text-white transition-colors">{inq.service}</span>
                               </td>
-                              <td className="p-6 font-mono text-white text-xs">{inq.budget || "-"}</td>
-                              <td className="p-6 text-zinc-400 font-light text-sm line-clamp-3 md:line-clamp-none max-w-sm">
+                              <td className="p-6 font-mono text-[var(--text-primary)] text-xs border-r border-[var(--border-color)] font-bold">{inq.budget || "-"}</td>
+                              <td className="p-6 text-[var(--text-secondary)] font-mono text-xs line-clamp-3 md:line-clamp-none max-w-sm border-r border-[var(--border-color)]">
                                 {inq.message}
                               </td>
                               <td className="p-6 text-right">
                                 <button
                                   onClick={() => deleteSingleInquiry(inq.id)}
-                                  className="px-3 py-1.5 bg-[#00FF41]/10 text-[#00FF41] hover:bg-[#00FF41]/20 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 ml-auto"
+                                  className="px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 ml-auto shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
                                 >
                                   <CheckCircle className="w-3 h-3" /> Done
                                 </button>
@@ -447,7 +504,7 @@ export default function AdminDashboard() {
             {viewMode === "hero" && (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
                 <Header title="Hero Section Configuration" onSave={onSaveHero} isSaving={isSaving} />
-                <div className="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6 backdrop-blur-xl">
+                <div className="brutalist-panel-white brutalist-border p-8 space-y-6 shadow-[8px_8px_0px_var(--text-primary)]">
                   <Field label="HEADLINE">
                     <input type="text" value={heroData.headline || ""} onChange={e => setHeroData({ ...heroData, headline: e.target.value })} className={inputClass} />
                   </Field>
@@ -482,18 +539,18 @@ export default function AdminDashboard() {
                   onSave={onSaveAbout}
                   isSaving={isSaving}
                   actionButton={
-                    <button onClick={addFounder} className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest transition-colors text-[#FFD700]">
+                    <button onClick={addFounder} className="flex items-center gap-2 px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest transition-colors shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
                       <Plus className="w-4 h-4" /> Add Profile
                     </button>
                   }
                 />
 
                 {aboutData.length === 0 ? (
-                  <div className="bg-white/5 border border-white/10 rounded-3xl p-12 text-center flex flex-col items-center justify-center">
-                    <Users className="w-12 h-12 text-zinc-600 mb-4" />
-                    <h3 className="text-xl font-bold text-white mb-2 font-serif italic">No Founders Data</h3>
-                    <p className="text-zinc-500 text-sm mb-6 max-w-sm">Your roster is currently empty. Add a profile to populate the about section.</p>
-                    <button onClick={addFounder} className="flex items-center gap-2 px-6 py-3 bg-[#FFD700] text-[#0a0e27] rounded-full text-xs font-bold uppercase tracking-widest hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] transition-all">
+                  <div className="brutalist-panel-white brutalist-border p-12 text-center flex flex-col items-center justify-center shadow-[8px_8px_0px_var(--text-primary)]">
+                    <Users className="w-12 h-12 text-[var(--text-muted)] mb-4" />
+                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2 uppercase">No Founders Data</h3>
+                    <p className="text-[var(--text-muted)] text-sm mb-6 max-w-sm font-mono">Your roster is currently empty. Add a profile to populate the about section.</p>
+                    <button onClick={addFounder} className="flex items-center gap-2 px-6 py-3 bg-[var(--neon-cyan)] border border-[var(--text-primary)] text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] transition-all shadow-[4px_4px_0px_var(--text-primary)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
                       <Plus className="w-4 h-4" /> Initialize First Profile
                     </button>
                   </div>
@@ -508,11 +565,11 @@ export default function AdminDashboard() {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.95 }}
                           transition={{ delay: index * 0.05 }}
-                          className="bg-white/5 border border-white/10 rounded-3xl p-6 relative backdrop-blur-xl group hover:border-[#FFD700]/30 transition-colors"
+                          className="brutalist-panel-white brutalist-border p-6 relative group hover:border-[var(--border-active)] transition-colors shadow-[4px_4px_0px_var(--border-color)] hover:shadow-[4px_4px_0px_var(--border-active)]"
                         >
                           <button
                             onClick={() => removeFounder(dev.id)}
-                            className="absolute top-4 right-4 p-2 bg-red-500/10 text-red-400 rounded-full opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all"
+                            className="absolute top-4 right-4 p-2 bg-[var(--surface-dark)] border border-[var(--border-color)] text-[var(--text-primary)] opacity-0 group-hover:opacity-100 hover:bg-[var(--neon-cyan)] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none"
                             title="Delete Profile"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -520,10 +577,10 @@ export default function AdminDashboard() {
 
                           <div className="flex flex-col md:flex-row items-start gap-6 mt-2">
                             <div className="flex flex-col items-center gap-3 shrink-0">
-                              <div className="w-24 h-24 rounded-2xl bg-black border border-white/10 overflow-hidden flex items-center justify-center">
-                                {dev.image ? <img src={dev.image} className="w-full h-full object-cover" alt="Founder" /> : <ImageIcon className="w-6 h-6 text-zinc-600" />}
+                              <div className="w-24 h-24 bg-[var(--surface-dark)] border border-[var(--border-color)] overflow-hidden flex items-center justify-center">
+                                {dev.image ? <img src={dev.image} className="w-full h-full object-cover grayscale contrast-125" alt="Founder" /> : <ImageIcon className="w-6 h-6 text-[var(--text-muted)]" />}
                               </div>
-                              <label className="cursor-pointer text-[9px] uppercase tracking-widest text-zinc-500 hover:text-[#FFD700] transition-colors border border-white/10 px-3 py-1.5 rounded-lg hover:border-[#FFD700]/30 bg-black/50 text-center w-full">
+                              <label className="cursor-pointer text-[9px] uppercase tracking-widest text-[var(--text-primary)] hover:bg-[var(--neon-cyan)] hover:text-white transition-colors border border-[var(--border-color)] px-3 py-1.5 bg-[var(--surface-dark)] text-center w-full font-bold shadow-[2px_2px_0px_var(--border-color)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
                                 Upload Photo
                                 <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                                   const path = await handleFileUpload(e, "founders");
@@ -553,18 +610,18 @@ export default function AdminDashboard() {
                   onSave={onSavePosts}
                   isSaving={isSaving}
                   actionButton={
-                    <button onClick={addPost} className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest transition-colors text-[#00FF41]">
+                    <button onClick={addPost} className="flex items-center gap-2 px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest transition-colors shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
                       <Plus className="w-4 h-4" /> Compose Briefing
                     </button>
                   }
                 />
 
                 {postsData.length === 0 ? (
-                  <div className="bg-white/5 border border-white/10 rounded-3xl p-12 text-center flex flex-col items-center justify-center">
-                    <FileText className="w-12 h-12 text-zinc-600 mb-4" />
-                    <h3 className="text-xl font-bold text-white mb-2 font-serif italic">No Intelligence Discovered</h3>
-                    <p className="text-zinc-500 text-sm mb-6 max-w-sm">The feed is currently empty. Broadcast a new mission update to the network.</p>
-                    <button onClick={addPost} className="flex items-center gap-2 px-6 py-3 bg-[#00FF41] text-[#050505] rounded-full text-xs font-bold uppercase tracking-widest hover:shadow-[0_0_20px_rgba(0,255,65,0.4)] transition-all">
+                  <div className="brutalist-panel-white brutalist-border p-12 text-center flex flex-col items-center justify-center shadow-[8px_8px_0px_var(--text-primary)]">
+                    <FileText className="w-12 h-12 text-[var(--text-muted)] mb-4" />
+                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2 uppercase">No Intelligence Discovered</h3>
+                    <p className="text-[var(--text-muted)] text-sm mb-6 max-w-sm font-mono">The feed is currently empty. Broadcast a new mission update to the network.</p>
+                    <button onClick={addPost} className="flex items-center gap-2 px-6 py-3 bg-[var(--neon-cyan)] border border-[var(--text-primary)] text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest hover:bg-[var(--text-primary)] transition-all shadow-[4px_4px_0px_var(--text-primary)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
                       <Plus className="w-4 h-4" /> Initialize Post
                     </button>
                   </div>
@@ -579,20 +636,20 @@ export default function AdminDashboard() {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.95 }}
                           transition={{ delay: index * 0.05 }}
-                          className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl group hover:border-[#FFD700]/30 transition-colors flex flex-col relative"
+                          className="brutalist-panel-white brutalist-border p-6 group hover:border-[var(--border-active)] transition-colors flex flex-col relative shadow-[4px_4px_0px_var(--border-color)] hover:shadow-[4px_4px_0px_var(--border-active)]"
                         >
                           <button
                             onClick={() => removePost(post.id)}
-                            className="absolute top-4 right-4 z-10 p-2 bg-red-500/10 text-red-400 rounded-full opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all shadow-xl"
+                            className="absolute top-4 right-4 z-10 p-2 bg-[var(--surface-dark)] border border-[var(--border-color)] text-[var(--text-primary)] opacity-0 group-hover:opacity-100 hover:bg-[var(--neon-cyan)] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none"
                             title="Delete Post"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
 
                           {post.image ? (
-                            <div className="w-full h-32 rounded-xl border border-white/10 overflow-hidden mb-4 bg-black relative">
-                              <img src={post.image} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" alt="Post cover" />
-                              <label className="absolute bottom-2 right-2 cursor-pointer text-[9px] bg-black/60 backdrop-blur-md uppercase tracking-widest text-white border border-white/20 px-3 py-1.5 rounded-lg hover:border-[#FFD700] hover:text-[#FFD700] transition-all shadow-xl">
+                            <div className="w-full h-32 border border-[var(--border-color)] overflow-hidden mb-4 bg-[var(--surface-dark)] relative group-hover:border-[var(--border-active)] transition-colors">
+                              <img src={post.image} className="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition-all" alt="Post cover" />
+                              <label className="absolute bottom-2 right-2 cursor-pointer text-[9px] bg-[var(--deep-surface)] border border-[var(--border-color)] uppercase tracking-widest text-[var(--text-primary)] px-3 py-1.5 hover:bg-[var(--neon-cyan)] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)] font-bold">
                                 Change Cover
                                 <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                                   const path = await handleFileUpload(e, "posts");
@@ -601,7 +658,7 @@ export default function AdminDashboard() {
                               </label>
                             </div>
                           ) : (
-                            <label className="mb-4 mt-8 w-full h-12 border border-dashed border-white/20 rounded-xl flex items-center justify-center text-xs text-zinc-500 uppercase tracking-widest hover:border-[#FFD700] hover:text-[#FFD700] transition-colors cursor-pointer bg-white/5">
+                            <label className="mb-4 mt-8 w-full h-12 border border-dashed border-[var(--border-color)] flex items-center justify-center text-xs text-[var(--text-muted)] uppercase tracking-widest hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)] transition-colors cursor-pointer bg-[var(--surface-dark)] font-mono font-bold">
                               Upload Cover Image
                               <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                                 const path = await handleFileUpload(e, "posts");
@@ -621,7 +678,7 @@ export default function AdminDashboard() {
                                   <option value="Update">Update</option>
                                 </select>
                               </Field>
-                              <Field label="DATE"><input type="date" value={post.date || ""} onChange={e => { const n = [...postsData]; n[index].date = e.target.value; setPostsData(n); }} className={`${inputClass} [color-scheme:dark]`} /></Field>
+                              <Field label="DATE"><input type="date" value={post.date || ""} onChange={e => { const n = [...postsData]; n[index].date = e.target.value; setPostsData(n); }} className={inputClass} /></Field>
                             </div>
                           </div>
                         </motion.div>
@@ -640,18 +697,18 @@ export default function AdminDashboard() {
                   onSave={onSaveClients}
                   isSaving={isSaving}
                   actionButton={
-                    <button onClick={addClient} className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest transition-colors text-[#FFD700]">
+                    <button onClick={addClient} className="flex items-center gap-2 px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest transition-colors shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
                       <Plus className="w-4 h-4" /> Add Client
                     </button>
                   }
                 />
 
                 {clientsData.length === 0 ? (
-                  <div className="bg-white/5 border border-white/10 rounded-3xl p-12 text-center flex flex-col items-center justify-center">
-                    <Quote className="w-12 h-12 text-zinc-600 mb-4" />
-                    <h3 className="text-xl font-bold text-white mb-2 font-serif italic">No Client Data</h3>
-                    <p className="text-zinc-500 text-sm mb-6 max-w-sm">Your client roster is currently empty. Add a profile to populate the testimonials section.</p>
-                    <button onClick={addClient} className="flex items-center gap-2 px-6 py-3 bg-[#FFD700] text-[#0a0e27] rounded-full text-xs font-bold uppercase tracking-widest hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] transition-all">
+                  <div className="brutalist-panel-white brutalist-border p-12 text-center flex flex-col items-center justify-center shadow-[8px_8px_0px_var(--text-primary)]">
+                    <Quote className="w-12 h-12 text-[var(--text-muted)] mb-4" />
+                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2 uppercase">No Client Data</h3>
+                    <p className="text-[var(--text-muted)] text-sm mb-6 max-w-sm font-mono">Your client roster is currently empty. Add a profile to populate the testimonials section.</p>
+                    <button onClick={addClient} className="flex items-center gap-2 px-6 py-3 bg-[var(--neon-cyan)] border border-[var(--text-primary)] text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest hover:bg-[var(--text-primary)] transition-all shadow-[4px_4px_0px_var(--text-primary)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
                       <Plus className="w-4 h-4" /> Initialize First Client
                     </button>
                   </div>
@@ -666,11 +723,11 @@ export default function AdminDashboard() {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.95 }}
                           transition={{ delay: index * 0.05 }}
-                          className="bg-white/5 border border-white/10 rounded-3xl p-6 relative backdrop-blur-xl group hover:border-[#FFD700]/30 transition-colors"
+                          className="brutalist-panel-white brutalist-border p-6 relative group hover:border-[var(--border-active)] transition-colors shadow-[4px_4px_0px_var(--border-color)] hover:shadow-[4px_4px_0px_var(--border-active)]"
                         >
                           <button
                             onClick={() => removeClient(client.id)}
-                            className="absolute top-4 right-4 p-2 bg-red-500/10 text-red-400 rounded-full opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all z-10"
+                            className="absolute top-4 right-4 p-2 bg-[var(--surface-dark)] border border-[var(--border-color)] text-[var(--text-primary)] opacity-0 group-hover:opacity-100 hover:bg-[var(--neon-cyan)] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none z-10"
                             title="Delete Client"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -678,10 +735,10 @@ export default function AdminDashboard() {
 
                           <div className="flex flex-col md:flex-row items-start gap-6 mt-2">
                             <div className="flex flex-col items-center gap-3 shrink-0">
-                              <div className="w-24 h-24 rounded-2xl bg-black border border-white/10 overflow-hidden flex items-center justify-center">
-                                {client.avatar ? <img src={client.avatar} className="w-full h-full object-cover" alt="Client Avatar" /> : <ImageIcon className="w-6 h-6 text-zinc-600" />}
+                              <div className="w-24 h-24 bg-[var(--surface-dark)] border border-[var(--border-color)] overflow-hidden flex items-center justify-center">
+                                {client.avatar ? <img src={client.avatar} className="w-full h-full object-cover grayscale contrast-125" alt="Client Avatar" /> : <ImageIcon className="w-6 h-6 text-[var(--text-muted)]" />}
                               </div>
-                              <label className="cursor-pointer text-[9px] uppercase tracking-widest text-zinc-500 hover:text-[#FFD700] transition-colors border border-white/10 px-3 py-1.5 rounded-lg hover:border-[#FFD700]/30 bg-black/50 text-center w-full">
+                              <label className="cursor-pointer text-[9px] uppercase tracking-widest text-[var(--text-primary)] hover:bg-[var(--neon-cyan)] hover:text-white transition-colors border border-[var(--border-color)] px-3 py-1.5 bg-[var(--surface-dark)] text-center w-full font-bold shadow-[2px_2px_0px_var(--border-color)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
                                 Upload Photo
                                 <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                                   const path = await handleFileUpload(e, "clients");
@@ -693,7 +750,7 @@ export default function AdminDashboard() {
                               <Field label="NAME"><input type="text" value={client.name || ""} onChange={e => { const n = [...clientsData]; n[index].name = e.target.value; setClientsData(n); }} className={inputClass} placeholder="Alexander Volkov" /></Field>
                               <Field label="ROLE"><input type="text" value={client.role || ""} onChange={e => { const n = [...clientsData]; n[index].role = e.target.value; setClientsData(n); }} className={inputClass} placeholder="CTO, Nexus Dynamics" /></Field>
                               <Field label="CONTENT"><textarea value={client.content || ""} onChange={e => { const n = [...clientsData]; n[index].content = e.target.value; setClientsData(n); }} className={textareaClass} placeholder="Testimonial content..." /></Field>
-                              <Field label="GLOW COLOR"><input type="text" value={client.glow || ""} onChange={e => { const n = [...clientsData]; n[index].glow = e.target.value; setClientsData(n); }} className={inputClass} placeholder="rgba(255, 215, 0, 0.5)" /></Field>
+                              <Field label="ACCENT COLOR"><input type="text" value={client.glow || ""} onChange={e => { const n = [...clientsData]; n[index].glow = e.target.value; setClientsData(n); }} className={inputClass} placeholder="rgba(255, 107, 0, 1)" /></Field>
                             </div>
                           </div>
                         </motion.div>
@@ -701,6 +758,216 @@ export default function AdminDashboard() {
                     </AnimatePresence>
                   </div>
                 )}
+              </motion.div>
+            )}
+
+            {/* 7. FAQs EDITOR */}
+            {viewMode === "faqs" && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
+                <Header
+                  title="FAQs Content"
+                  onSave={onSaveFaq}
+                  isSaving={isSaving}
+                  actionButton={
+                    <button onClick={addFaq} className="flex items-center gap-2 px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest transition-colors shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                      <Plus className="w-4 h-4" /> Add FAQ
+                    </button>
+                  }
+                />
+
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <AnimatePresence>
+                    {faqData.map((faq, index) => (
+                      <motion.div
+                        layout
+                        key={faq.id || index}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="brutalist-panel-white brutalist-border p-6 relative group hover:border-[var(--border-active)] transition-colors shadow-[4px_4px_0px_var(--border-color)] hover:shadow-[4px_4px_0px_var(--border-active)]"
+                      >
+                        <button
+                          onClick={() => removeFaq(faq.id)}
+                          className="absolute top-4 right-4 p-2 bg-[var(--surface-dark)] border border-[var(--border-color)] text-[var(--text-primary)] opacity-0 group-hover:opacity-100 hover:bg-[var(--neon-cyan)] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none z-10"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <div className="space-y-4">
+                          <Field label="QUESTION"><input type="text" value={faq.question || ""} onChange={e => { const n = [...faqData]; n[index].question = e.target.value; setFaqData(n); }} className={inputClass} placeholder="Question?" /></Field>
+                          <Field label="ANSWER"><textarea value={faq.answer || ""} onChange={e => { const n = [...faqData]; n[index].answer = e.target.value; setFaqData(n); }} className={textareaClass} placeholder="Answer..." /></Field>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
+
+            {/* 8. ECOSYSTEM EDITOR */}
+            {viewMode === "ecosystem" && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
+                <Header
+                  title="Agent Ecosystem"
+                  onSave={onSaveEcosystem}
+                  isSaving={isSaving}
+                  actionButton={
+                    <button onClick={addEcosystem} className="flex items-center gap-2 px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest transition-colors shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                      <Plus className="w-4 h-4" /> Add Agent Component
+                    </button>
+                  }
+                />
+
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <AnimatePresence>
+                    {ecosystemData.map((eco, index) => (
+                      <motion.div
+                        layout
+                        key={eco.id || index}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="brutalist-panel-white brutalist-border p-6 relative group hover:border-[var(--border-active)] transition-colors shadow-[4px_4px_0px_var(--border-color)] hover:shadow-[4px_4px_0px_var(--border-active)]"
+                      >
+                        <button
+                          onClick={() => removeEcosystem(eco.id)}
+                          className="absolute top-4 right-4 p-2 bg-[var(--surface-dark)] border border-[var(--border-color)] text-[var(--text-primary)] opacity-0 group-hover:opacity-100 hover:bg-[var(--neon-cyan)] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none z-10"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <div className="space-y-4">
+                          <Field label="TITLE"><input type="text" value={eco.title || ""} onChange={e => { const n = [...ecosystemData]; n[index].title = e.target.value; setEcosystemData(n); }} className={inputClass} placeholder="Agent Role" /></Field>
+                          <Field label="DESCRIPTION"><textarea value={eco.desc || ""} onChange={e => { const n = [...ecosystemData]; n[index].desc = e.target.value; setEcosystemData(n); }} className={textareaClass} placeholder="Agent capability description..." /></Field>
+                          <div className="grid grid-cols-2 gap-4">
+                            <Field label="ICON TYPE"><input type="text" value={eco.icon || ""} onChange={e => { const n = [...ecosystemData]; n[index].icon = e.target.value; setEcosystemData(n); }} className={inputClass} placeholder="Terminal, Lock, Globe" /></Field>
+                            <Field label="ACCENT CLASSES"><input type="text" value={eco.accent || ""} onChange={e => { const n = [...ecosystemData]; n[index].accent = e.target.value; setEcosystemData(n); }} className={inputClass} placeholder="bg-black text-white" /></Field>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
+
+            {/* 9. SYSTEM VARIABLES EDITOR */}
+            {viewMode === "system" && systemData && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
+                <Header title="System Variables" onSave={onSaveSystem} isSaving={isSaving} />
+
+                <div className="brutalist-panel-white brutalist-border p-8 shadow-[8px_8px_0px_var(--text-primary)]">
+                  <h3 className="text-xl font-bold uppercase tracking-tighter mb-6 border-b border-[var(--border-color)] pb-2 flex items-center gap-2">
+                    <Activity className="w-5 h-5" /> Metrics Base Variables
+                  </h3>
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <Field label="BASE ACTIVE AGENTS">
+                      <input type="number" value={systemData.metrics?.activeAgents || 24} onChange={e => setSystemData({ ...systemData, metrics: { ...systemData.metrics, activeAgents: parseInt(e.target.value) } })} className={inputClass} />
+                    </Field>
+                    <Field label="BASE GPU COMPUTE">
+                      <input type="number" step="0.01" value={systemData.metrics?.gpuCompute || 1.84} onChange={e => setSystemData({ ...systemData, metrics: { ...systemData.metrics, gpuCompute: parseFloat(e.target.value) } })} className={inputClass} />
+                    </Field>
+                    <Field label="BASE REQUESTS">
+                      <input type="number" value={systemData.metrics?.requests || 2405932} onChange={e => setSystemData({ ...systemData, metrics: { ...systemData.metrics, requests: parseInt(e.target.value) } })} className={inputClass} />
+                    </Field>
+                  </div>
+                </div>
+
+                <div className="brutalist-panel-white brutalist-border p-8 shadow-[8px_8px_0px_var(--text-primary)]">
+                  <h3 className="text-xl font-bold uppercase tracking-tighter mb-6 border-b border-[var(--border-color)] pb-2 flex items-center gap-2">
+                    <LayoutDashboard className="w-5 h-5" /> Bento Grid Variables
+                  </h3>
+                  <div className="space-y-4">
+                    <Field label="MAIN TITLE">
+                      <input type="text" value={systemData.bentoGrid?.title || ""} onChange={e => setSystemData({ ...systemData, bentoGrid: { ...systemData.bentoGrid, title: e.target.value } })} className={inputClass} />
+                    </Field>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <Field label="CARD 1 TITLE"><input type="text" value={systemData.bentoGrid?.card1Title || ""} onChange={e => setSystemData({ ...systemData, bentoGrid: { ...systemData.bentoGrid, card1Title: e.target.value } })} className={inputClass} /></Field>
+                      <Field label="CARD 1 DESCRIPTION"><textarea value={systemData.bentoGrid?.card1Desc || ""} onChange={e => setSystemData({ ...systemData, bentoGrid: { ...systemData.bentoGrid, card1Desc: e.target.value } })} className={textareaClass} /></Field>
+                      <Field label="CARD 2 TITLE"><input type="text" value={systemData.bentoGrid?.card2Title || ""} onChange={e => setSystemData({ ...systemData, bentoGrid: { ...systemData.bentoGrid, card2Title: e.target.value } })} className={inputClass} /></Field>
+                      <Field label="CARD 2 DESCRIPTION"><textarea value={systemData.bentoGrid?.card2Desc || ""} onChange={e => setSystemData({ ...systemData, bentoGrid: { ...systemData.bentoGrid, card2Desc: e.target.value } })} className={textareaClass} /></Field>
+                      <Field label="CARD 3 TITLE"><input type="text" value={systemData.bentoGrid?.card3Title || ""} onChange={e => setSystemData({ ...systemData, bentoGrid: { ...systemData.bentoGrid, card3Title: e.target.value } })} className={inputClass} /></Field>
+                      <Field label="CARD 4 TITLE"><input type="text" value={systemData.bentoGrid?.card4Title || ""} onChange={e => setSystemData({ ...systemData, bentoGrid: { ...systemData.bentoGrid, card4Title: e.target.value } })} className={inputClass} /></Field>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="brutalist-panel-white brutalist-border p-8 shadow-[8px_8px_0px_var(--text-primary)]">
+                  <h3 className="text-xl font-bold uppercase tracking-tighter mb-6 border-b border-[var(--border-color)] pb-2 flex items-center gap-2">
+                    <Terminal className="w-5 h-5" /> API Playground Variables
+                  </h3>
+                  <Field label="API SECTION TITLE">
+                    <input type="text" value={systemData.apiPlayground?.title || ""} onChange={e => setSystemData({ ...systemData, apiPlayground: { ...systemData.apiPlayground, title: e.target.value } })} className={inputClass} />
+                  </Field>
+                </div>
+
+                <div className="brutalist-panel-white brutalist-border p-8 shadow-[8px_8px_0px_var(--text-primary)]">
+                  <h3 className="text-xl font-bold uppercase tracking-tighter mb-6 border-b border-[var(--border-color)] pb-2 flex items-center gap-2">
+                    <Activity className="w-5 h-5" /> Marquee Strings
+                  </h3>
+                  <Field label="MARQUEE STRINGS (One per line)">
+                    <textarea 
+                      value={(systemData.marquee || []).join("\n")} 
+                      onChange={e => setSystemData({ ...systemData, marquee: e.target.value.split("\n") })} 
+                      className={textareaClass}
+                      rows={6}
+                    />
+                  </Field>
+                </div>
+              </motion.div>
+            )}
+
+            {/* 10. ABOUT PAGE CMS EDITOR */}
+            {viewMode === "about_cms" && aboutConfigData && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
+                <Header title="About Page Config" onSave={onSaveAboutConfig} isSaving={isSaving} />
+
+                {/* Execution Logic */}
+                <div className="brutalist-panel-white brutalist-border p-8 shadow-[8px_8px_0px_var(--text-primary)]">
+                  <h3 className="text-xl font-bold uppercase tracking-tighter mb-6 border-b border-[var(--border-color)] pb-2 flex items-center gap-2">
+                    <Server className="w-5 h-5" /> Execution Logic
+                  </h3>
+                  <div className="space-y-6">
+                    {aboutConfigData.executionLogic?.map((item: any, idx: number) => (
+                      <div key={idx} className="grid md:grid-cols-3 gap-4 border p-4 border-[var(--border-color)] bg-[var(--surface-dark)]">
+                        <Field label={`ITEM ${idx + 1} TITLE`}><input type="text" value={item.title || ""} onChange={e => { const n = { ...aboutConfigData }; n.executionLogic[idx].title = e.target.value; setAboutConfigData(n); }} className={inputClass} /></Field>
+                        <Field label="ICON (Server, Users, Zap)"><input type="text" value={item.icon || ""} onChange={e => { const n = { ...aboutConfigData }; n.executionLogic[idx].icon = e.target.value; setAboutConfigData(n); }} className={inputClass} /></Field>
+                        <Field label="DESCRIPTION"><textarea value={item.desc || ""} onChange={e => { const n = { ...aboutConfigData }; n.executionLogic[idx].desc = e.target.value; setAboutConfigData(n); }} className={textareaClass} rows={2} /></Field>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Capabilities Matrix */}
+                <div className="brutalist-panel-white brutalist-border p-8 shadow-[8px_8px_0px_var(--text-primary)]">
+                  <h3 className="text-xl font-bold uppercase tracking-tighter mb-6 border-b border-[var(--border-color)] pb-2 flex items-center gap-2">
+                    <Activity className="w-5 h-5" /> Capabilities Matrix
+                  </h3>
+                  <div className="space-y-6">
+                    {aboutConfigData.capabilities?.map((item: any, idx: number) => (
+                      <div key={idx} className="grid md:grid-cols-2 gap-4 border p-4 border-[var(--border-color)] bg-[var(--surface-dark)]">
+                        <Field label={`CAPABILITY ${idx + 1} TITLE`}><input type="text" value={item.title || ""} onChange={e => { const n = { ...aboutConfigData }; n.capabilities[idx].title = e.target.value; setAboutConfigData(n); }} className={inputClass} /></Field>
+                        <Field label="DESCRIPTION"><textarea value={item.desc || ""} onChange={e => { const n = { ...aboutConfigData }; n.capabilities[idx].desc = e.target.value; setAboutConfigData(n); }} className={textareaClass} rows={2} /></Field>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Horizon Protocol */}
+                <div className="brutalist-panel-white brutalist-border p-8 shadow-[8px_8px_0px_var(--text-primary)]">
+                  <h3 className="text-xl font-bold uppercase tracking-tighter mb-6 border-b border-[var(--border-color)] pb-2 flex items-center gap-2">
+                    <Terminal className="w-5 h-5" /> Horizon Protocol
+                  </h3>
+                  <div className="space-y-6">
+                    {aboutConfigData.horizon?.map((item: any, idx: number) => (
+                      <div key={idx} className="grid md:grid-cols-3 gap-4 border p-4 border-[var(--border-color)] bg-[var(--surface-dark)]">
+                        <Field label="TAG (e.g. [ CURRENT FOCUS ])"><input type="text" value={item.tag || ""} onChange={e => { const n = { ...aboutConfigData }; n.horizon[idx].tag = e.target.value; setAboutConfigData(n); }} className={inputClass} /></Field>
+                        <Field label={`PHASE ${idx + 1} TITLE`}><input type="text" value={item.title || ""} onChange={e => { const n = { ...aboutConfigData }; n.horizon[idx].title = e.target.value; setAboutConfigData(n); }} className={inputClass} /></Field>
+                        <Field label="DESCRIPTION"><textarea value={item.desc || ""} onChange={e => { const n = { ...aboutConfigData }; n.horizon[idx].desc = e.target.value; setAboutConfigData(n); }} className={textareaClass} rows={2} /></Field>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
             )}
 
@@ -716,17 +983,17 @@ function SidebarBtn({ active, onClick, icon: Icon, label, badge }: any) {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${active
-        ? "bg-[#FFD700]/10 text-[#FFD700] font-bold border border-[#FFD700]/20"
-        : "text-zinc-400 hover:bg-white/5 hover:text-white border border-transparent"
+      className={`w-full flex items-center justify-between px-4 py-3 border transition-all ${active
+        ? "bg-[var(--text-primary)] text-[var(--deep-surface)] border-[var(--text-primary)] font-bold shadow-[2px_2px_0px_var(--neon-cyan)] translate-x-[2px] translate-y-[2px]"
+        : "text-[var(--text-primary)] bg-[var(--surface-dark)] border-[var(--border-color)] hover:bg-[var(--deep-surface)] hover:border-[var(--text-primary)] shadow-[2px_2px_0px_var(--border-color)] hover:shadow-[2px_2px_0px_var(--text-primary)]"
         }`}
     >
       <div className="flex items-center gap-3">
-        <Icon className={`w-5 h-5 ${active ? "text-[#FFD700]" : "text-zinc-500"}`} />
-        <span className="text-sm font-medium">{label}</span>
+        <Icon className={`w-5 h-5 ${active ? "text-[var(--neon-cyan)]" : "text-[var(--text-primary)]"}`} />
+        <span className="text-sm font-bold uppercase tracking-widest font-mono">{label}</span>
       </div>
       {badge !== undefined && badge > 0 && (
-        <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${active ? "bg-[#FFD700] text-[#0a0e27]" : "bg-white/10 text-white"}`}>
+        <span className={`px-2 py-0.5 border text-[10px] font-mono font-bold ${active ? "bg-[var(--neon-cyan)] text-[var(--deep-surface)] border-[var(--neon-cyan)]" : "bg-[var(--deep-surface)] text-[var(--text-primary)] border-[var(--border-color)]"}`}>
           {badge}
         </span>
       )}
@@ -737,7 +1004,7 @@ function SidebarBtn({ active, onClick, icon: Icon, label, badge }: any) {
 function Field({ label, children }: { label: string, children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5 w-full">
-      <label className="text-[9px] text-zinc-500 uppercase tracking-widest font-mono ml-1">{label}</label>
+      <label className="technical-label ml-1 font-bold">{label}</label>
       {children}
     </div>
   );
@@ -745,15 +1012,15 @@ function Field({ label, children }: { label: string, children: React.ReactNode }
 
 function Header({ title, onSave, isSaving, actionButton }: any) {
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--border-color)] pb-6 bg-[var(--background)]">
       <div className="flex flex-col md:flex-row md:items-center gap-4">
-        <h2 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter text-white font-serif">{title}</h2>
+        <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-[var(--text-primary)]">{title}</h2>
         {actionButton}
       </div>
       <button
         onClick={onSave}
         disabled={isSaving}
-        className="px-8 py-3 bg-white text-[#0a0e27] font-black uppercase tracking-widest text-xs hover:bg-gradient-to-r hover:from-[#FFD700] hover:to-[#B8860B] hover:text-white rounded-full flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(255,215,0,0.15)]"
+        className="px-8 py-3 bg-[var(--text-primary)] border border-[var(--text-primary)] text-[var(--deep-surface)] font-black uppercase tracking-widest text-xs hover:bg-[var(--neon-cyan)] hover:text-[var(--deep-surface)] flex items-center justify-center gap-2 transition-all active:translate-y-[4px] active:translate-x-[4px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed shadow-[4px_4px_0px_var(--border-color)] hover:shadow-[4px_4px_0px_var(--text-primary)]"
       >
         {isSaving ? (
           <><span className="animate-spin">⟳</span> SAVING...</>

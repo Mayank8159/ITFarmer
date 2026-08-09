@@ -8,8 +8,14 @@ import { Cpu, Network, Zap, Code2, Server } from "lucide-react";
 export default function BentoGrid() {
   const [inferenceCount, setInferenceCount] = useState(2405932);
   const [latency, setLatency] = useState(42);
+  const [config, setConfig] = useState<any>(null);
 
   useEffect(() => {
+    fetch('/data/systemConfig.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => setConfig(data.bentoGrid))
+      .catch(err => console.error("Failed to load bento grid config:", err));
+
     const interval = setInterval(() => {
       setInferenceCount(prev => prev + Math.floor(Math.random() * 5));
       setLatency(40 + Math.floor(Math.random() * 8));
@@ -25,7 +31,7 @@ export default function BentoGrid() {
         <div className="mb-16 border-b border-black/15 pb-8">
           <span className="font-mono text-xs uppercase tracking-widest text-[#ff6b00] mb-4 block font-bold">INFRASTRUCTURE LAYER</span>
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-black uppercase max-w-3xl leading-[0.9]">
-            UNCOMPROMISED PERFORMANCE.
+            {config?.title || "UNCOMPROMISED PERFORMANCE."}
           </h2>
         </div>
 
@@ -88,8 +94,8 @@ export default function BentoGrid() {
               </div>
 
               <div className="mt-8">
-                <h3 className="text-2xl font-black text-black mb-2 uppercase">GPU Compute Architecture</h3>
-                <p className="text-black/70 text-sm font-mono max-w-xl">Distributed clusters optimized for high-bandwidth model training and low-latency inference.</p>
+                <h3 className="text-2xl font-black text-black mb-2 uppercase">{config?.card1Title || "GPU Compute Architecture"}</h3>
+                <p className="text-black/70 text-sm font-mono max-w-xl">{config?.card1Desc || "Distributed clusters optimized for high-bandwidth model training and low-latency inference."}</p>
               </div>
             </BrutalistCard>
           </motion.div>
@@ -139,8 +145,8 @@ export default function BentoGrid() {
               </div>
 
               <div>
-                <h3 className="text-xl font-black text-black mb-1 uppercase">Agent Network</h3>
-                <p className="text-black/60 text-xs font-mono">Autonomous swarms interacting via secure subnets.</p>
+                <h3 className="text-xl font-black text-black mb-1 uppercase">{config?.card2Title || "Agent Network"}</h3>
+                <p className="text-black/60 text-xs font-mono">{config?.card2Desc || "Autonomous swarms interacting via secure subnets."}</p>
               </div>
             </BrutalistCard>
           </motion.div>
@@ -190,7 +196,7 @@ export default function BentoGrid() {
             <BrutalistCard whiteBg className="h-full flex flex-col justify-between">
               <div className="flex items-center gap-3 mb-6 border-b border-black/15 pb-4">
                 <Cpu className="w-5 h-5 text-black" />
-                <h3 className="text-xl font-black text-black uppercase">Execution Pipeline</h3>
+                <h3 className="text-xl font-black text-black uppercase">{config?.card3Title || "Execution Pipeline"}</h3>
               </div>
               
               <div className="flex items-center justify-between w-full mt-4 px-2 relative">
@@ -221,7 +227,7 @@ export default function BentoGrid() {
               <div className="p-8 pb-4">
                 <div className="flex items-center gap-3 mb-2">
                   <Code2 className="w-5 h-5 text-black" />
-                  <h3 className="text-xl font-black text-black uppercase">Developer API</h3>
+                  <h3 className="text-xl font-black text-black uppercase">{config?.card4Title || "Developer API"}</h3>
                 </div>
               </div>
               

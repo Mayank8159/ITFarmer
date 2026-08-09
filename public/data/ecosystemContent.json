@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "icon": "Terminal",
+    "title": "Code Generation",
+    "desc": "Autonomous agents capable of writing, reviewing, and deploying production-ready code.",
+    "accent": "bg-black text-white border-black"
+  },
+  {
+    "id": "2",
+    "icon": "Lock",
+    "title": "Security Auditing",
+    "desc": "Continuous smart contract and infrastructure vulnerability scanning by specialized agents.",
+    "accent": "bg-[#ff6b00] text-white border-[#ff6b00]"
+  },
+  {
+    "id": "3",
+    "icon": "Globe",
+    "title": "Web Intelligence",
+    "desc": "Real-time web scraping, sentiment analysis, and OSINT gathering agents.",
+    "accent": "bg-white text-black border-black"
+  }
+]

@@ -1,15 +1,24 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  
+  // Use Framer Motion values to avoid React re-renders on mouse move
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+
+  // Spring physics for the outer frame
+  const springConfig = { damping: 20, stiffness: 400, mass: 0.1 };
+  const cursorXSpring = useSpring(cursorX, springConfig);
+  const cursorYSpring = useSpring(cursorY, springConfig);
 
   useEffect(() => {
     const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -27,24 +36,27 @@ export default function CustomCursor() {
       }
     };
 
-    window.addEventListener("mousemove", updateMousePosition);
-    window.addEventListener("mouseover", handleMouseOver);
+    window.addEventListener("mousemove", updateMousePosition, { passive: true });
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", updateMousePosition);
       window.removeEventListener("mouseover", handleMouseOver);
     };
-  }, []);
+  }, [cursorX, cursorY]);
 
-  // Use a slight spring for the follower
   return (
     <>
       {/* Primary Dot (instant) */}
       <motion.div
         className="hidden md:block fixed top-0 left-0 w-3 h-3 bg-[#ff6b00] rounded-none pointer-events-none z-[99999] mix-blend-difference"
+        style={{
+          x: cursorX,
+          y: cursorY,
+          translateX: "-50%",
+          translateY: "-50%"
+        }}
         animate={{
-          x: mousePosition.x - 6,
-          y: mousePosition.y - 6,
           scale: isHovering ? 0 : 1,
         }}
         transition={{ type: "tween", ease: "linear", duration: 0 }}
@@ -53,9 +65,13 @@ export default function CustomCursor() {
       {/* Brutalist Frame (delayed spring) */}
       <motion.div
         className="hidden md:flex fixed top-0 left-0 w-8 h-8 border-2 border-black pointer-events-none z-[99998] items-center justify-center mix-blend-difference bg-white/20"
+        style={{
+          x: cursorXSpring,
+          y: cursorYSpring,
+          translateX: "-50%",
+          translateY: "-50%"
+        }}
         animate={{
-          x: mousePosition.x - 16,
-          y: mousePosition.y - 16,
           scale: isHovering ? 1.5 : 1,
           rotate: isHovering ? 45 : 0,
         }}

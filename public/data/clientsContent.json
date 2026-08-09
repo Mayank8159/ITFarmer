@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "name": "Elena Rostova",
+    "role": "CTO, Vanguard Data",
+    "content": "Integrating Neural Forge into our data pipeline reduced our inference latency by 40%. The brutalist simplicity of the API hides an incredibly robust and scalable infrastructure underneath. It has completely transformed our deployment strategy.",
+    "avatar": "",
+    "glow": "rgba(255, 107, 0, 1)"
+  },
+  {
+    "id": "2",
+    "name": "Marcus Webb",
+    "role": "Lead Engineer, Synthetix",
+    "content": "The swarm intelligence architecture is unlike anything we've worked with. The autonomous agents handle our smart contract auditing flawlessly. We went from manually reviewing edge cases for weeks to letting the swarm handle it in hours.",
+    "avatar": "",
+    "glow": "rgba(255, 107, 0, 1)"
+  },
+  {
+    "id": "3",
+    "name": "Dr. Sarah Chen",
+    "role": "Head of AI, Nexus Corp",
+    "content": "We demanded an air-gapped, highly secure inference cluster. Neural Forge delivered exactly that. Their GPU compute nodes are ridiculously fast, and the dashboard gives us total transparency into the network's health.",
+    "avatar": "",
+    "glow": "rgba(255, 107, 0, 1)"
+  },
+  {
+    "id": "4",
+    "name": "Julian Vance",
+    "role": "Founder, Horizon Labs",
+    "content": "I was skeptical of the brutalist approach at first, but it just works. No bloated UI, no confusing telemetry. Just raw, unadulterated performance. It's the most reliable infrastructure we've ever built upon.",
+    "avatar": "",
+    "glow": "rgba(255, 107, 0, 1)"
+  },
+  {
+    "id": "5",
+    "name": "Viktor Drazen",
+    "role": "CEO, Cyberdyne Logistics",
+    "content": "The web intelligence agents completely automated our global supply chain scraping. What used to take a team of 15 data scientists now happens autonomously in real-time.",
+    "avatar": "",
+    "glow": "rgba(255, 107, 0, 1)"
+  },
+  {
+    "id": "6",
+    "name": "Amara Singh",
+    "role": "VP Engineering, Quantum Finance",
+    "content": "We switched to Neural Forge for our high-frequency trading models. The absolute bare-metal speed and strict zero-telemetry policy made it a no-brainer. Incredible architecture.",
+    "avatar": "",
+    "glow": "rgba(255, 107, 0, 1)"
+  }
+]

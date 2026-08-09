@@ -1,25 +1,16 @@
 {
-  "headline": "Neural Forge Hub",
-  "subheadline": "We build crash-resilient AI workflows, custom software, and zero-trust digital infrastructure for teams that demand precision, privacy, and performance.",
+  "headline": "BUILD. CONNECT. INFER.",
+  "subheadline": "Advanced AI infrastructure laboratory engineered for researchers, developers, and autonomous agents. Scale GPU computation and deploy specialized inference networks with uncompromised velocity.",
   "primaryCta": {
-    "label": "Request Technical Consultation",
-    "href": "/contact"
+    "text": "Launch Neural Forge",
+    "label": "Launch Neural Forge",
+    "href": "/services"
   },
   "secondaryCta": {
-    "label": "Explore Our Stack",
-    "href": "#stack-section"
+    "text": "Read Intelligence Feed",
+    "label": "Read Intelligence Feed",
+    "href": "/posts"
   },
-  "trustStack": [
-    "Edge AI",
-    "RAG Architectures",
-    "Secure Hosting",
-    "Predictive Marketing",
-    "PyTorch",
-    "Next.js"
-  ],
-  "metrics": [
-    "99.99% Uptime",
-    "Zero-Remote Inference Deployed",
-    "100% Data Sovereignty"
-  ]
+  "trustStack": [],
+  "metrics": []
 }

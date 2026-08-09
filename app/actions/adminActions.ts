@@ -10,6 +10,10 @@ const aboutPath = path.join(dataDir, "aboutContent.json");
 const postsPath = path.join(dataDir, "postsContent.json");
 const inquiriesPath = path.join(dataDir, "inquiries.json");
 const clientsPath = path.join(dataDir, "clientsContent.json");
+const faqPath = path.join(dataDir, "faqContent.json");
+const ecosystemPath = path.join(dataDir, "ecosystemContent.json");
+const systemConfigPath = path.join(dataDir, "systemConfig.json");
+const aboutConfigPath = path.join(dataDir, "aboutConfig.json");
 
 // Ensure inquiries file exists
 async function ensureInquiriesFile() {
@@ -49,6 +53,27 @@ export async function getClientsData() {
   } catch (error) { return []; }
 }
 
+export async function getFaqData() {
+  try {
+    const fileContent = await fs.readFile(faqPath, "utf-8");
+    return JSON.parse(fileContent);
+  } catch (error) { return []; }
+}
+
+export async function getEcosystemData() {
+  try {
+    const fileContent = await fs.readFile(ecosystemPath, "utf-8");
+    return JSON.parse(fileContent);
+  } catch (error) { return []; }
+}
+
+export async function getSystemConfig() {
+  try {
+    const fileContent = await fs.readFile(systemConfigPath, "utf-8");
+    return JSON.parse(fileContent);
+  } catch (error) { return null; }
+}
+
 export async function saveHeroContent(data: any) {
   try {
     await fs.writeFile(heroPath, JSON.stringify(data, null, 2), "utf-8");
@@ -79,6 +104,42 @@ export async function savePostsContent(data: any) {
 export async function saveClientsContent(data: any) {
   try {
     await fs.writeFile(clientsPath, JSON.stringify(data, null, 2), "utf-8");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function saveFaqContent(data: any) {
+  try {
+    await fs.writeFile(faqPath, JSON.stringify(data, null, 2), "utf-8");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function saveEcosystemContent(data: any) {
+  try {
+    await fs.writeFile(ecosystemPath, JSON.stringify(data, null, 2), "utf-8");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function saveSystemConfig(data: any) {
+  try {
+    await fs.writeFile(systemConfigPath, JSON.stringify(data, null, 2), "utf-8");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function saveAboutConfig(data: any) {
+  try {
+    await fs.writeFile(aboutConfigPath, JSON.stringify(data, null, 2), "utf-8");
     return { success: true };
   } catch (error) {
     return { success: false, error: String(error) };

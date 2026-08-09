@@ -1,38 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, Zap } from "lucide-react";
 
-const FAQS = [
-  {
-    question: "Who is Neural Forge for?",
-    answer: "Neural Forge is designed for enterprise engineering teams, AI researchers, and funded startups who require uncompromised performance, strict security, and air-gapped deployments for their autonomous agents."
-  },
-  {
-    question: "Do you offer managed hosting or raw compute?",
-    answer: "We offer both. You can deploy directly to our bare-metal GPU clusters via our CLI, or leverage our managed Swarm Intelligence layer where our agents handle load balancing and deployment logic."
-  },
-  {
-    question: "Is the infrastructure truly air-gapped?",
-    answer: "Yes. Our enterprise tier provides physically isolated hardware with zero external telemetry, ensuring your proprietary models and datasets remain completely secure."
-  },
-  {
-    question: "How does the pricing scale?",
-    answer: "Pricing is completely transparent and based on raw compute cycles (PFLOPs) and network egress. There are no hidden fees for agent orchestration."
-  },
-  {
-    question: "Can we fine-tune models directly on the platform?",
-    answer: "Absolutely. Our pipeline supports LoRA and full-parameter fine-tuning directly on our GPU clusters, with isolated secure storage for your checkpoints."
-  },
-  {
-    question: "Is there a limit to the number of agents in a swarm?",
-    answer: "Technically, no. The swarm dynamically scales based on your compute allocation. We've seen swarms of over 10,000 sub-agents operating concurrently."
-  }
-];
-
 export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [faqs, setFaqs] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/data/faqContent.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => {
+        setFaqs(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to load FAQs:", err);
+        setIsLoading(false);
+      });
+  }, []);
 
   const toggle = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
@@ -74,7 +62,7 @@ export default function FaqSection() {
 
           {/* Right Column: Accordion */}
           <div className="lg:w-2/3 border-t-2 border-black flex flex-col gap-0 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-black">
-            {FAQS.map((faq, idx) => (
+            {!isLoading && faqs.map((faq, idx) => (
               <div key={idx} className="border-b-2 border-black bg-white group hover:bg-[#f8f8f8] transition-colors last:border-b-0">
                 <button 
                   onClick={() => toggle(idx)}

@@ -9,18 +9,33 @@ export default function MetricsStrip() {
   const [gpuCompute, setGpuCompute] = useState(1.84);
   const [requests, setRequests] = useState(2405932);
 
+  const [config, setConfig] = useState<any>(null);
+
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    fetch('/data/systemConfig.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => {
+        setConfig(data.metrics);
+        setActiveAgents(data.metrics.activeAgents || 24);
+        setGpuCompute(data.metrics.gpuCompute || 1.84);
+        setRequests(data.metrics.requests || 2405932);
+      })
+      .catch(err => console.error("Failed to load metrics data:", err));
+  }, []);
+
+  useEffect(() => {
+    if (prefersReducedMotion || !config) return;
     const interval = setInterval(() => {
       setActiveAgents(prev => (Math.random() > 0.8 ? prev + (Math.random() > 0.5 ? 1 : -1) : prev));
       setGpuCompute(prev => {
         const val = prev + (Math.random() * 0.02 - 0.01);
-        return Math.max(1.75, Math.min(1.95, val));
+        const base = config.gpuCompute || 1.84;
+        return Math.max(base - 0.1, Math.min(base + 0.1, val));
       });
       setRequests(prev => prev + Math.floor(Math.random() * 7));
     }, 1500);
     return () => clearInterval(interval);
-  }, [prefersReducedMotion]);
+  }, [prefersReducedMotion, config]);
 
   const METRICS = [
     { label: "ACTIVE AGENTS", value: Math.max(20, activeAgents).toString(), indicator: true },

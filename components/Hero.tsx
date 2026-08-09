@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { ArrowRight, Terminal } from "lucide-react";
@@ -11,6 +11,17 @@ import ScrambleText from "@/components/ScrambleText";
 
 export default function HeroPage() {
   const heroRef = useRef<HTMLElement>(null);
+  const [heroData, setHeroData] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/data/heroContent.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => setHeroData(data))
+      .catch(err => console.error("Error loading hero data:", err));
+  }, []);
+
+  const headlineWords = heroData?.headline ? heroData.headline.split(" ") : ["BUILD.", "CONNECT.", "INFER."];
+  const lastWord = headlineWords.length > 0 ? headlineWords.pop() : "";
   
   return (
     <section 
@@ -67,10 +78,11 @@ export default function HeroPage() {
             </motion.div>
             
             <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[100px] font-black leading-[0.9] tracking-tighter text-black uppercase flex flex-col">
-              <ScrambleText text="BUILD." delay={3.2} />
-              <ScrambleText text="CONNECT." delay={3.6} />
+              {headlineWords.map((word: string, i: number) => (
+                <ScrambleText key={i} text={word} delay={3.2 + i * 0.4} />
+              ))}
               <span className="text-[#ff6b00]">
-                <ScrambleText text="INFER." delay={4.0} />
+                <ScrambleText text={lastWord || ""} delay={3.2 + headlineWords.length * 0.4} />
               </span>
             </h1>
           </div>
@@ -81,7 +93,7 @@ export default function HeroPage() {
             transition={{ duration: 0.5, delay: 0.6 }}
             className="text-lg sm:text-xl text-black/70 max-w-xl font-mono leading-[1.6] tracking-wide mt-8 border-l-4 border-[#ff6b00] pl-6"
           >
-            Advanced AI infrastructure laboratory engineered for researchers, developers, and autonomous agents. Scale GPU computation and deploy specialized inference networks with uncompromised velocity.
+            {heroData?.subheadline || "Advanced AI infrastructure laboratory engineered for researchers, developers, and autonomous agents. Scale GPU computation and deploy specialized inference networks with uncompromised velocity."}
           </motion.p>
 
           <motion.div
@@ -92,21 +104,21 @@ export default function HeroPage() {
           >
             {/* Primary CTA */}
             <motion.div whileHover={{ y: -4, x: -4, boxShadow: "4px 4px 0px 0px rgba(0,0,0,1)" }} transition={{ type: "spring", stiffness: 400, damping: 25 }} className="w-full sm:w-auto">
-              <Link href="/services" className="w-full sm:w-auto px-8 py-5 bg-[#ff6b00] text-white font-mono text-xs uppercase tracking-widest border border-black flex items-center justify-center gap-3 group">
+              <Link href={heroData?.primaryCta?.href || "/services"} className="w-full sm:w-auto px-8 py-5 bg-[#ff6b00] text-white font-mono text-xs uppercase tracking-widest border border-black flex items-center justify-center gap-3 group">
                 <Terminal className="w-4 h-4" />
-                <span>Launch Neural Forge</span>
+                <span>{heroData?.primaryCta?.label || heroData?.primaryCta?.text || "Launch Neural Forge"}</span>
               </Link>
             </motion.div>
 
             {/* Secondary CTA */}
             <motion.div whileHover={{ y: -4, x: -4, boxShadow: "4px 4px 0px 0px rgba(0,0,0,1)" }} transition={{ type: "spring", stiffness: 400, damping: 25 }} className="w-full sm:w-auto">
-              <a
-                href="/#agents"
+              <Link
+                href={heroData?.secondaryCta?.href || "/#agents"}
                 className="w-full sm:w-auto px-8 py-5 bg-white text-black font-mono text-xs uppercase tracking-widest border border-black flex items-center justify-center gap-3 group"
               >
-                <span>Explore Ecosystem</span>
+                <span>{heroData?.secondaryCta?.label || heroData?.secondaryCta?.text || "Explore Ecosystem"}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </Link>
             </motion.div>
           </motion.div>
         </div>

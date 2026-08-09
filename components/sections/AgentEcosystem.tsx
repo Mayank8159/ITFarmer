@@ -1,11 +1,35 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import BrutalistCard from "@/components/cards/BrutalistCard";
 import { Terminal, Lock, Globe } from "lucide-react";
 
 export default function AgentEcosystem() {
+  const [agents, setAgents] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/data/ecosystemContent.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => {
+        setAgents(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to load ecosystem data:", err);
+        setIsLoading(false);
+      });
+  }, []);
+
+  const getIcon = (type: string) => {
+    switch (type?.toLowerCase()) {
+      case "lock": return <Lock className="w-6 h-6 currentColor" />;
+      case "globe": return <Globe className="w-6 h-6 currentColor" />;
+      default: return <Terminal className="w-6 h-6 currentColor" />;
+    }
+  };
+
   return (
     <section id="agents" className="relative w-full py-32 bg-[#f0f0f0] border-b border-black">
       <div className="max-w-[1600px] mx-auto px-6">
@@ -17,26 +41,7 @@ export default function AgentEcosystem() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              icon: <Terminal className="w-6 h-6 text-white" />,
-              title: "Code Generation",
-              desc: "Autonomous agents capable of writing, reviewing, and deploying production-ready code.",
-              accent: "bg-black"
-            },
-            {
-              icon: <Lock className="w-6 h-6 text-white" />,
-              title: "Security Auditing",
-              desc: "Continuous smart contract and infrastructure vulnerability scanning by specialized agents.",
-              accent: "bg-[#ff6b00]"
-            },
-            {
-              icon: <Globe className="w-6 h-6 text-black" />,
-              title: "Web Intelligence",
-              desc: "Real-time web scraping, sentiment analysis, and OSINT gathering agents.",
-              accent: "bg-white border border-black"
-            }
-          ].map((item, idx) => (
+          {!isLoading && agents.map((item, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
@@ -46,7 +51,7 @@ export default function AgentEcosystem() {
             >
               <BrutalistCard className="h-full flex flex-col gap-6" whiteBg>
                 <div className={`w-14 h-14 flex items-center justify-center ${item.accent}`}>
-                  {item.icon}
+                  {getIcon(item.icon)}
                 </div>
                 <div>
                   <h3 className="text-2xl font-black text-black uppercase mb-3">{item.title}</h3>

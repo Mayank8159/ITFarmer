@@ -1,50 +1,26 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight, ChevronLeft, Quote } from "lucide-react";
 
-const TESTIMONIALS = [
-  {
-    name: "Elena Rostova",
-    role: "CTO, Vanguard Data",
-    content: "Integrating Neural Forge into our data pipeline reduced our inference latency by 40%. The brutalist simplicity of the API hides an incredibly robust and scalable infrastructure underneath. It has completely transformed our deployment strategy.",
-    initials: "ER"
-  },
-  {
-    name: "Marcus Webb",
-    role: "Lead Engineer, Synthetix",
-    content: "The swarm intelligence architecture is unlike anything we've worked with. The autonomous agents handle our smart contract auditing flawlessly. We went from manually reviewing edge cases for weeks to letting the swarm handle it in hours.",
-    initials: "MW"
-  },
-  {
-    name: "Dr. Sarah Chen",
-    role: "Head of AI, Nexus Corp",
-    content: "We demanded an air-gapped, highly secure inference cluster. Neural Forge delivered exactly that. Their GPU compute nodes are ridiculously fast, and the dashboard gives us total transparency into the network's health.",
-    initials: "SC"
-  },
-  {
-    name: "Julian Vance",
-    role: "Founder, Horizon Labs",
-    content: "I was skeptical of the brutalist approach at first, but it just works. No bloated UI, no confusing telemetry. Just raw, unadulterated performance. It's the most reliable infrastructure we've ever built upon.",
-    initials: "JV"
-  },
-  {
-    name: "Viktor Drazen",
-    role: "CEO, Cyberdyne Logistics",
-    content: "The web intelligence agents completely automated our global supply chain scraping. What used to take a team of 15 data scientists now happens autonomously in real-time.",
-    initials: "VD"
-  },
-  {
-    name: "Amara Singh",
-    role: "VP Engineering, Quantum Finance",
-    content: "We switched to Neural Forge for our high-frequency trading models. The absolute bare-metal speed and strict zero-telemetry policy made it a no-brainer. Incredible architecture.",
-    initials: "AS"
-  }
-];
-
 export default function TestimonialsSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/data/clientsContent.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => {
+        setTestimonials(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error("Error loading clients data:", err);
+        setIsLoading(false);
+      });
+  }, []);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -57,6 +33,14 @@ export default function TestimonialsSection() {
       scrollRef.current.scrollBy({ left: 400, behavior: 'smooth' });
     }
   };
+
+  if (isLoading) {
+    return (
+      <section className="relative w-full bg-[#e5e5e5] border-t-2 border-black py-24 z-10 overflow-hidden flex items-center justify-center min-h-[400px]">
+        <div className="font-mono text-xs uppercase tracking-widest text-black/50 animate-pulse">Loading Testimonials...</div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative w-full bg-[#e5e5e5] border-t-2 border-black py-24 z-10 overflow-hidden">
@@ -94,9 +78,9 @@ export default function TestimonialsSection() {
           ref={scrollRef}
           className="flex gap-8 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-12 w-full"
         >
-          {TESTIMONIALS.map((test, idx) => (
+          {testimonials.map((test, idx) => (
             <motion.div 
-              key={idx}
+              key={test.id || idx}
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -105,8 +89,12 @@ export default function TestimonialsSection() {
             >
               {/* Card Header (Profile) */}
               <div className="flex items-center gap-6 p-6 border-b-2 border-black bg-[#f8f8f8]">
-                <div className="w-16 h-16 bg-black flex items-center justify-center text-white font-black text-xl">
-                  {test.initials}
+                <div className="w-16 h-16 border-2 border-black bg-black flex items-center justify-center text-white font-black text-xl overflow-hidden relative" style={{ backgroundColor: test.glow || '#000' }}>
+                  {test.avatar ? (
+                    <img src={test.avatar} alt={test.name} className="w-full h-full object-cover grayscale contrast-125 mix-blend-luminosity" />
+                  ) : (
+                    test.name ? test.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'UI'
+                  )}
                 </div>
                 <div>
                   <h4 className="font-black text-2xl uppercase text-black">{test.name}</h4>

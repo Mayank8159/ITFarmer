@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Copy, Check, Terminal } from "lucide-react";
 
@@ -47,6 +47,14 @@ export default function ApiPlayground() {
   const [copied, setCopied] = useState(false);
   const [running, setRunning] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
+  const [config, setConfig] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/data/systemConfig.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => setConfig(data.apiPlayground))
+      .catch(err => console.error("Failed to load api config:", err));
+  }, []);
 
   const handleCopy = async () => {
     try {
@@ -85,7 +93,7 @@ export default function ApiPlayground() {
         <div className="mb-12">
           <span className="font-mono text-xs uppercase tracking-widest text-[#ff6b00] mb-4 block font-bold">DEVELOPER EXPERIENCE</span>
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-black uppercase max-w-2xl leading-[0.9]">
-            INTEGRATE IN SECONDS.
+            {config?.title || "INTEGRATE IN SECONDS."}
           </h2>
         </div>
 
