@@ -22,6 +22,8 @@ export default function ScrambleText({
     let timeout: NodeJS.Timeout;
     let frameId: number;
 
+    let loopInterval: NodeJS.Timeout;
+
     const startAnimation = () => {
       let iteration = 0;
       const totalFrames = (duration * 60);
@@ -51,10 +53,14 @@ export default function ScrambleText({
       animate();
     };
 
-    timeout = setTimeout(startAnimation, delay * 1000);
+    timeout = setTimeout(() => {
+      startAnimation();
+      loopInterval = setInterval(startAnimation, 10000); // Re-scramble every 10 seconds
+    }, delay * 1000);
 
     return () => {
       clearTimeout(timeout);
+      clearInterval(loopInterval);
       cancelAnimationFrame(frameId);
     };
   }, [text, delay, duration]);
