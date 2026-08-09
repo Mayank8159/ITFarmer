@@ -4,7 +4,7 @@
     "name": "Elena Rostova",
     "role": "CTO, Vanguard Data",
     "content": "Integrating Neural Forge into our data pipeline reduced our inference latency by 40%. The brutalist simplicity of the API hides an incredibly robust and scalable infrastructure underneath. It has completely transformed our deployment strategy.",
-    "avatar": "",
+    "avatar": "/avatars/elena_rostova.png",
     "glow": "rgba(255, 107, 0, 1)"
   },
   {
@@ -12,7 +12,7 @@
     "name": "Marcus Webb",
     "role": "Lead Engineer, Synthetix",
     "content": "The swarm intelligence architecture is unlike anything we've worked with. The autonomous agents handle our smart contract auditing flawlessly. We went from manually reviewing edge cases for weeks to letting the swarm handle it in hours.",
-    "avatar": "",
+    "avatar": "/avatars/marcus_webb.png",
     "glow": "rgba(255, 107, 0, 1)"
   },
   {
@@ -20,7 +20,7 @@
     "name": "Dr. Sarah Chen",
     "role": "Head of AI, Nexus Corp",
     "content": "We demanded an air-gapped, highly secure inference cluster. Neural Forge delivered exactly that. Their GPU compute nodes are ridiculously fast, and the dashboard gives us total transparency into the network's health.",
-    "avatar": "",
+    "avatar": "/avatars/sarah_chen.png",
     "glow": "rgba(255, 107, 0, 1)"
   },
   {
@@ -28,7 +28,7 @@
     "name": "Julian Vance",
     "role": "Founder, Horizon Labs",
     "content": "I was skeptical of the brutalist approach at first, but it just works. No bloated UI, no confusing telemetry. Just raw, unadulterated performance. It's the most reliable infrastructure we've ever built upon.",
-    "avatar": "",
+    "avatar": "/avatars/julian_vance.png",
     "glow": "rgba(255, 107, 0, 1)"
   },
   {
@@ -36,7 +36,7 @@
     "name": "Viktor Drazen",
     "role": "CEO, Cyberdyne Logistics",
     "content": "The web intelligence agents completely automated our global supply chain scraping. What used to take a team of 15 data scientists now happens autonomously in real-time.",
-    "avatar": "",
+    "avatar": "/avatars/viktor_drazen.png",
     "glow": "rgba(255, 107, 0, 1)"
   },
   {
@@ -44,7 +44,7 @@
     "name": "Amara Singh",
     "role": "VP Engineering, Quantum Finance",
     "content": "We switched to Neural Forge for our high-frequency trading models. The absolute bare-metal speed and strict zero-telemetry policy made it a no-brainer. Incredible architecture.",
-    "avatar": "",
+    "avatar": "/avatars/amara_singh.png",
     "glow": "rgba(255, 107, 0, 1)"
   }
 ]

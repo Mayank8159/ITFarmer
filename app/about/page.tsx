@@ -195,8 +195,8 @@ export default function AboutPage(): JSX.Element {
                   
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-black">
                     <div className="flex flex-col gap-2 w-full">
-                      <a href={`mailto:team.techserve55@gmail.com`} className="text-[10px] font-mono font-bold text-black hover:text-[#ff6b00] flex items-center gap-2">
-                        <Mail className="w-4 h-4" /> team.techserve55@gmail.com
+                      <a href={`mailto:${founder.email || 'team.techserve55@gmail.com'}`} className="text-[10px] font-mono font-bold text-black hover:text-[#ff6b00] flex items-center gap-2">
+                        <Mail className="w-4 h-4" /> {founder.email || 'team.techserve55@gmail.com'}
                       </a>
                     </div>
                     <div className="flex gap-4">

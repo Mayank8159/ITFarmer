@@ -23,5 +23,11 @@
     "C++ KERNELS COMPILED",
     "HIPAA COMPLIANT TELEMETRY",
     "SUB-10MS LATENCY"
-  ]
+  ],
+  "contact": {
+    "email": "team.techserve55@gmail.com",
+    "github": "https://github.com/Techserve55",
+    "twitter": "https://twitter.com",
+    "discord": "https://discord.com"
+  }
 }

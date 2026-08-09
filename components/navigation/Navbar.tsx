@@ -124,7 +124,18 @@ export default function Navbar() {
               }
 
               return (
-                <Link key={link.label} href={link.href} className={linkClasses}>
+                <Link 
+                  key={link.label} 
+                  href={link.href} 
+                  className={linkClasses}
+                  onClick={(e) => {
+                    if (pathname === "/" && link.href === "/") {
+                      e.preventDefault();
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      window.history.pushState(null, '', '/');
+                    }
+                  }}
+                >
                   {bracketLeft} {link.label} {bracketRight}
                   {isActive && (
                     <motion.div
@@ -208,10 +219,17 @@ export default function Navbar() {
                         {link.label}
                       </a>
                     ) : (
-                      <Link
+                        <Link
                         href={link.href}
                         className="text-2xl font-mono text-black hover:pl-4 transition-all duration-300 block border-b border-black/10 pb-4"
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={(e) => {
+                          setMobileMenuOpen(false);
+                          if (pathname === "/" && link.href === "/") {
+                            e.preventDefault();
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            window.history.pushState(null, '', '/');
+                          }
+                        }}
                       >
                         {link.label}
                       </Link>

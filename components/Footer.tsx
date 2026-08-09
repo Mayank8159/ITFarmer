@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Terminal, Github, Twitter, Disc, X } from "lucide-react";
 import DistortedText from "@/components/DistortedText";
@@ -8,6 +8,21 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Footer() {
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | null>(null);
+  const [config, setConfig] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/data/systemConfig.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => setConfig(data))
+      .catch(err => console.error(err));
+  }, []);
+
+  const contact = config?.contact || {
+    email: "team.techserve55@gmail.com",
+    github: "https://github.com/Techserve55",
+    twitter: "https://twitter.com",
+    discord: "https://discord.com"
+  };
 
   return (
     <>
@@ -43,26 +58,26 @@ export default function Footer() {
               <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">DEVELOPERS</h4>
               <Link href="/posts" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Documentation</Link>
               <Link href="/services" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">API Reference</Link>
-              <a href="https://github.com/Techserve55" target="_blank" rel="noopener noreferrer" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">GitHub Repository</a>
+              <a href={contact.github} target="_blank" rel="noopener noreferrer" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">GitHub Repository</a>
             </div>
 
             <div className="flex flex-col gap-4">
               <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">RESOURCES</h4>
               <Link href="/about" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Research</Link>
               <Link href="/posts" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Blog</Link>
-              <a href="mailto:team.techserve55@gmail.com" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Contact</a>
+              <a href={`mailto:${contact.email}`} className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Contact</a>
             </div>
 
             <div className="flex flex-col gap-4">
               <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">SOCIAL</h4>
               <div className="flex gap-4">
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
+                <a href={contact.twitter} target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
                   <Twitter className="w-5 h-5" />
                 </a>
-                <a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
+                <a href={contact.discord} target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
                   <Disc className="w-5 h-5" />
                 </a>
-                <a href="https://github.com/Techserve55" target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
+                <a href={contact.github} target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
                   <Github className="w-5 h-5" />
                 </a>
               </div>

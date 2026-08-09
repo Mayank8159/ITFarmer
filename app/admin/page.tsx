@@ -592,6 +592,11 @@ export default function AdminDashboard() {
                               <Field label="NAME"><input type="text" value={dev.name || ""} onChange={e => { const n = [...aboutData]; n[index].name = e.target.value; setAboutData(n); }} className={inputClass} placeholder="John Doe" /></Field>
                               <Field label="ROLE"><input type="text" value={dev.role || ""} onChange={e => { const n = [...aboutData]; n[index].role = e.target.value; setAboutData(n); }} className={inputClass} placeholder="Security Architect" /></Field>
                               <Field label="DESCRIPTION"><textarea value={dev.description || ""} onChange={e => { const n = [...aboutData]; n[index].description = e.target.value; setAboutData(n); }} className={textareaClass} placeholder="Brief bio..." /></Field>
+                              <Field label="EMAIL"><input type="email" value={dev.email || ""} onChange={e => { const n = [...aboutData]; n[index].email = e.target.value; setAboutData(n); }} className={inputClass} placeholder="dev@company.com" /></Field>
+                              <div className="grid md:grid-cols-2 gap-4">
+                                <Field label="GITHUB"><input type="text" value={dev.github || ""} onChange={e => { const n = [...aboutData]; n[index].github = e.target.value; setAboutData(n); }} className={inputClass} placeholder="https://github.com/..." /></Field>
+                                <Field label="LINKEDIN"><input type="text" value={dev.linkedin || ""} onChange={e => { const n = [...aboutData]; n[index].linkedin = e.target.value; setAboutData(n); }} className={inputClass} placeholder="https://linkedin.com/in/..." /></Field>
+                              </div>
                             </div>
                           </div>
                         </motion.div>
@@ -913,6 +918,26 @@ export default function AdminDashboard() {
                       rows={6}
                     />
                   </Field>
+                </div>
+
+                <div className="brutalist-panel-white brutalist-border p-8 shadow-[8px_8px_0px_var(--text-primary)]">
+                  <h3 className="text-xl font-bold uppercase tracking-tighter mb-6 border-b border-[var(--border-color)] pb-2 flex items-center gap-2">
+                    <Users className="w-5 h-5" /> Main Site Contacts
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Field label="MAIN CONTACT EMAIL">
+                      <input type="email" value={systemData.contact?.email || ""} onChange={e => setSystemData({ ...systemData, contact: { ...systemData.contact, email: e.target.value } })} className={inputClass} />
+                    </Field>
+                    <Field label="GITHUB LINK">
+                      <input type="text" value={systemData.contact?.github || ""} onChange={e => setSystemData({ ...systemData, contact: { ...systemData.contact, github: e.target.value } })} className={inputClass} />
+                    </Field>
+                    <Field label="TWITTER LINK">
+                      <input type="text" value={systemData.contact?.twitter || ""} onChange={e => setSystemData({ ...systemData, contact: { ...systemData.contact, twitter: e.target.value } })} className={inputClass} />
+                    </Field>
+                    <Field label="DISCORD LINK">
+                      <input type="text" value={systemData.contact?.discord || ""} onChange={e => setSystemData({ ...systemData, contact: { ...systemData.contact, discord: e.target.value } })} className={inputClass} />
+                    </Field>
+                  </div>
                 </div>
               </motion.div>
             )}

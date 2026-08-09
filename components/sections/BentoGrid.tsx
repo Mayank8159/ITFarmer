@@ -56,39 +56,31 @@ export default function BentoGrid() {
                 </div>
               </div>
               
-              <div className="flex-1 relative w-full mt-4 border border-black bg-[#e5e5e5] p-6 flex flex-col justify-end">
-                 {/* Brutalist compute graph */}
-                 <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden flex items-end">
-                   <motion.div 
-                     animate={{ x: ["0%", "-50%"] }} 
-                     transition={{ ease: "linear", duration: 4, repeat: Infinity }}
-                     className="w-[200%] h-full flex"
-                   >
-                     {/* Graph 1 */}
-                     <svg className="w-1/2 h-full preserve-3d" viewBox="0 0 100 100" preserveAspectRatio="none">
-                       <path 
-                         d="M0,100 L0,50 L20,70 L40,30 L60,80 L80,20 L100,50 L100,100 Z" 
-                         fill="black" 
-                       />
-                     </svg>
-                     {/* Graph 2 (Seamless clone) */}
-                     <svg className="w-1/2 h-full preserve-3d" viewBox="0 0 100 100" preserveAspectRatio="none">
-                       <path 
-                         d="M0,100 L0,50 L20,70 L40,30 L60,80 L80,20 L100,50 L100,100 Z" 
-                         fill="black" 
-                       />
-                     </svg>
-                   </motion.div>
+              <div className="flex-1 relative w-full mt-4 border border-black bg-[#111] flex flex-col justify-end overflow-hidden min-h-[240px]">
+                 {/* Grid Background */}
+                 <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+                 
+                 {/* Premium Smooth Equalizer Graph */}
+                 <div className="absolute inset-0 flex items-end gap-1 px-4 md:px-8 pb-[88px] opacity-90">
+                   {[...Array(24)].map((_, i) => (
+                     <motion.div 
+                       key={i}
+                       className="flex-1 bg-gradient-to-t from-[#ff6b00] to-transparent rounded-t-sm"
+                       animate={{ height: ['15%', `${30 + Math.random() * 65}%`, '15%'] }}
+                       transition={{ duration: 1.5 + Math.random() * 2, repeat: Infinity, ease: 'easeInOut' }}
+                     />
+                   ))}
                  </div>
                  
-                 <div className="relative z-10 flex gap-12 border-t border-black pt-4">
+                 {/* Bottom Data Bar */}
+                 <div className="relative z-10 flex flex-wrap gap-6 md:gap-12 border-t border-white/20 bg-black/80 backdrop-blur-xl p-4 md:p-6 w-full">
                    <div>
-                     <div className="font-mono text-[10px] uppercase tracking-widest text-black/60 mb-1 font-bold">UTILIZATION</div>
-                     <div className="text-4xl font-black text-black">92.4%</div>
+                     <div className="font-mono text-[10px] uppercase tracking-widest text-white/60 mb-1 font-bold">UTILIZATION</div>
+                     <div className="text-2xl md:text-4xl font-black text-white">92.4%</div>
                    </div>
                    <div>
-                     <div className="font-mono text-[10px] uppercase tracking-widest text-black/60 mb-1 font-bold">THROUGHPUT</div>
-                     <div className="text-4xl font-black text-black">1.8 PFLOP/s</div>
+                     <div className="font-mono text-[10px] uppercase tracking-widest text-white/60 mb-1 font-bold">THROUGHPUT</div>
+                     <div className="text-2xl md:text-4xl font-black text-white">1.8 PFLOP/s</div>
                    </div>
                  </div>
               </div>
@@ -113,39 +105,62 @@ export default function BentoGrid() {
                 <Network className="w-4 h-4 text-white" />
               </div>
               
-              <div className="flex-1 relative flex items-center justify-center border border-black/10 bg-[#f8f8f8] mb-4">
+              <div className="flex-1 relative flex items-center justify-center border border-black bg-[#111] mb-4 overflow-hidden min-h-[240px]">
+                {/* Grid Background */}
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at center, #555 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
+                
                 {/* Agent Nodes */}
-                <div className="relative w-32 h-32 flex items-center justify-center">
+                <div className="relative w-full h-full flex items-center justify-center">
+                  {/* Orbiting rings */}
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ ease: "linear", duration: 20, repeat: Infinity }}
+                    className="absolute w-40 h-40 md:w-56 md:h-56 rounded-full border border-white/20 border-dashed" 
+                  />
+                  <motion.div 
+                    animate={{ rotate: -360 }}
+                    transition={{ ease: "linear", duration: 15, repeat: Infinity }}
+                    className="absolute w-28 h-28 md:w-40 md:h-40 rounded-full border border-[#ff6b00]/40" 
+                  />
+                  
+                  {/* Center Node */}
+                  <motion.div 
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ ease: "easeInOut", duration: 3, repeat: Infinity }}
+                    className="absolute w-8 h-8 md:w-10 md:h-10 bg-white flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.5)] z-10"
+                  >
+                    <div className="w-2 h-2 md:w-3 md:h-3 bg-black" />
+                  </motion.div>
+
+                  {/* Satellite Nodes */}
                   <motion.div 
                     animate={{ rotate: 360 }}
                     transition={{ ease: "linear", duration: 10, repeat: Infinity }}
-                    className="w-16 h-16 border-2 border-black" 
-                  />
+                    className="absolute w-40 h-40 md:w-56 md:h-56 flex items-start justify-center"
+                  >
+                    <motion.div 
+                      animate={{ scale: [1, 1.5, 1], opacity: [1, 0.8, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="w-3 h-3 bg-[#ff6b00] shadow-[0_0_15px_#ff6b00] -mt-1.5" 
+                    />
+                  </motion.div>
+
                   <motion.div 
-                    animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute w-2 h-2 bg-[#ff6b00] top-4" 
-                  />
-                  <motion.div 
-                    animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                    className="absolute w-2 h-2 bg-black bottom-4 left-4" 
-                  />
-                  <motion.div 
-                    animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                    className="absolute w-2 h-2 bg-black bottom-4 right-4" 
-                  />
-                  
-                  {/* Connectors */}
-                  <div className="absolute w-px h-8 bg-black/20 top-6" />
-                  <div className="absolute h-px w-8 bg-black/20 bottom-8 left-6 rotate-45" />
-                  <div className="absolute h-px w-8 bg-black/20 bottom-8 right-6 -rotate-45" />
+                    animate={{ rotate: -360 }}
+                    transition={{ ease: "linear", duration: 12, repeat: Infinity }}
+                    className="absolute w-28 h-28 md:w-40 md:h-40 flex items-end justify-start"
+                  >
+                    <motion.div 
+                      animate={{ scale: [1, 1.3, 1], opacity: [0.8, 1, 0.8] }}
+                      transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+                      className="w-2.5 h-2.5 md:w-3 md:h-3 bg-white shadow-[0_0_10px_white] -mb-1 -ml-1" 
+                    />
+                  </motion.div>
                 </div>
               </div>
 
-              <div>
-                <h3 className="text-xl font-black text-black mb-1 uppercase">{config?.card2Title || "Agent Network"}</h3>
+              <div className="mt-auto">
+                <h3 className="text-xl font-black text-black mb-1 uppercase leading-tight pr-4">{config?.card2Title || "Agent Network"}</h3>
                 <p className="text-black/60 text-xs font-mono">{config?.card2Desc || "Autonomous swarms interacting via secure subnets."}</p>
               </div>
             </BrutalistCard>

@@ -1,32 +1,27 @@
 [
   {
     "id": "1",
-    "question": "Who is Neural Forge for?",
-    "answer": "Neural Forge is designed for enterprise engineering teams, AI researchers, and funded startups who require uncompromised performance, strict security, and air-gapped deployments for their autonomous agents."
+    "question": "What services do you provide?",
+    "answer": "We specialize in end-to-end IT solutions, including full-stack web platform development, custom enterprise software architecture, and the comprehensive development and integration of complex multi-agent AI loops."
   },
   {
     "id": "2",
-    "question": "Do you offer managed hosting or raw compute?",
-    "answer": "We offer both. You can deploy directly to our bare-metal GPU clusters via our CLI, or leverage our managed Swarm Intelligence layer where our agents handle load balancing and deployment logic."
+    "question": "How fast can you assemble an engineering squad?",
+    "answer": "Within 72 hours. Our network maintains a pre-vetted pool of elite engineers ready to deploy immediately into your specific domain."
   },
   {
     "id": "3",
-    "question": "Is the infrastructure truly air-gapped?",
-    "answer": "Yes. Our enterprise tier provides physically isolated hardware with zero external telemetry, ensuring your proprietary models and datasets remain completely secure."
+    "question": "Do you offer machine learning training?",
+    "answer": "Yes. We execute all types of machine learning model training and fine-tuning, provided the client offers or provisions the necessary compute infrastructure."
   },
   {
     "id": "4",
-    "question": "How does the pricing scale?",
-    "answer": "Pricing is completely transparent and based on raw compute cycles (PFLOPs) and network egress. There are no hidden fees for agent orchestration."
+    "question": "What is your pricing model?",
+    "answer": "We operate on a sprint-based execution model or a dedicated retainer, depending on the scale and volatility of your project requirements."
   },
   {
     "id": "5",
-    "question": "Can we fine-tune models directly on the platform?",
-    "answer": "Absolutely. Our pipeline supports LoRA and full-parameter fine-tuning directly on our GPU clusters, with isolated secure storage for your checkpoints."
-  },
-  {
-    "id": "6",
-    "question": "Is there a limit to the number of agents in a swarm?",
-    "answer": "Technically, no. The swarm dynamically scales based on your compute allocation. We've seen swarms of over 10,000 sub-agents operating concurrently."
+    "question": "Do you handle cloud infrastructure as well?",
+    "answer": "Yes, we manage end-to-end CI/CD pipelines, secure database provisioning, and highly optimized cloud environments (AWS, GCP, Azure) to support the applications we develop."
   }
 ]

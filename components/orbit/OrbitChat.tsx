@@ -59,10 +59,13 @@ export default function OrbitChat() {
       }
 
       const data = await res.json();
+      const rawContent = data.choices?.[0]?.message?.content || "No response received.";
+      const cleanContent = rawContent.replace(/[*`#]/g, '');
+
       const botMessage: Message = { 
         id: Math.random().toString(), 
         role: "assistant", 
-        content: data.choices?.[0]?.message?.content || "No response received." 
+        content: cleanContent
       };
       setHistory((prev) => [...prev, botMessage]);
     } catch (err) {

@@ -5,7 +5,7 @@
     "description": "An automated code transformation pipeline designed to liberate deep learning workloads from proprietary hardware locks. Analyzes NVIDIA CUDA kernel calls and automatically transpiles them to AMD HIP-compliant C++ codebases. Reduces migration friction for enterprise teams transitioning to AMD GPU clusters, saving months of manual code rewrites.",
     "category": "Project",
     "date": "2026-08-09",
-    "image": ""
+    "image": "/projects/rocm_bridge.png"
   },
   {
     "id": "2",
@@ -13,7 +13,7 @@
     "description": "An end-to-end telemetry system capturing real-time biometric metrics and executing automated anomaly detection. Built with a decoupled FastAPI microservice backend connected to a Next.js dashboard via secure WebSockets for sub-second alert dispatch. Demonstrates production readiness for HIPAA-compliant data pipelines and live streaming analytics.",
     "category": "Project",
     "date": "2026-08-09",
-    "image": ""
+    "image": "/projects/vitalguard_ai.png"
   },
   {
     "id": "3",
@@ -21,7 +21,7 @@
     "description": "A secure financial routing and transaction logging API built for high reliability under concurrent load. Utilizes asynchronous Python (asyncio + motor), custom JWT authentication middleware, strict rate-limiting, and deployment pipeline automation. Proves capability in handling high-security user data, transactional integrity, and scalable cloud deployments.",
     "category": "Project",
     "date": "2026-08-09",
-    "image": ""
+    "image": "/projects/zorvyn_finance.png"
   },
   {
     "id": "4",
@@ -29,7 +29,7 @@
     "description": "A full-stack IT service platform handling public client requests, dynamic content feeds, and real-time administrative notification feeds. Next.js 16 App Router frontend paired with a FastAPI/MongoDB backend using persistent WebSocket channels for instant admin telemetry. Shows end-to-end client management capability and live state synchronization across distributed web clients.",
     "category": "Project",
     "date": "2026-08-09",
-    "image": ""
+    "image": "/projects/itfarmer_platform.png"
   },
   {
     "id": "5",
@@ -37,7 +37,7 @@
     "description": "An embedded hardware-software integration interface designed to orchestrate multi-axis motor movements and sensor readings. Microcontroller programming linked with custom radar/flame sensor inputs, driving synchronous servo and motor arrays via optimized low-latency signal loops. Proves cross-domain engineering competence bridging high-level software down to physical hardware execution.",
     "category": "Project",
     "date": "2026-08-09",
-    "image": ""
+    "image": "/projects/humanoid_telemetry.png"
   },
   {
     "id": "6",
@@ -45,7 +45,7 @@
     "description": "A modular full-stack web system optimized for fast product catalog indexing, dynamic client state management, and API routing. Modular component architecture with clean REST API abstractions connecting modern client views to scalable backend persistence layers. Highlights UI component engineering, clean architectural patterns, and reusable client-side data fetching strategies.",
     "category": "Project",
     "date": "2026-08-09",
-    "image": ""
+    "image": "/projects/bazaarlink.png"
   },
   {
     "id": "7",

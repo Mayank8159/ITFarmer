@@ -89,7 +89,7 @@ export default function TestimonialsSection() {
             >
               {/* Card Header (Profile) */}
               <div className="flex items-center gap-6 p-6 border-b-2 border-black bg-[#f8f8f8]">
-                <div className="w-16 h-16 border-2 border-black bg-black flex items-center justify-center text-white font-black text-xl overflow-hidden relative" style={{ backgroundColor: test.glow || '#000' }}>
+                <div className="w-24 h-24 border-2 border-black bg-black flex items-center justify-center text-white font-black text-3xl overflow-hidden relative shrink-0" style={{ backgroundColor: test.glow || '#000' }}>
                   {test.avatar ? (
                     <img src={test.avatar} alt={test.name} className="w-full h-full object-cover grayscale contrast-125 mix-blend-luminosity" />
                   ) : (
@@ -97,8 +97,8 @@ export default function TestimonialsSection() {
                   )}
                 </div>
                 <div>
-                  <h4 className="font-black text-2xl uppercase text-black">{test.name}</h4>
-                  <p className="font-mono text-xs uppercase tracking-widest text-black/60 font-bold">{test.role}</p>
+                  <h4 className="font-black text-2xl md:text-3xl uppercase text-black">{test.name}</h4>
+                  <p className="font-mono text-xs md:text-sm uppercase tracking-widest text-black/60 font-bold mt-1">{test.role}</p>
                 </div>
               </div>
               
