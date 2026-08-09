@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Github, Menu, X, Terminal } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useCurrency } from "@/components/CurrencyContext";
 
 const NAV_LINKS = [
   { label: "Platform", href: "/" },
@@ -19,6 +20,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeHash, setActiveHash] = useState("");
   const pathname = usePathname();
+  const { currency, toggleCurrency } = useCurrency();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -138,6 +140,12 @@ export default function Navbar() {
 
           {/* RIGHT: Actions */}
           <div className="flex items-center gap-6 bg-white border border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-2 py-1">
+            <button 
+              onClick={toggleCurrency}
+              className="hidden sm:flex items-center justify-center font-mono text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 border border-black hover:bg-black hover:text-white transition-colors"
+            >
+              {currency}
+            </button>
             <a href="https://github.com" target="_blank" rel="noreferrer" className="hidden sm:flex text-black hover:text-[#ff6b00] transition-colors p-2">
               <Github className="w-4 h-4" />
             </a>

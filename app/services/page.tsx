@@ -4,12 +4,17 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Terminal, ShieldCheck, Zap, ArrowRight, Loader2, Check } from "lucide-react";
 import BrutalistCard from "@/components/cards/BrutalistCard";
+import { useCurrency } from "@/components/CurrencyContext";
 
 export default function ServicesPage() {
-  const [step, setStep] = useState<"input" | "loading" | "success">("input");
+  const [step, setStep] = useState<"input" | "form" | "loading" | "success">("input");
   
   const [selectedScope, setSelectedScope] = useState<string | null>(null);
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
+  
+  const [formData, setFormData] = useState({ name: "", email: "", details: "" });
+  
+  const { formatBudget } = useCurrency();
 
   const SCOPES = [
     { id: "01", label: "Multi-Agent AI / RAG Pipeline" },
@@ -26,6 +31,12 @@ export default function ServicesPage() {
 
   const handleExecute = () => {
     if (!selectedScope || !selectedBudget) return;
+    setStep("form");
+  };
+
+  const handleSubmitForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.details) return;
     setStep("loading");
     
     // Simulate backend processing
@@ -112,7 +123,7 @@ export default function ServicesPage() {
                             : "bg-transparent border-white/20 text-white/80 hover:border-white/50"
                         }`}
                       >
-                        {budget}
+                        {formatBudget(budget)}
                       </button>
                     ))}
                   </div>
@@ -123,7 +134,67 @@ export default function ServicesPage() {
                       disabled={!selectedScope || !selectedBudget}
                       className="px-8 py-4 bg-[#00ff41] text-black font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-colors disabled:opacity-30 disabled:hover:bg-[#00ff41]"
                     >
-                      [EXECUTE REQUEST] <ArrowRight className="w-5 h-5" />
+                      [CONTINUE] <ArrowRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
+              {step === "form" && (
+                <motion.div 
+                  key="form"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="flex flex-col h-full"
+                >
+                  <div className="mb-6">
+                    <p className="text-[#00ff41] text-sm md:text-base mb-2 font-bold">neuralforge@hub:~$ <span className="text-white font-normal">provide_details --client</span></p>
+                    <p className="text-white/60 text-xs mt-2 uppercase tracking-widest border-l-2 border-[#ff6b00] pl-3">
+                      Enter payload context below:
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleSubmitForm} className="flex flex-col gap-4 mb-8">
+                    <input 
+                      type="text" 
+                      placeholder="COMMANDER_NAME" 
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30"
+                    />
+                    <input 
+                      type="email" 
+                      placeholder="SECURE_UPLINK (EMAIL)" 
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30"
+                    />
+                    <textarea 
+                      placeholder="PROJECT_PARAMETERS (DETAILS)..." 
+                      required
+                      rows={4}
+                      value={formData.details}
+                      onChange={(e) => setFormData({...formData, details: e.target.value})}
+                      className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30 resize-none"
+                    />
+                  </form>
+
+                  <div className="flex justify-between mt-auto border-t border-white/10 pt-6">
+                    <button
+                      onClick={() => setStep("input")}
+                      className="px-6 py-4 bg-transparent border border-white/20 text-white/60 font-bold uppercase tracking-widest hover:border-white hover:text-white transition-colors"
+                    >
+                      [BACK]
+                    </button>
+                    <button
+                      onClick={handleSubmitForm}
+                      disabled={!formData.name || !formData.email || !formData.details}
+                      className="px-8 py-4 bg-[#ff6b00] text-black font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-colors disabled:opacity-30 disabled:hover:bg-[#ff6b00]"
+                    >
+                      [DEPLOY PAYLOAD] <ArrowRight className="w-5 h-5" />
                     </button>
                   </div>
                 </motion.div>

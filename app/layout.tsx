@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import OrbitChat from "@/components/orbit/OrbitChat";
 import LoadingScreen from "@/components/LoadingScreen";
 import CustomCursor from "@/components/CustomCursor";
+import { CurrencyProvider } from "@/components/CurrencyContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -62,15 +63,17 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${spaceMono.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#e5e5e5] min-h-screen text-black cursor-none`}
       >
-        <CustomCursor />
-        <LoadingScreen />
-        <ScrollProvider>
-          <ShortcutListener />
-          <Navbar />
-          {children}
-          <Footer />
-          <OrbitChat />
-        </ScrollProvider>
+        <CurrencyProvider>
+          <CustomCursor />
+          <LoadingScreen />
+          <ScrollProvider>
+            <ShortcutListener />
+            <Navbar />
+            {children}
+            <Footer />
+            <OrbitChat />
+          </ScrollProvider>
+        </CurrencyProvider>
       </body>
     </html>
   );
