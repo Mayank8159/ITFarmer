@@ -2,9 +2,9 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Zap, Terminal, ShieldCheck, Database, Cpu } from "lucide-react";
+import { Zap, Terminal, ShieldCheck, Database, Cpu, Globe, Lock, Server, Activity, Network } from "lucide-react";
 
-const MARQUEE_ITEMS = [
+const PRIMARY_ITEMS = [
   { text: "AUTONOMOUS SWARMS", icon: <Cpu className="w-6 h-6 text-[#ff6b00]" /> },
   { text: "LOW-LATENCY INFERENCE", icon: <Zap className="w-6 h-6 text-[#ff6b00]" /> },
   { text: "1024-NODE CLUSTERS", icon: <Database className="w-6 h-6 text-[#ff6b00]" /> },
@@ -12,10 +12,20 @@ const MARQUEE_ITEMS = [
   { text: "NEURAL DEPLOYMENT", icon: <Terminal className="w-6 h-6 text-[#ff6b00]" /> },
 ];
 
-// Duplicate items to ensure smooth infinite scrolling
-const SCROLL_ITEMS = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+const SECONDARY_ITEMS = [
+  { text: "GLOBAL TELEMETRY", icon: <Globe className="w-6 h-6 text-[#ff6b00]" /> },
+  { text: "QUANTUM ENCRYPTION", icon: <Lock className="w-6 h-6 text-[#ff6b00]" /> },
+  { text: "DYNAMIC LOAD BALANCING", icon: <Network className="w-6 h-6 text-[#ff6b00]" /> },
+  { text: "EDGE COMPUTE", icon: <Server className="w-6 h-6 text-[#ff6b00]" /> },
+  { text: "99.99% UPTIME", icon: <Activity className="w-6 h-6 text-[#ff6b00]" /> },
+];
 
-export default function MarqueeStrip() {
+export default function MarqueeStrip({ variant = "primary" }: { variant?: "primary" | "secondary" }) {
+  const baseItems = variant === "primary" ? PRIMARY_ITEMS : SECONDARY_ITEMS;
+  
+  // Duplicate items to ensure smooth infinite scrolling
+  const SCROLL_ITEMS = [...baseItems, ...baseItems, ...baseItems, ...baseItems];
+
   return (
     <div className="w-full bg-black py-6 border-y-4 border-[#ff6b00] overflow-hidden flex relative z-10">
       <motion.div

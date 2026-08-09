@@ -27,7 +27,7 @@ export default function HomePage(): JSX.Element {
       <MarqueeStrip />
       <BentoGrid />
       <ApiPlayground />
-      <MarqueeStrip />
+      <MarqueeStrip variant="secondary" />
       <ResearchSection />
       <TestimonialsSection />
       <FaqSection />
