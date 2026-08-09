@@ -10,6 +10,7 @@ import ResearchSection from "@/components/sections/ResearchSection";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
 import FaqSection from "@/components/sections/FaqSection";
 import FinalCTA from "@/components/sections/FinalCTA";
+import MarqueeStrip from "@/components/sections/MarqueeStrip";
 import dynamic from "next/dynamic";
 
 const SmokeBackground = dynamic(() => import("@/components/SmokeBackground"), { ssr: false });
@@ -23,8 +24,10 @@ export default function HomePage(): JSX.Element {
       <HeroPage />
       <MetricsStrip />
       <AgentEcosystem />
+      <MarqueeStrip />
       <BentoGrid />
       <ApiPlayground />
+      <MarqueeStrip />
       <ResearchSection />
       <TestimonialsSection />
       <FaqSection />
