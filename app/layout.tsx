@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Space_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import ShortcutListener from "@/components/ShortcutListener";
-import ScrollProvider from "@/components/ScrollProvider";
-import Navbar from "@/components/navigation/Navbar";
-import Footer from "@/components/Footer";
-import OrbitChat from "@/components/orbit/OrbitChat";
-import LoadingScreen from "@/components/LoadingScreen";
-import CustomCursor from "@/components/CustomCursor";
+
 import { CurrencyProvider } from "@/components/CurrencyContext";
+import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -87,15 +82,9 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceMono.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#e5e5e5] min-h-screen text-black cursor-none`}
       >
         <CurrencyProvider>
-          <CustomCursor />
-          <LoadingScreen />
-          <ScrollProvider>
-            <ShortcutListener />
-            <Navbar />
+          <ClientLayoutWrapper>
             {children}
-            <Footer />
-            <OrbitChat />
-          </ScrollProvider>
+          </ClientLayoutWrapper>
         </CurrencyProvider>
       </body>
     </html>
