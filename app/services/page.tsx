@@ -43,6 +43,13 @@ export default function ServicesPage() {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.details) return;
     
+    // Strict Email Validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      alert("INVALID UPLINK: Email format is incorrect.");
+      return;
+    }
+
     // Captcha Check
     if (parseInt(captchaInput) !== (captchaParams.v1 + captchaParams.v2)) {
       alert("SECURITY OVERRIDE FAILED: Incorrect calculation.");

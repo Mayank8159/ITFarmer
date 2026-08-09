@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ScrambleText from "./ScrambleText";
 
 export default function LoadingScreen() {
   const [isLoading, setIsLoading] = useState(true);
@@ -52,11 +53,17 @@ export default function LoadingScreen() {
             transition={{ duration: 0.4, delay: 1.5 }}
             className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none"
           >
-            <h1 className="text-white text-5xl md:text-8xl font-black uppercase tracking-tighter drop-shadow-lg mix-blend-difference mb-4">
-              SYSTEM BOOT
+            <h1 className="text-white text-5xl md:text-8xl font-black uppercase tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] mb-4">
+              <ScrambleText text="SYSTEM BOOT" delay={0.2} duration={0.6} />
             </h1>
-            <div className="text-[#ff6b00] font-mono text-4xl md:text-6xl font-bold tracking-widest drop-shadow-lg">
-              {Math.min(counter, 100)}%
+            <div className="text-white font-mono text-5xl md:text-7xl font-black tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] flex items-center justify-center relative">
+              <span className="relative z-10">{Math.min(counter, 100)}%</span>
+              {/* Fake scanline over the text */}
+              <motion.div 
+                animate={{ y: [0, 40, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                className="absolute inset-0 h-[2px] bg-white/30 z-20"
+              />
             </div>
           </motion.div>
 
