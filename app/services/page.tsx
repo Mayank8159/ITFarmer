@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Terminal, ShieldCheck, Zap, ArrowRight, Loader2, Check } from "lucide-react";
 import BrutalistCard from "@/components/cards/BrutalistCard";
@@ -13,10 +13,24 @@ export default function ServicesPage() {
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
   const [customBudget, setCustomBudget] = useState("");
   
-  const [formData, setFormData] = useState({ name: "", email: "", details: "" });
+  const [formData, setFormData] = useState({ 
+    name: "", 
+    email: "", 
+    startDate: "", 
+    endDate: "", 
+    details: "" 
+  });
 
-  const [captchaParams, setCaptchaParams] = useState({ v1: Math.floor(Math.random() * 10), v2: Math.floor(Math.random() * 10) });
+  const [captchaParams, setCaptchaParams] = useState({ v1: 0, v2: 0 });
   const [captchaInput, setCaptchaInput] = useState("");
+
+  // Initialize random captcha values strictly on the client side
+  useEffect(() => {
+    setCaptchaParams({ 
+      v1: Math.floor(Math.random() * 10) + 1, 
+      v2: Math.floor(Math.random() * 10) + 1 
+    });
+  }, []);
   
   const { formatBudget } = useCurrency();
 
@@ -41,7 +55,7 @@ export default function ServicesPage() {
 
   const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.details) return;
+    if (!formData.name || !formData.email || !formData.startDate || !formData.endDate || !formData.details) return;
     
     // Strict Email Validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -53,7 +67,10 @@ export default function ServicesPage() {
     // Captcha Check
     if (parseInt(captchaInput) !== (captchaParams.v1 + captchaParams.v2)) {
       alert("SECURITY OVERRIDE FAILED: Incorrect calculation.");
-      setCaptchaParams({ v1: Math.floor(Math.random() * 10), v2: Math.floor(Math.random() * 10) });
+      setCaptchaParams({ 
+        v1: Math.floor(Math.random() * 10) + 1, 
+        v2: Math.floor(Math.random() * 10) + 1 
+      });
       setCaptchaInput("");
       return;
     }
@@ -206,6 +223,28 @@ export default function ServicesPage() {
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
                       className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30"
                     />
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="flex-1">
+                        <label className="text-[#ff6b00] text-xs font-mono font-bold tracking-widest block mb-1">INITIALIZATION_DATE</label>
+                        <input 
+                          type="date" 
+                          required
+                          value={formData.startDate}
+                          onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                          className="w-full bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors [&::-webkit-calendar-picker-indicator]:invert"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <label className="text-[#ff6b00] text-xs font-mono font-bold tracking-widest block mb-1">TERMINATION_DATE</label>
+                        <input 
+                          type="date" 
+                          required
+                          value={formData.endDate}
+                          onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                          className="w-full bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors [&::-webkit-calendar-picker-indicator]:invert"
+                        />
+                      </div>
+                    </div>
                     <textarea 
                       placeholder="PROJECT_PARAMETERS (DETAILS)..." 
                       required
@@ -245,7 +284,7 @@ export default function ServicesPage() {
                     </button>
                     <button
                       onClick={handleSubmitForm}
-                      disabled={!formData.name || !formData.email || !formData.details || !captchaInput}
+                      disabled={!formData.name || !formData.email || !formData.startDate || !formData.endDate || !formData.details || !captchaInput}
                       className="px-8 py-4 bg-[#ff6b00] text-black font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-colors disabled:opacity-30 disabled:hover:bg-[#ff6b00]"
                     >
                       [DEPLOY PAYLOAD] <ArrowRight className="w-5 h-5" />
