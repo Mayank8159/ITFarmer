@@ -28,7 +28,9 @@ import {
   saveEcosystemContent,
   getSystemConfig,
   saveSystemConfig,
-  saveAboutConfig
+  saveAboutConfig,
+  getAboutConfig,
+  authenticateAdmin
 } from "@/app/actions/adminActions";
 
 // Initial empty fallback data (Harmonized to support both 'text' and 'label' for CTAs)
@@ -90,7 +92,7 @@ export default function AdminDashboard() {
 
     const fetchData = async () => {
       try {
-        const [heroRes, aboutRes, postsRes, inqRes, clientsRes, faqRes, ecoRes, sysRes] = await Promise.all([
+        const [heroRes, aboutRes, postsRes, inqRes, clientsRes, faqRes, ecoRes, sysRes, aboutConfRes] = await Promise.all([
           getHeroData(),
           getAboutData(),
           getPostsData(),
@@ -98,7 +100,8 @@ export default function AdminDashboard() {
           getClientsData(),
           getFaqData(),
           getEcosystemData(),
-          getSystemConfig()
+          getSystemConfig(),
+          getAboutConfig()
         ]);
 
         if (heroRes) setHeroData({ ...fallbackHero, ...heroRes });
@@ -109,6 +112,7 @@ export default function AdminDashboard() {
         if (faqRes) setFaqData(faqRes);
         if (ecoRes) setEcosystemData(ecoRes);
         if (sysRes) setSystemData(sysRes);
+        if (aboutConfRes) setAboutConfigData(aboutConfRes);
       } catch (e) {
         console.error("Failed to load CMS data:", e);
       }
@@ -124,12 +128,21 @@ export default function AdminDashboard() {
   }, [history, viewMode]);
 
   // Auth Handler
-  const handleLogin = (e: React.FormEvent) => {
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput === "Neural@123#") {
-      setIsAuthenticated(true);
-    } else {
-      alert("ACCESS DENIED.");
+    setIsAuthenticating(true);
+    try {
+      const res = await authenticateAdmin(passwordInput);
+      if (res.success) {
+        setIsAuthenticated(true);
+      } else {
+        alert(res.error || "ACCESS DENIED.");
+      }
+    } catch (err) {
+      alert("Auth failed: Network error");
+    } finally {
+      setIsAuthenticating(false);
     }
   };
 
@@ -233,17 +246,36 @@ export default function AdminDashboard() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, directory: string): Promise<string | null> => {
     const file = e.target.files?.[0];
     if (!file) return null;
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("directory", directory);
-    try {
-      const res = await uploadFile(formData);
-      if (res.success && res.filePath) return res.filePath;
-      alert("Upload failed: " + (res.error || "Unknown error"));
-    } catch (err) {
-      alert("Upload failed: Network error");
-    }
-    return null;
+    
+    // Client-side compression to prevent 5MB JSON string bloat
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 800;
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Compress aggressively to 0.7 JPEG quality
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
+          resolve(compressedDataUrl);
+        };
+        img.src = event.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   // CRUD Operations
@@ -362,7 +394,7 @@ export default function AdminDashboard() {
           <div className="pt-6 pb-2 technical-label px-4 font-bold">Content System</div>
           <SidebarBtn active={viewMode === "hero"} onClick={() => setViewMode("hero")} icon={LayoutDashboard} label="Hero Editor" />
           <SidebarBtn active={viewMode === "founders"} onClick={() => setViewMode("founders")} icon={Users} label="Founders CMS" />
-          <SidebarBtn active={viewMode === "posts"} onClick={() => setViewMode("posts")} icon={FileText} label="Posts CMS" />
+          <SidebarBtn active={viewMode === "posts"} onClick={() => setViewMode("posts")} icon={FileText} label="Case Studies CMS" />
           <SidebarBtn active={viewMode === "clients"} onClick={() => setViewMode("clients")} icon={Star} label="Clients CMS" />
           <SidebarBtn active={viewMode === "faqs"} onClick={() => setViewMode("faqs")} icon={Quote} label="FAQs CMS" />
           <SidebarBtn active={viewMode === "ecosystem"} onClick={() => setViewMode("ecosystem")} icon={Activity} label="Ecosystem CMS" />
@@ -596,6 +628,7 @@ export default function AdminDashboard() {
                               <div className="grid md:grid-cols-2 gap-4">
                                 <Field label="GITHUB"><input type="text" value={dev.github || ""} onChange={e => { const n = [...aboutData]; n[index].github = e.target.value; setAboutData(n); }} className={inputClass} placeholder="https://github.com/..." /></Field>
                                 <Field label="LINKEDIN"><input type="text" value={dev.linkedin || ""} onChange={e => { const n = [...aboutData]; n[index].linkedin = e.target.value; setAboutData(n); }} className={inputClass} placeholder="https://linkedin.com/in/..." /></Field>
+                                <Field label="PORTFOLIO LINK"><input type="text" value={dev.portfolio || ""} onChange={e => { const n = [...aboutData]; n[index].portfolio = e.target.value; setAboutData(n); }} className={inputClass} placeholder="https://myportfolio.com" /></Field>
                               </div>
                             </div>
                           </div>
@@ -651,36 +684,76 @@ export default function AdminDashboard() {
                             <Trash2 className="w-4 h-4" />
                           </button>
 
-                          {post.image ? (
-                            <div className="w-full h-32 border border-[var(--border-color)] overflow-hidden mb-4 bg-[var(--surface-dark)] relative group-hover:border-[var(--border-active)] transition-colors">
-                              <img src={post.image} className="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition-all" alt="Post cover" />
-                              <label className="absolute bottom-2 right-2 cursor-pointer text-[9px] bg-[var(--deep-surface)] border border-[var(--border-color)] uppercase tracking-widest text-[var(--text-primary)] px-3 py-1.5 hover:bg-[var(--neon-cyan)] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)] font-bold">
-                                Change Cover
-                                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                                  const path = await handleFileUpload(e, "posts");
-                                  if (path) { const n = [...postsData]; n[index].image = path; setPostsData(n); }
-                                }} />
-                              </label>
-                            </div>
-                          ) : (
-                            <label className="mb-4 mt-8 w-full h-12 border border-dashed border-[var(--border-color)] flex items-center justify-center text-xs text-[var(--text-muted)] uppercase tracking-widest hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)] transition-colors cursor-pointer bg-[var(--surface-dark)] font-mono font-bold">
-                              Upload Cover Image
-                              <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                                const path = await handleFileUpload(e, "posts");
-                                if (path) { const n = [...postsData]; n[index].image = path; setPostsData(n); }
-                              }} />
-                            </label>
-                          )}
+                          <div className="mb-4">
+                            <Field label="COVER IMAGE PATH OR UPLOAD">
+                              <div className="flex gap-2">
+                                <input 
+                                  type="text" 
+                                  value={post.image || ""} 
+                                  onChange={e => { const n = [...postsData]; n[index].image = e.target.value; setPostsData(n); }} 
+                                  className={inputClass} 
+                                  placeholder="/projects/example.jpg" 
+                                />
+                                <label className="cursor-pointer bg-[var(--text-primary)] text-[var(--deep-surface)] px-4 py-3 flex items-center justify-center font-bold text-xs uppercase hover:bg-[var(--neon-cyan)] transition-colors shrink-0 shadow-[2px_2px_0px_var(--border-color)]">
+                                  Upload
+                                  <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                                    const path = await handleFileUpload(e, "posts");
+                                    if (path) { const n = [...postsData]; n[index].image = path; setPostsData(n); }
+                                  }} />
+                                </label>
+                              </div>
+                            </Field>
+                            {post.image && (
+                              <div className="w-full h-32 border border-[var(--border-color)] overflow-hidden mt-2 bg-[var(--surface-dark)]">
+                                <img src={post.image} className="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition-all" alt="Cover preview" />
+                              </div>
+                            )}
+                          </div>
 
                           <div className="space-y-4 flex-1 flex flex-col">
-                            <Field label="TITLE"><input type="text" value={post.title || ""} onChange={e => { const n = [...postsData]; n[index].title = e.target.value; setPostsData(n); }} className={inputClass} placeholder="Zero Trust Infrastructure..." /></Field>
-                            <Field label="DESCRIPTION"><textarea value={post.description || ""} onChange={e => { const n = [...postsData]; n[index].description = e.target.value; setPostsData(n); }} className={textareaClass} placeholder="Detailed analysis of..." /></Field>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <Field label="TITLE"><input type="text" value={post.title || ""} onChange={e => { const n = [...postsData]; n[index].title = e.target.value; setPostsData(n); }} className={inputClass} placeholder="Zero Trust Infrastructure..." /></Field>
+                              <Field label="CLIENT"><input type="text" value={post.client || ""} onChange={e => { const n = [...postsData]; n[index].client = e.target.value; setPostsData(n); }} className={inputClass} placeholder="Acme Corp / Internal" /></Field>
+                            </div>
+                            <Field label="TECHNOLOGIES (Comma separated)"><input type="text" value={post.technologies || ""} onChange={e => { const n = [...postsData]; n[index].technologies = e.target.value; setPostsData(n); }} className={inputClass} placeholder="Next.js, Python, AWS" /></Field>
+                            <Field label="OVERVIEW / DESCRIPTION"><textarea value={post.description || ""} onChange={e => { const n = [...postsData]; n[index].description = e.target.value; setPostsData(n); }} className={textareaClass} placeholder="Detailed analysis of..." /></Field>
+                            
+                            {post.category === "Project" && (
+                              <>
+                                <Field label="THE CHALLENGE"><textarea value={post.challenge || ""} onChange={e => { const n = [...postsData]; n[index].challenge = e.target.value; setPostsData(n); }} className={textareaClass} placeholder="What was the core problem..." /></Field>
+                                <Field label="THE SOLUTION"><textarea value={post.solution || ""} onChange={e => { const n = [...postsData]; n[index].solution = e.target.value; setPostsData(n); }} className={textareaClass} placeholder="How we built it..." /></Field>
+                                <Field label="THE RESULTS"><textarea value={post.results || ""} onChange={e => { const n = [...postsData]; n[index].results = e.target.value; setPostsData(n); }} className={textareaClass} placeholder="Metrics and impact..." /></Field>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <Field label="LIVE LINK / REPO"><input type="text" value={post.link || ""} onChange={e => { const n = [...postsData]; n[index].link = e.target.value; setPostsData(n); }} className={inputClass} placeholder="https://..." /></Field>
+                                  <Field label="ARCHITECTURE IMAGE URL">
+                                    <div className="flex gap-2">
+                                      <input type="text" value={post.architectureImage || ""} onChange={e => { const n = [...postsData]; n[index].architectureImage = e.target.value; setPostsData(n); }} className={inputClass} placeholder="/projects/arch.jpg" />
+                                      <label className="cursor-pointer bg-[var(--text-primary)] text-[var(--deep-surface)] px-4 py-3 flex items-center justify-center font-bold text-xs uppercase hover:bg-[var(--neon-cyan)] transition-colors shrink-0 shadow-[2px_2px_0px_var(--border-color)]">
+                                        Upload
+                                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                                          const path = await handleFileUpload(e, "posts");
+                                          if (path) { const n = [...postsData]; n[index].architectureImage = path; setPostsData(n); }
+                                        }} />
+                                      </label>
+                                    </div>
+                                  </Field>
+                                </div>
+                              </>
+                            )}
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <Field label="INSTAGRAM REEL LINK">
+                                <input type="text" value={post.reelUrl || ""} onChange={e => { const n = [...postsData]; n[index].reelUrl = e.target.value; setPostsData(n); }} className={inputClass} placeholder="https://instagram.com/reel/..." />
+                              </Field>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 border-t border-[var(--border-color)] pt-4">
                               <Field label="CATEGORY">
                                 <select value={post.category || "Update"} onChange={e => { const n = [...postsData]; n[index].category = e.target.value; setPostsData(n); }} className={`${inputClass} cursor-pointer`}>
                                   <option value="Project">Project</option>
                                   <option value="Team">Team</option>
                                   <option value="Update">Update</option>
+                                  <option value="Technical Write-up">Technical Write-up</option>
                                 </select>
                               </Field>
                               <Field label="DATE"><input type="date" value={post.date || ""} onChange={e => { const n = [...postsData]; n[index].date = e.target.value; setPostsData(n); }} className={inputClass} /></Field>
@@ -928,14 +1001,14 @@ export default function AdminDashboard() {
                     <Field label="MAIN CONTACT EMAIL">
                       <input type="email" value={systemData.contact?.email || ""} onChange={e => setSystemData({ ...systemData, contact: { ...systemData.contact, email: e.target.value } })} className={inputClass} />
                     </Field>
-                    <Field label="GITHUB LINK">
-                      <input type="text" value={systemData.contact?.github || ""} onChange={e => setSystemData({ ...systemData, contact: { ...systemData.contact, github: e.target.value } })} className={inputClass} />
+                    <Field label="INSTAGRAM LINK">
+                      <input type="text" value={systemData.contact?.instagram || ""} onChange={e => setSystemData({ ...systemData, contact: { ...systemData.contact, instagram: e.target.value } })} className={inputClass} />
                     </Field>
                     <Field label="TWITTER LINK">
                       <input type="text" value={systemData.contact?.twitter || ""} onChange={e => setSystemData({ ...systemData, contact: { ...systemData.contact, twitter: e.target.value } })} className={inputClass} />
                     </Field>
-                    <Field label="DISCORD LINK">
-                      <input type="text" value={systemData.contact?.discord || ""} onChange={e => setSystemData({ ...systemData, contact: { ...systemData.contact, discord: e.target.value } })} className={inputClass} />
+                    <Field label="LINKEDIN LINK">
+                      <input type="text" value={systemData.contact?.linkedin || ""} onChange={e => setSystemData({ ...systemData, contact: { ...systemData.contact, linkedin: e.target.value } })} className={inputClass} />
                     </Field>
                   </div>
                 </div>

@@ -2,16 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Home, LayoutGrid, Users, Rocket, Info, Briefcase, FileText } from "lucide-react";
+import { Home, LayoutGrid, Users, Rocket, Info, Briefcase, FileText, Code } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 const NAV_ITEMS = [
   { id: "home", label: "Home", icon: Home, path: "/" },
-  { id: "modules", label: "Workflow", icon: LayoutGrid, path: "/#modules" },
-  { id: "deployments", label: "Clients", icon: Users, path: "/#deployments" },
+  { id: "work", label: "Work", icon: LayoutGrid, path: "/work" },
   { id: "about", label: "About Us", icon: Info, path: "/about" },
-  { id: "services", label: "Services", icon: Briefcase, path: "/services" },
-  { id: "posts", label: "Posts", icon: FileText, path: "/posts" },
+  { id: "contact", label: "Contact", icon: Users, path: "/contact" },
 ];
 
 export default function SideNav() {

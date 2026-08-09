@@ -9,6 +9,8 @@ import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/Footer";
 import OrbitChat from "@/components/orbit/OrbitChat";
 import ScrollProvider from "@/components/ScrollProvider";
+import MinimalHeader from "@/components/navigation/MinimalHeader";
+import MinimalFooter from "@/components/navigation/MinimalFooter";
 
 export default function ClientLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -22,16 +24,18 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
     );
   }
 
+  const isLandingPage = pathname?.startsWith("/lp");
+
   return (
     <>
       <CustomCursor />
       <LoadingScreen />
       <ScrollProvider>
         <ShortcutListener />
-        <Navbar />
+        {isLandingPage ? <MinimalHeader /> : <Navbar />}
         {children}
-        <Footer />
-        <OrbitChat />
+        {isLandingPage ? <MinimalFooter /> : <Footer />}
+        {!isLandingPage && <OrbitChat />}
       </ScrollProvider>
     </>
   );

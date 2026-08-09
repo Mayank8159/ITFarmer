@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About Us | Neural Forge Hub',
-  description: 'Learn about the cutting-edge autonomous agents and massive GPU compute clusters powering the Neural Forge Hub ecosystem.',
+  description: 'Meet the engineering team behind Neural Forge Hub. We build robust, scalable AI and software systems for modern businesses.',
   alternates: {
     canonical: '/about',
   },

@@ -1,9 +1,4 @@
 {
-  "metrics": {
-    "activeAgents": 24,
-    "gpuCompute": 1.84,
-    "requests": 2405932
-  },
   "bentoGrid": {
     "title": "UNCOMPROMISED PERFORMANCE.",
     "card1Title": "GPU Compute Architecture",
@@ -21,13 +16,12 @@
     "GPU CLUSTERS ALLOCATED",
     "NEURAL PIPELINES ACTIVE",
     "C++ KERNELS COMPILED",
-    "HIPAA COMPLIANT TELEMETRY",
     "SUB-10MS LATENCY"
   ],
   "contact": {
-    "email": "team.techserve55@gmail.com",
-    "github": "https://github.com/Techserve55",
+    "email": "services@neuralforgehub.tech",
+    "instagram": "https://instagram.com",
     "twitter": "https://twitter.com",
-    "discord": "https://discord.com"
+    "linkedin": "https://linkedin.com"
   }
 }

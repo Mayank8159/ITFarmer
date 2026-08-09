@@ -127,8 +127,8 @@ export default function DistortedText({ text }: DistortedTextProps) {
       const gap = window.innerWidth < 768 ? 3 : 5;
       
       // We read from the unscaled imageData array
-      // So we have to step by gap * dpr
-      const step = gap * dpr;
+      // So we have to step by gap * dpr. Use Math.floor to ensure integer steps.
+      const step = Math.floor(gap * dpr);
 
       for (let y = 0; y < textCoordinates.height; y += step) {
         for (let x = 0; x < textCoordinates.width; x += step) {
@@ -148,7 +148,9 @@ export default function DistortedText({ text }: DistortedTextProps) {
       setIsReady(true);
     };
 
-    init();
+    document.fonts.ready.then(() => {
+      init();
+    });
 
     const animate = () => {
       ctx.clearRect(0, 0, width, height);

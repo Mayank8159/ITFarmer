@@ -74,7 +74,7 @@ export default function HeroPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="font-mono text-[#ff6b00] tracking-[0.2em] text-xs font-bold uppercase"
             >
-              NEURAL FORGE HUB / AI INFRASTRUCTURE
+              NEURAL FORGE HUB / AI & SOFTWARE ENGINEERING STUDIO
             </motion.div>
             
             <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[100px] font-black leading-[0.9] tracking-tighter text-black uppercase flex flex-col">
@@ -104,7 +104,7 @@ export default function HeroPage() {
           >
             {/* Primary CTA */}
             <motion.div whileHover={{ y: -4, x: -4, boxShadow: "4px 4px 0px 0px rgba(0,0,0,1)" }} transition={{ type: "spring", stiffness: 400, damping: 25 }} className="w-full sm:w-auto">
-              <Link href={heroData?.primaryCta?.href || "/services"} className="w-full sm:w-auto px-8 py-5 bg-[#ff6b00] text-white font-mono text-xs uppercase tracking-widest border border-black flex items-center justify-center gap-3 group">
+              <Link href={heroData?.primaryCta?.href || "/contact"} className="w-full sm:w-auto px-8 py-5 bg-[#ff6b00] text-white font-mono text-xs uppercase tracking-widest border border-black flex items-center justify-center gap-3 group">
                 <Terminal className="w-4 h-4" />
                 <span>{heroData?.primaryCta?.label || heroData?.primaryCta?.text || "Launch Neural Forge"}</span>
               </Link>
@@ -148,8 +148,7 @@ export default function HeroPage() {
              </div>
              
              <div className="mt-4 pt-4 border-t border-black flex justify-between font-mono text-[10px] uppercase tracking-widest text-black/50">
-                <span>Latency: 42ms</span>
-                <span>Active Nodes: 1,024</span>
+                <span>SYSTEMS ONLINE</span>
              </div>
            </div>
         </motion.div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Terminal, Github, Twitter, Disc, X } from "lucide-react";
+import { Terminal, Instagram, Twitter, Linkedin, X } from "lucide-react";
 import DistortedText from "@/components/DistortedText";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -18,19 +18,19 @@ export default function Footer() {
   }, []);
 
   const contact = config?.contact || {
-    email: "team.techserve55@gmail.com",
-    github: "https://github.com/Techserve55",
+    email: "services@neuralforgehub.tech",
+    instagram: "https://instagram.com",
     twitter: "https://twitter.com",
-    discord: "https://discord.com"
+    linkedin: "https://linkedin.com"
   };
 
   return (
     <>
       <footer className="w-full bg-[#f0f0f0] border-t-4 border-black relative z-10">
         <div className="max-w-[1600px] mx-auto px-6 pt-20 pb-10">
-          
+
           <div className="grid grid-cols-2 md:grid-cols-6 gap-10 mb-16">
-            
+
             {/* Brand Column */}
             <div className="col-span-2 md:col-span-2 flex flex-col items-start">
               <Link href="/" className="flex items-center gap-3 mb-6 bg-black text-white px-4 py-2 hover:bg-[#ff6b00] transition-colors border border-black">
@@ -38,7 +38,7 @@ export default function Footer() {
                 <span className="font-bold tracking-tight uppercase">Neural Forge Hub</span>
               </Link>
               <p className="text-black/70 text-sm font-mono leading-relaxed max-w-xs mb-6">
-                Advanced AI infrastructure and computational resources for the next generation of autonomous networks.
+                We're the engineering team you wish you had in-house — we build production AI and software, not prototypes.
               </p>
               <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-black w-fit">
                 <div className="w-2 h-2 bg-[#ff6b00]" />
@@ -48,38 +48,34 @@ export default function Footer() {
 
             {/* Links Columns */}
             <div className="flex flex-col gap-4">
-              <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">PLATFORM</h4>
-              <a href="/#agents" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2 block">Agents</a>
-              <a href="/#infrastructure" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2 block">Infrastructure</a>
-              <Link href="/services" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Pricing</Link>
+              <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">EXPLORE</h4>
+              <Link href="/work" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Work</Link>
             </div>
 
             <div className="flex flex-col gap-4">
-              <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">DEVELOPERS</h4>
-              <Link href="/posts" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Documentation</Link>
-              <Link href="/services" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">API Reference</Link>
-              <a href={contact.github} target="_blank" rel="noopener noreferrer" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">GitHub Repository</a>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">RESOURCES</h4>
-              <Link href="/about" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Research</Link>
-              <Link href="/posts" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Blog</Link>
+              <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">COMPANY</h4>
+              <Link href="/about" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">About</Link>
               <a href={`mailto:${contact.email}`} className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Contact</a>
             </div>
 
             <div className="flex flex-col gap-4">
               <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">SOCIAL</h4>
               <div className="flex gap-4">
-                <a href={contact.twitter} target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a href={contact.discord} target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
-                  <Disc className="w-5 h-5" />
-                </a>
-                <a href={contact.github} target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
-                  <Github className="w-5 h-5" />
-                </a>
+                {contact.instagram && (
+                  <a href={contact.instagram} target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2 hover:-translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                )}
+                {contact.twitter && (
+                  <a href={contact.twitter} target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2 hover:-translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                    <Twitter className="w-5 h-5" />
+                  </a>
+                )}
+                {contact.linkedin && (
+                  <a href={contact.linkedin} target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2 hover:-translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                )}
               </div>
             </div>
 
@@ -94,7 +90,7 @@ export default function Footer() {
               <button onClick={() => setLegalModal('terms')} className="hover:text-black transition-colors uppercase tracking-widest">TERMS OF SERVICE</button>
             </div>
           </div>
-          
+
           {/* Extreme Footer Text Distortion */}
           <DistortedText text="FORGE" />
         </div>
@@ -103,13 +99,13 @@ export default function Footer() {
       {/* Brutalist Legal Modal */}
       <AnimatePresence>
         {legalModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
@@ -119,8 +115,8 @@ export default function Footer() {
                 <h2 className="text-3xl font-black uppercase tracking-tighter">
                   {legalModal === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
                 </h2>
-                <button 
-                  onClick={() => setLegalModal(null)} 
+                <button
+                  onClick={() => setLegalModal(null)}
                   className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#ff6b00] hover:text-white transition-colors"
                 >
                   <X className="w-6 h-6" />

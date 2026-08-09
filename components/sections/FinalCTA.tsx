@@ -57,18 +57,18 @@ export default function FinalCTA() {
 
         <div className="flex flex-col sm:flex-row items-stretch justify-center gap-4 w-full">
           <Link 
-            href="/services" 
+            href="/contact" 
             className="w-full sm:w-auto px-10 py-5 bg-[#ff6b00] text-white font-mono text-sm uppercase tracking-widest border-2 border-black hover:bg-black transition-colors flex items-center justify-center gap-3 font-bold"
           >
             <Terminal className="w-4 h-4" />
-            <span>Launch Neural Forge</span>
+            <span>Book a Strategy Call</span>
           </Link>
 
           <Link
-            href="/posts"
+            href="/work"
             className="w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-5 bg-white border-2 border-black text-black font-mono text-sm uppercase tracking-widest hover:bg-[#e5e5e5] transition-colors font-bold group"
           >
-            View Documentation
+            View Case Studies
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>

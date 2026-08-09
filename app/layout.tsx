@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { CurrencyProvider } from "@/components/CurrencyContext";
 import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
+import Script from "next/script";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -23,15 +24,15 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.neuralforgehub.tech'),
-  title: "Neural Forge Hub | Advanced AI Infrastructure",
-  description: "Enterprise-grade GPU compute clusters and autonomous swarm intelligence orchestration for the next generation of AI research.",
-  keywords: ["AI Infrastructure", "GPU Compute", "Agentic Swarms", "Machine Learning", "Autonomous Agents", "Cloud GPUs", "Neural Networks"],
+  title: "Neural Forge Hub | AI & Software Engineering Studio",
+  description: "We're the engineering team you wish you had in-house — we build production AI and software, not prototypes.",
+  keywords: ["AI Studio", "Software Engineering", "AI Agents", "Web Applications", "Production ML", "Automation", "Full-Stack"],
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: "Neural Forge Hub",
-    description: "Advanced AI Infrastructure Laboratory & Swarm Telemetry",
+    description: "AI & Software Engineering Studio",
     url: "https://www.neuralforgehub.tech",
     siteName: "Neural Forge Hub",
     images: [
@@ -39,7 +40,7 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Neural Forge Hub Dashboard",
+        alt: "Neural Forge Hub - Engineering Studio",
       },
     ],
     locale: "en_US",
@@ -48,8 +49,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Neural Forge Hub",
-    description: "Advanced AI Infrastructure Laboratory",
-    images: ["/twitter-image.jpg"],
+    description: "AI & Software Engineering Studio",
+    images: ["/og-image.jpg"],
   },
 };
 
@@ -65,7 +66,7 @@ export default function RootLayout({
     "name": "Neural Forge Hub",
     "url": "https://www.neuralforgehub.tech",
     "logo": "https://www.neuralforgehub.tech/favicon.ico",
-    "description": "Advanced AI Infrastructure Laboratory & Swarm Telemetry",
+    "description": "AI & Software Engineering Studio",
     "sameAs": []
   };
 
@@ -77,10 +78,56 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <Script defer data-domain="neuralforgehub.tech" src="https://plausible.io/js/script.js" strategy="afterInteractive" />
       </head>
       <body
         className={`${inter.variable} ${spaceMono.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#e5e5e5] min-h-screen text-black cursor-none`}
       >
+        {/* Meta Pixel Code */}
+        {process.env.NEXT_PUBLIC_META_PIXEL_ID && (
+          <Script
+            id="meta-pixel"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                !function(f,b,e,v,n,t,s)
+                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                n.queue=[];t=b.createElement(e);t.async=!0;
+                t.src=v;s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)}(window, document,'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '${process.env.NEXT_PUBLIC_META_PIXEL_ID}');
+                fbq('track', 'PageView');
+              `,
+            }}
+          />
+        )}
+        
+        {/* LinkedIn Insight Tag Code */}
+        {process.env.NEXT_PUBLIC_LINKEDIN_PARTNER_ID && (
+          <Script
+            id="linkedin-insight"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                _linkedin_partner_id = "${process.env.NEXT_PUBLIC_LINKEDIN_PARTNER_ID}";
+                window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+                window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+                (function(l) {
+                if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+                window.lintrk.q=[]}
+                var s = document.getElementsByTagName("script")[0];
+                var b = document.createElement("script");
+                b.type = "text/javascript";b.async = true;
+                b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+                s.parentNode.insertBefore(b, s);})(window.lintrk);
+              `,
+            }}
+          />
+        )}
+
         <CurrencyProvider>
           <ClientLayoutWrapper>
             {children}

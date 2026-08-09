@@ -2,28 +2,31 @@
   {
     "id": "1",
     "name": "Mayank Kumar Sharma",
-    "role": "Founder & DevOps Architect",
+    "role": "Founder & Systems Architect",
     "image": "/founders/Mayank.png",
-    "description": "Architecting unbreakable cloud infrastructures and CI/CD pipelines.",
+    "description": "Architecting native applications (Android & Windows .exe), high-performance software, and rigorous enterprise system designs.",
     "github": "https://github.com/Mayank8159",
-    "linkedin": "https://www.linkedin.com/in/mayank-kumar-sharma-900318318/"
+    "linkedin": "https://www.linkedin.com/in/mayank-kumar-sharma-900318318/",
+    "portfolio": ""
   },
   {
     "id": "2",
     "name": "Priyanshu Roy",
     "role": "Co-Founder & Lead AI/ML Engineer",
     "image": "/founders/Priyanshu.jpg",
-    "description": "Engineering predictive models and state-of-the-art LLM architectures.",
+    "description": "Building state-of-the-art ML models: custom Transformers, RAG pipelines, Computer Vision, and text encoders. Expertise in open-source integrations, building AI agents, and training autonomous simulations.",
     "github": "https://github.com/priyanshu-ogdev",
-    "linkedin": "https://www.linkedin.com/in/priyanshu-roy-25b91a31a/"
+    "linkedin": "https://www.linkedin.com/in/priyanshu-roy-25b91a31a/",
+    "portfolio": ""
   },
   {
     "id": "3",
     "name": "Shreyan Mitra",
     "role": "Co-Founder & Full Stack Architect",
     "image": "/founders/Shreyan_v2.jpeg",
-    "description": "Building high-performance, seamless end-to-end web applications.",
+    "description": "Building high-quality web platforms, seamless UI architectures, and full-stack cloud workflows from the ground up.",
     "github": "https://github.com/MURPHIOP",
-    "linkedin": "https://www.linkedin.com/in/shreyan-mitra/"
+    "linkedin": "https://www.linkedin.com/in/shreyan-mitra/",
+    "portfolio": ""
   }
 ]

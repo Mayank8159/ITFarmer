@@ -1,15 +1,15 @@
 {
   "headline": "BUILD. CONNECT. INFER.",
-  "subheadline": "Advanced AI infrastructure laboratory engineered for researchers, developers, and autonomous agents. Scale GPU computation and deploy specialized inference networks with uncompromised velocity.",
+  "subheadline": "We're the engineering team you wish you had in-house — we build production AI and software, not prototypes.",
   "primaryCta": {
-    "text": "Launch Neural Forge",
-    "label": "Launch Neural Forge",
-    "href": "/services"
+    "text": "Get a Project Estimate",
+    "label": "Get a Project Estimate",
+    "href": "/contact"
   },
   "secondaryCta": {
-    "text": "Read Intelligence Feed",
-    "label": "Read Intelligence Feed",
-    "href": "/posts"
+    "text": "See Our Work",
+    "label": "See Our Work",
+    "href": "/work"
   },
   "trustStack": [],
   "metrics": []

@@ -6,8 +6,6 @@ import BrutalistCard from "@/components/cards/BrutalistCard";
 import { Cpu, Network, Zap, Code2, Server } from "lucide-react";
 
 export default function BentoGrid() {
-  const [inferenceCount, setInferenceCount] = useState(2405932);
-  const [latency, setLatency] = useState(42);
   const [config, setConfig] = useState<any>(null);
 
   useEffect(() => {
@@ -15,12 +13,6 @@ export default function BentoGrid() {
       .then(res => res.json())
       .then(data => setConfig(data.bentoGrid))
       .catch(err => console.error("Failed to load bento grid config:", err));
-
-    const interval = setInterval(() => {
-      setInferenceCount(prev => prev + Math.floor(Math.random() * 5));
-      setLatency(40 + Math.floor(Math.random() * 8));
-    }, 2000);
-    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -60,28 +52,32 @@ export default function BentoGrid() {
                  {/* Grid Background */}
                  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
                  
-                 {/* Premium Smooth Equalizer Graph */}
-                 <div className="absolute inset-0 flex items-end gap-1 px-4 md:px-8 pb-[88px] opacity-90">
-                   {[...Array(24)].map((_, i) => (
-                     <motion.div 
-                       key={i}
-                       className="flex-1 bg-gradient-to-t from-[#ff6b00] to-transparent rounded-t-sm"
-                       animate={{ height: ['15%', `${30 + Math.random() * 65}%`, '15%'] }}
-                       transition={{ duration: 1.5 + Math.random() * 2, repeat: Infinity, ease: 'easeInOut' }}
-                     />
-                   ))}
+                 {/* Stack List */}
+                 <div className="absolute inset-0 flex flex-col justify-center gap-4 px-6 md:px-12 opacity-90 z-10 pt-4">
+                   <div className="flex items-center justify-between border-b border-white/20 pb-2">
+                     <span className="font-mono text-xs uppercase tracking-widest text-white font-bold">Agentic Workflows</span>
+                     <span className="text-[#ff6b00] font-black">+</span>
+                   </div>
+                   <div className="flex items-center justify-between border-b border-white/20 pb-2">
+                     <span className="font-mono text-xs uppercase tracking-widest text-white font-bold">RAG Pipelines</span>
+                     <span className="text-[#ff6b00] font-black">+</span>
+                   </div>
+                   <div className="flex items-center justify-between border-b border-white/20 pb-2">
+                     <span className="font-mono text-xs uppercase tracking-widest text-white font-bold">Vision Models</span>
+                     <span className="text-[#ff6b00] font-black">+</span>
+                   </div>
+                   <div className="flex items-center justify-between border-b border-white/20 pb-2">
+                     <span className="font-mono text-xs uppercase tracking-widest text-white font-bold">LLM Fine-Tuning</span>
+                     <span className="text-[#ff6b00] font-black">+</span>
+                   </div>
                  </div>
                  
                  {/* Bottom Data Bar */}
-                 <div className="relative z-10 flex flex-wrap gap-6 md:gap-12 border-t border-white/20 bg-black/80 backdrop-blur-xl p-4 md:p-6 w-full">
-                   <div>
-                     <div className="font-mono text-[10px] uppercase tracking-widest text-white/60 mb-1 font-bold">UTILIZATION</div>
-                     <div className="text-2xl md:text-4xl font-black text-white">92.4%</div>
-                   </div>
-                   <div>
-                     <div className="font-mono text-[10px] uppercase tracking-widest text-white/60 mb-1 font-bold">THROUGHPUT</div>
-                     <div className="text-2xl md:text-4xl font-black text-white">1.8 PFLOP/s</div>
-                   </div>
+                 <div className="relative z-20 flex flex-wrap gap-4 border-t border-white/20 bg-black/80 backdrop-blur-xl p-4 md:p-6 w-full">
+                   <div className="px-3 py-1 bg-white/10 text-white font-mono text-[10px] uppercase tracking-widest">Next.js</div>
+                   <div className="px-3 py-1 bg-white/10 text-white font-mono text-[10px] uppercase tracking-widest">Python</div>
+                   <div className="px-3 py-1 bg-white/10 text-white font-mono text-[10px] uppercase tracking-widest">PyTorch</div>
+                   <div className="px-3 py-1 bg-white/10 text-white font-mono text-[10px] uppercase tracking-widest">AWS</div>
                  </div>
               </div>
 
@@ -181,15 +177,15 @@ export default function BentoGrid() {
               
               <div className="flex-1 flex flex-col justify-center space-y-4">
                 <div>
-                  <div className="font-mono text-[10px] uppercase tracking-widest text-black/60 mb-1 font-bold">TOTAL REQUESTS</div>
-                  <div className="text-3xl font-black text-black tracking-tight">
-                    {inferenceCount.toLocaleString('en-US')}
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-black/60 mb-1 font-bold">ARCHITECTURE</div>
+                  <div className="text-2xl font-black text-black tracking-tight">
+                    Event-Driven
                   </div>
                 </div>
                 <div className="h-px w-full bg-black/15" />
                 <div>
-                  <div className="font-mono text-[10px] uppercase tracking-widest text-black/60 mb-1 font-bold">AVG LATENCY</div>
-                  <div className="text-2xl font-black text-[#ff6b00]">{latency}ms</div>
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-black/60 mb-1 font-bold">SCALING</div>
+                  <div className="text-2xl font-black text-[#ff6b00]">Serverless</div>
                 </div>
               </div>
 

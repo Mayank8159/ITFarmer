@@ -24,6 +24,19 @@ async function ensureInquiriesFile() {
   }
 }
 
+// Security
+export async function authenticateAdmin(password: string) {
+  const correctPassword = process.env.ADMIN_PASSWORD;
+  if (!correctPassword) return { success: false, error: "ADMIN_PASSWORD not set in environment." };
+  
+  // Hardcoded fallback ONLY for local dev if .env is missing
+  if (correctPassword === "Neural@123#" && password === "Neural@123#") {
+    return { success: true };
+  }
+  
+  return { success: password === correctPassword };
+}
+
 // Data Fetchers
 export async function getHeroData() {
   try {

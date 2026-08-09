@@ -1,35 +1,33 @@
-"use client";
 
 import { JSX } from "react";
 import HeroPage from "@/components/Hero";
-import MetricsStrip from "@/components/sections/MetricsStrip";
-import BentoGrid from "@/components/sections/BentoGrid";
-import ApiPlayground from "@/components/sections/ApiPlayground";
+import CapabilitiesSection from "@/components/sections/CapabilitiesSection";
+import GithubActivity from "@/components/sections/GithubActivity";
+import LeadMagnetGate from "@/components/sections/LeadMagnetGate";
 import AgentEcosystem from "@/components/sections/AgentEcosystem";
+import MarqueeStrip from "@/components/sections/MarqueeStrip";
+import BentoGrid from "@/components/sections/BentoGrid";
 import ResearchSection from "@/components/sections/ResearchSection";
-import TestimonialsSection from "@/components/sections/TestimonialsSection";
 import FaqSection from "@/components/sections/FaqSection";
 import FinalCTA from "@/components/sections/FinalCTA";
-import MarqueeStrip from "@/components/sections/MarqueeStrip";
-import dynamic from "next/dynamic";
-
-const SmokeBackground = dynamic(() => import("@/components/SmokeBackground"), { ssr: false });
-const OrbitChat = dynamic(() => import("@/components/orbit/OrbitChat"), { ssr: false });
-
 export default function HomePage(): JSX.Element {
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-transparent flex flex-col">
 
       {/* UI LAYERS */}
       <HeroPage />
-      <MetricsStrip />
+      <GithubActivity />
+      <CapabilitiesSection />
       <AgentEcosystem />
       <MarqueeStrip />
       <BentoGrid />
-      <ApiPlayground />
       <ResearchSection />
-      <TestimonialsSection />
       <FaqSection />
+      
+      <div className="py-24 bg-[#e5e5e5]">
+        <LeadMagnetGate />
+      </div>
+
       <FinalCTA />
     </main>
   );

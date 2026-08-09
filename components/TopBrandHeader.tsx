@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function TopBrandHeader() {
   const [copied, setCopied] = useState(false);
-  const companyEmail = "team.techserve55@gmail.com";
+  const companyEmail = "services@neuralforgehub.tech";
 
   const handleCopy = async () => {
     try {
@@ -43,13 +43,13 @@ export default function TopBrandHeader() {
 
       {/* Right: Contact Node */}
       <div className="pointer-events-auto flex items-center gap-4">
-        <button 
+        <button
           onClick={handleCopy}
           className={`
             flex items-center gap-2 px-5 py-2 rounded-full 
             border transition-all duration-300 group/contact backdrop-blur-md shadow-xl
-            ${copied 
-              ? "bg-[#FFD700]/10 border-[#FFD700]/50 text-[#FFD700]" 
+            ${copied
+              ? "bg-[#FFD700]/10 border-[#FFD700]/50 text-[#FFD700]"
               : "bg-black/30 border-white/10 text-zinc-400 hover:border-[#FFD700]/30 hover:bg-[#0a0e27]/60"
             }
           `}

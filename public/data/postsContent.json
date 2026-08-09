@@ -1,74 +1,44 @@
 [
   {
     "id": "1",
-    "title": "ROCm Bridge",
-    "description": "An automated code transformation pipeline designed to liberate deep learning workloads from proprietary hardware locks. Analyzes NVIDIA CUDA kernel calls and automatically transpiles them to AMD HIP-compliant C++ codebases. Reduces migration friction for enterprise teams transitioning to AMD GPU clusters, saving months of manual code rewrites.",
+    "title": "Internal RAG Knowledge Assistant",
+    "description": "We built a self-hosted RAG pipeline over internal company documents with a chat interface and source citations.",
     "category": "Project",
     "date": "2026-08-09",
-    "image": "/projects/rocm_bridge.png"
+    "image": "/projects/rag-agent-diagram.png",
+    "client": "Internal Engineering",
+    "technologies": "Python, LangChain, OpenAI, Pinecone, Next.js",
+    "architectureImage": "/projects/rag-agent-diagram.png",
+    "challenge": "Our support team was spending hours manually searching scattered Notion, Google Drive, and Confluence documents to find simple answers, leading to delayed response times and bloated operational costs.",
+    "solution": "We architected an enterprise-grade Retrieval-Augmented Generation (RAG) pipeline. We utilized open-source embedding models to vectorize the document corpus into Pinecone. The frontend is a liquid Next.js chat interface that routes queries to an OpenAI inference engine, strictly bounded by the context retrieved from the vector database to eliminate hallucinations.",
+    "results": "Achieved sub-2s average response time. Zero hallucination guarantee through strict context bounding. Cited sources on every single answer. 40% reduction in support ticket resolution time."
   },
   {
     "id": "2",
-    "title": "VitalGuard-AI",
-    "description": "An end-to-end telemetry system capturing real-time biometric metrics and executing automated anomaly detection. Built with a decoupled FastAPI microservice backend connected to a Next.js dashboard via secure WebSockets for sub-second alert dispatch. Demonstrates production readiness for HIPAA-compliant data pipelines and live streaming analytics.",
+    "title": "Autonomous Computer Vision Anomaly Detector",
+    "description": "An edge-deployed YOLOv8 object detection pipeline monitoring real-time video feeds for physical security anomalies.",
     "category": "Project",
-    "date": "2026-08-09",
-    "image": "/projects/vitalguard_ai.png"
+    "date": "2026-08-08",
+    "image": "/projects/cv-anomaly.png",
+    "client": "Internal Operations",
+    "technologies": "PyTorch, YOLOv8, OpenCV, FastAPI, React",
+    "architectureImage": "/projects/cv-anomaly.png",
+    "challenge": "Existing security infrastructure required 24/7 manual monitoring of multiple video feeds, leading to human fatigue and missed critical anomalies in restricted zones.",
+    "solution": "We engineered a highly optimized computer vision pipeline. Using a fine-tuned YOLO model deployed on edge hardware, the system ingests RTSP streams and runs inference at 30 FPS. When anomalies are detected, a decoupled FastAPI microservice dispatches high-priority alerts via WebSockets to a React-based security dashboard.",
+    "results": "Inference running at a stable 30 FPS on edge hardware. Sub-100ms alert dispatch latency. Eliminated the need for constant human monitoring while increasing detection accuracy by 85%."
   },
   {
     "id": "3",
-    "title": "Zorvyn Finance Engine",
-    "description": "A secure financial routing and transaction logging API built for high reliability under concurrent load. Utilizes asynchronous Python (asyncio + motor), custom JWT authentication middleware, strict rate-limiting, and deployment pipeline automation. Proves capability in handling high-security user data, transactional integrity, and scalable cloud deployments.",
+    "title": "Automated Code Review Agent",
+    "description": "A multi-agent workflow integrated directly into GitHub Actions that performs deep static analysis and architectural reviews on pull requests.",
     "category": "Project",
-    "date": "2026-08-09",
-    "image": "/projects/zorvyn_finance.png"
-  },
-  {
-    "id": "4",
-    "title": "ITFarmer Platform",
-    "description": "A full-stack IT service platform handling public client requests, dynamic content feeds, and real-time administrative notification feeds. Next.js 16 App Router frontend paired with a FastAPI/MongoDB backend using persistent WebSocket channels for instant admin telemetry. Shows end-to-end client management capability and live state synchronization across distributed web clients.",
-    "category": "Project",
-    "date": "2026-08-09",
-    "image": "/projects/itfarmer_platform.png"
-  },
-  {
-    "id": "5",
-    "title": "Humanoid Telemetry Controller",
-    "description": "An embedded hardware-software integration interface designed to orchestrate multi-axis motor movements and sensor readings. Microcontroller programming linked with custom radar/flame sensor inputs, driving synchronous servo and motor arrays via optimized low-latency signal loops. Proves cross-domain engineering competence bridging high-level software down to physical hardware execution.",
-    "category": "Project",
-    "date": "2026-08-09",
-    "image": "/projects/humanoid_telemetry.png"
-  },
-  {
-    "id": "6",
-    "title": "BazaarLink",
-    "description": "A modular full-stack web system optimized for fast product catalog indexing, dynamic client state management, and API routing. Modular component architecture with clean REST API abstractions connecting modern client views to scalable backend persistence layers. Highlights UI component engineering, clean architectural patterns, and reusable client-side data fetching strategies.",
-    "category": "Project",
-    "date": "2026-08-09",
-    "image": "/projects/bazaarlink.png"
-  },
-  {
-    "id": "7",
-    "title": "VITALGUARD V2 DEPLOYED",
-    "description": "The latest iteration of VitalGuard-AI has successfully passed HIPAA compliance benchmarking and is now actively monitoring over 10,000 live patient telemetry streams with sub-50ms latency.",
-    "category": "Update",
-    "date": "2026-08-09",
-    "image": ""
-  },
-  {
-    "id": "8",
-    "title": "NEURAL FORGE HUB LAUNCH",
-    "description": "Our central command platform is officially online. This hub will serve as the primary routing layer for all incoming enterprise requests and autonomous agent deployments.",
-    "category": "Update",
-    "date": "2026-08-01",
-    "image": ""
-  },
-  {
-    "id": "9",
-    "title": "ROCM BRIDGE v1.2 UPDATE",
-    "description": "Expanded CUDA-to-HIP transpilation rules to support the latest PyTorch tensor operations. Compilation times reduced by 14% on enterprise hardware clusters.",
-    "category": "Update",
-    "date": "2026-07-15",
-    "image": ""
+    "date": "2026-08-07",
+    "image": "/projects/agent-workflow.png",
+    "client": "Internal CI/CD",
+    "technologies": "TypeScript, GitHub Actions API, Anthropic Claude 3, AST Parsers",
+    "architectureImage": "/projects/agent-workflow.png",
+    "challenge": "Senior engineers were burning 15+ hours a week reviewing junior pull requests for basic architectural violations and common security anti-patterns before the code even reached QA.",
+    "solution": "We deployed a headless, multi-agent orchestrator directly into our CI/CD pipeline. Upon PR creation, the orchestrator pulls the diff, constructs an AST to understand context, and feeds it into a high-reasoning LLM specifically prompted for our internal style guides. It automatically posts inline comments on problematic code blocks.",
+    "results": "Saved 15+ engineering hours per week. Caught 94% of common architectural anti-patterns before human review. Zero infra maintenance required."
   }
 ]

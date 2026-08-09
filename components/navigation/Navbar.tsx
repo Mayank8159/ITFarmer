@@ -8,11 +8,11 @@ import { usePathname } from "next/navigation";
 import { useCurrency } from "@/components/CurrencyContext";
 
 const NAV_LINKS = [
-  { label: "Platform", href: "/" },
-  { label: "Agents", href: "/#agents" },
-  { label: "Infrastructure", href: "/#infrastructure" },
-  { label: "Research", href: "/about" },
-  { label: "Docs", href: "/posts" },
+  { label: "Home", href: "/" },
+  { label: "Work", href: "/work" },
+  { label: "About", href: "/about" },
+  { label: "Post", href: "/log" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {
@@ -53,7 +53,7 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     // Initial check
     handleScroll();
-    
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
@@ -63,9 +63,8 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 flex justify-center w-full border-b-2 border-black ${
-          scrolled ? "bg-[#f2f2f2]" : "bg-[#e5e5e5]"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 flex justify-center w-full border-b-2 border-black ${scrolled ? "bg-[#f2f2f2]" : "bg-[#e5e5e5]"
+          }`}
         style={{
           clipPath: "polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0 calc(100% - 20px))"
         }}
@@ -88,7 +87,7 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-8">
             {NAV_LINKS.map((link) => {
               const isHashLink = link.href.startsWith("/#");
-              
+
               // Determine active state considering scroll position on home page
               let isActive = false;
               if (pathname === "/") {
@@ -100,10 +99,9 @@ export default function Navbar() {
               } else {
                 isActive = pathname === link.href; // Standard routing for other pages
               }
-              
-              const linkClasses = `font-mono text-xs uppercase tracking-widest transition-all relative group flex items-center gap-1 ${
-                isActive ? "text-black font-black" : "text-black/60 hover:text-black font-bold"
-              }`;
+
+              const linkClasses = `font-mono text-xs uppercase tracking-widest transition-all relative group flex items-center gap-1 ${isActive ? "text-black font-black" : "text-black/60 hover:text-black font-bold"
+                }`;
 
               const bracketLeft = <span className="text-[#ff6b00] opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-200">[</span>;
               const bracketRight = <span className="text-[#ff6b00] opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0 duration-200">]</span>;
@@ -124,9 +122,9 @@ export default function Navbar() {
               }
 
               return (
-                <Link 
-                  key={link.label} 
-                  href={link.href} 
+                <Link
+                  key={link.label}
+                  href={link.href}
                   className={linkClasses}
                   onClick={(e) => {
                     if (pathname === "/" && link.href === "/") {
@@ -151,21 +149,12 @@ export default function Navbar() {
 
           {/* RIGHT: Actions */}
           <div className="flex items-center gap-6 bg-white border border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-2 py-1">
-            <button 
-              onClick={toggleCurrency}
-              className="hidden sm:flex items-center justify-center font-mono text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 border border-black hover:bg-black hover:text-white transition-colors"
-            >
-              {currency}
-            </button>
-            <a href="https://github.com" target="_blank" rel="noreferrer" className="hidden sm:flex text-black hover:text-[#ff6b00] transition-colors p-2">
-              <Github className="w-4 h-4" />
-            </a>
 
-            <Link href="/services" className="hidden sm:flex bg-black text-white px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-[#ff6b00] transition-colors">
-              Deploy
+            <Link href="/contact" className="hidden sm:flex bg-black text-white px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-[#ff6b00] transition-colors">
+              Book Strategy Call
             </Link>
 
-            <button 
+            <button
               className="lg:hidden p-2 text-black hover:text-[#ff6b00] transition-colors"
               onClick={() => setMobileMenuOpen(true)}
             >
@@ -192,7 +181,7 @@ export default function Navbar() {
                 </div>
                 <span className="font-bold text-black text-xl tracking-tight uppercase">Neural Forge</span>
               </Link>
-              <button 
+              <button
                 className="p-2 text-black hover:bg-black/10 border border-black/10 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -219,7 +208,7 @@ export default function Navbar() {
                         {link.label}
                       </a>
                     ) : (
-                        <Link
+                      <Link
                         href={link.href}
                         className="text-2xl font-mono text-black hover:pl-4 transition-all duration-300 block border-b border-black/10 pb-4"
                         onClick={(e) => {
@@ -240,8 +229,8 @@ export default function Navbar() {
             </div>
 
             <div className="mt-auto flex flex-col gap-6">
-              <Link href="/services" onClick={() => setMobileMenuOpen(false)} className="w-full text-center py-4 bg-[#ff6b00] text-white font-mono text-sm uppercase tracking-widest hover:bg-black transition-colors">
-                Launch Application
+              <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="w-full text-center py-4 bg-[#ff6b00] text-white font-mono text-sm uppercase tracking-widest hover:bg-black transition-colors">
+                Book Strategy Call
               </Link>
             </div>
           </motion.div>

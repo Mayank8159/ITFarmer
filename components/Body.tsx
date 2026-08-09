@@ -96,29 +96,7 @@ const OPERATING_SYSTEM_MODULES: OSModule[] = [
   }
 ];
 
-const TESTIMONIALS: TestimonialData[] = [
-  {
-    name: "Alexander Volkov",
-    role: "CTO, Nexus Dynamics",
-    content: "The precision of their Talent Engine is unmatched. We assembled a 10-man specialized squad in under 72 hours. It feels like having an internal elite team.",
-    avatar: "https://i.pravatar.cc/150?u=alex",
-    glow: "rgba(255, 215, 0, 0.5)"
-  },
-  {
-    name: "Sarah Chen",
-    role: "Head of Product, Solara AI",
-    content: "Scaling our infrastructure was becoming a nightmare until we integrated with their OS. The transparency gave us the confidence to ship 30% faster.",
-    avatar: "https://i.pravatar.cc/150?u=sarah",
-    glow: "rgba(184, 134, 11, 0.5)"
-  },
-  {
-    name: "Marcus Thorne",
-    role: "VP Engineering, Quantix",
-    content: "Military-grade is an understatement. Their Security Layer caught vulnerabilities our previous vendors missed.",
-    avatar: "https://i.pravatar.cc/150?u=marcus",
-    glow: "rgba(218, 165, 32, 0.5)"
-  }
-];
+const TESTIMONIALS: TestimonialData[] = [];
 
 const PIPELINE_STEPS: PipelineStep[] = [
   { title: "Onboarding", sub: "Architecture Mapping" },
@@ -137,24 +115,24 @@ const STATS: StatItem[] = [
 
 const CAPABILITIES: CapabilityData[] = [
   {
-    title: "Multimodal AI Assistants",
-    description: "Real-time conversational agents combining vision, speech-to-text, and TTS synchronization.",
-    icon: <Bot className="w-6 h-6 text-[#FFD700]" />
-  },
-  {
-    title: "Automated Security Agents",
-    description: "Anomaly detection, disaster monitoring, and facial recognition frameworks for enterprise surveillance.",
-    icon: <ShieldCheck className="w-6 h-6 text-[#FFD700]" />
-  },
-  {
-    title: "High-Volume Media Pipelines",
-    description: "Automated data ingestion, metadata processing, and content generation engines.",
+    title: "AI & ML Engineering",
+    description: "Custom Transformers, RAG pipelines, Text Encoders, Model Fine-Tuning, and YOLO object detection workflows.",
     icon: <Database className="w-6 h-6 text-[#FFD700]" />
   },
   {
-    title: "Secure & Scalable SaaS",
-    description: "Threat-resistant platforms featuring advanced endpoint auditing and CI/CD-backed microservices.",
+    title: "Agents & Automation",
+    description: "Multi-agent workflows, autonomous simulation, tool-use integration, and multimodal data synchronization.",
+    icon: <Bot className="w-6 h-6 text-[#FFD700]" />
+  },
+  {
+    title: "Web Applications",
+    description: "High-performance, liquid UI architectures using Next.js, React, Tailwind, Supabase, and PostgreSQL.",
     icon: <Globe className="w-6 h-6 text-[#FFD700]" />
+  },
+  {
+    title: "Native Apps & Systems",
+    description: "Native Android (.apk), Windows (.exe) desktop software, and secure enterprise system architectures.",
+    icon: <ShieldCheck className="w-6 h-6 text-[#FFD700]" />
   }
 ];
 
@@ -247,6 +225,7 @@ export default function NextSection(): JSX.Element {
       </div>
 
       {/* TESTIMONIALS DIAL */}
+      {clients && clients.length > 0 && (
       <div id="deployments" className="mb-40 relative z-10 pt-20 mt-10">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-center mb-20">
           <Quote className="w-12 h-12 text-[#FFD700]/20 mx-auto mb-6" />
@@ -313,6 +292,7 @@ export default function NextSection(): JSX.Element {
           </button>
         </div>
       </div>
+      )}
 
       {/* STATS STRIP */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-40 relative z-10">
@@ -365,7 +345,7 @@ export default function NextSection(): JSX.Element {
       <motion.div id="onboarding" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="flex flex-col items-center justify-center text-center relative z-10 pt-20">
         <div className="w-px h-24 bg-gradient-to-b from-[#FFD700] to-transparent mb-12" />
         <h4 className="text-2xl font-bold text-white mb-8 uppercase tracking-tighter">Ready to deploy your elite squad?</h4>
-        <Link href="/services">
+        <Link href="/contact">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
