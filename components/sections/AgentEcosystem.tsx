@@ -10,7 +10,7 @@ export default function AgentEcosystem() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/data/ecosystemContent.json?t=' + Date.now())
+    fetch('/api/data/ecosystemContent')
       .then(res => res.json())
       .then(data => {
         setAgents(data);

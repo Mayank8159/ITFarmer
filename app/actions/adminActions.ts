@@ -146,10 +146,16 @@ export async function saveAboutConfig(data: any) {
   }
 }
 
+export async function getAboutConfig() {
+  try {
+    const fileContent = await fs.readFile(aboutConfigPath, "utf-8");
+    return JSON.parse(fileContent);
+  } catch (error) { return null; }
+}
+
 export async function uploadFile(formData: FormData) {
   try {
     const file = formData.get("file") as File;
-    const directory = formData.get("directory") as string; // 'founders', 'posts', or 'clients'
     
     if (!file) {
       return { success: false, error: "No file provided." };
@@ -158,21 +164,13 @@ export async function uploadFile(formData: FormData) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Secure the directory path
-    const safeDir = directory === "posts" ? "posts" : directory === "clients" ? "clients" : "founders";
-    const uploadDir = path.join(process.cwd(), "public", safeDir);
-    
-    // Ensure directory exists
-    try {
-      await fs.access(uploadDir);
-    } catch {
-      await fs.mkdir(uploadDir, { recursive: true });
-    }
+    // Bypass EROFS (read-only filesystem) by encoding the image as a Base64 Data URL
+    // This allows images to be stored directly inside the JSON configurations.
+    const mimeType = file.type || 'image/jpeg';
+    const base64Data = buffer.toString('base64');
+    const dataUrl = `data:${mimeType};base64,${base64Data}`;
 
-    const filePath = path.join(uploadDir, file.name);
-    await fs.writeFile(filePath, buffer);
-
-    return { success: true, filePath: `/${safeDir}/${file.name}` };
+    return { success: true, filePath: dataUrl };
   } catch (error) {
     return { success: false, error: String(error) };
   }

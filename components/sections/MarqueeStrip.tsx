@@ -25,7 +25,7 @@ export default function MarqueeStrip({ variant = "primary" }: { variant?: "prima
   const [configLoaded, setConfigLoaded] = useState(false);
 
   useEffect(() => {
-    fetch('/data/systemConfig.json?t=' + Date.now())
+    fetch('/api/data/systemConfig')
       .then(res => res.json())
       .then(data => {
         if (data.marquee && data.marquee.length > 0) {

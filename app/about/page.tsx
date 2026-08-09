@@ -14,8 +14,8 @@ export default function AboutPage(): JSX.Element {
 
   useEffect(() => {
     Promise.all([
-      fetch('/data/aboutContent.json?t=' + Date.now()).then(res => res.json()),
-      fetch('/data/aboutConfig.json?t=' + Date.now()).then(res => res.json())
+      fetch('/api/data/aboutContent').then(res => res.json()),
+      fetch('/api/data/aboutConfig').then(res => res.json())
     ]).then(([foundersData, configData]) => {
       setFounders(foundersData);
       setAboutConfig(configData);

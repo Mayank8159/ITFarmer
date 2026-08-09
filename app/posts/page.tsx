@@ -10,7 +10,7 @@ export default function ArchivesPage(): JSX.Element {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/data/postsContent.json?t=' + Date.now())
+    fetch('/api/data/postsContent')
       .then(res => res.json())
       .then(data => {
         setPosts(data);

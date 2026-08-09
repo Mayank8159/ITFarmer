@@ -11,7 +11,7 @@ export default function Footer() {
   const [config, setConfig] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/data/systemConfig.json?t=' + Date.now())
+    fetch('/api/data/systemConfig')
       .then(res => res.json())
       .then(data => setConfig(data))
       .catch(err => console.error(err));

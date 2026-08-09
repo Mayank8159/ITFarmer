@@ -10,7 +10,7 @@ export default function TestimonialsSection() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/data/clientsContent.json?t=' + Date.now())
+    fetch('/api/data/clientsContent')
       .then(res => res.json())
       .then(data => {
         setTestimonials(data);

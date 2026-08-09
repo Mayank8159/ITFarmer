@@ -11,7 +11,7 @@ export default function BentoGrid() {
   const [config, setConfig] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/data/systemConfig.json?t=' + Date.now())
+    fetch('/api/data/systemConfig')
       .then(res => res.json())
       .then(data => setConfig(data.bentoGrid))
       .catch(err => console.error("Failed to load bento grid config:", err));

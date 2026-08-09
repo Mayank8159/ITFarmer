@@ -14,7 +14,7 @@ export default function HeroPage() {
   const [heroData, setHeroData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/data/heroContent.json?t=' + Date.now())
+    fetch('/api/data/heroContent')
       .then(res => res.json())
       .then(data => setHeroData(data))
       .catch(err => console.error("Error loading hero data:", err));

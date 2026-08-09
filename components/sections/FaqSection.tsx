@@ -10,7 +10,7 @@ export default function FaqSection() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/data/faqContent.json?t=' + Date.now())
+    fetch('/api/data/faqContent')
       .then(res => res.json())
       .then(data => {
         setFaqs(data);

@@ -867,13 +867,13 @@ export default function AdminDashboard() {
                   </h3>
                   <div className="grid md:grid-cols-3 gap-6">
                     <Field label="BASE ACTIVE AGENTS">
-                      <input type="number" value={systemData.metrics?.activeAgents || 24} onChange={e => setSystemData({ ...systemData, metrics: { ...systemData.metrics, activeAgents: parseInt(e.target.value) } })} className={inputClass} />
+                      <input type="number" value={systemData.metrics?.activeAgents ?? ""} onChange={e => setSystemData({ ...systemData, metrics: { ...systemData.metrics, activeAgents: e.target.value === "" ? "" : parseInt(e.target.value) } })} className={inputClass} />
                     </Field>
                     <Field label="BASE GPU COMPUTE">
-                      <input type="number" step="0.01" value={systemData.metrics?.gpuCompute || 1.84} onChange={e => setSystemData({ ...systemData, metrics: { ...systemData.metrics, gpuCompute: parseFloat(e.target.value) } })} className={inputClass} />
+                      <input type="number" step="0.01" value={systemData.metrics?.gpuCompute ?? ""} onChange={e => setSystemData({ ...systemData, metrics: { ...systemData.metrics, gpuCompute: e.target.value === "" ? "" : parseFloat(e.target.value) } })} className={inputClass} />
                     </Field>
                     <Field label="BASE REQUESTS">
-                      <input type="number" value={systemData.metrics?.requests || 2405932} onChange={e => setSystemData({ ...systemData, metrics: { ...systemData.metrics, requests: parseInt(e.target.value) } })} className={inputClass} />
+                      <input type="number" value={systemData.metrics?.requests ?? ""} onChange={e => setSystemData({ ...systemData, metrics: { ...systemData.metrics, requests: e.target.value === "" ? "" : parseInt(e.target.value) } })} className={inputClass} />
                     </Field>
                   </div>
                 </div>

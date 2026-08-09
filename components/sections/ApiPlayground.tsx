@@ -50,7 +50,7 @@ export default function ApiPlayground() {
   const [config, setConfig] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/data/systemConfig.json?t=' + Date.now())
+    fetch('/api/data/systemConfig')
       .then(res => res.json())
       .then(data => setConfig(data.apiPlayground))
       .catch(err => console.error("Failed to load api config:", err));
