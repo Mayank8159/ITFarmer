@@ -75,7 +75,7 @@ export default function DistortedText({ text }: DistortedTextProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<Particle[]>([]);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number>(0);
   
   const mouseRef = useRef({ x: -1000, y: -1000, radius: 100 });
   const [isReady, setIsReady] = useState(false);
