@@ -1,47 +1,23 @@
 @import "tailwindcss";
-@layer utilities {
-  .perspective-1000 {
-    perspective: 1000px;
-  }
-  .transform-3d {
-    transform-style: preserve-3d;
-  }
-  .backface-hidden {
-    backface-visibility: hidden;
-  }
-  
-  /* Glassmorphism Levels */
-  .glass-light {
-    @apply backdrop-blur-[4px] bg-white/5 border border-white/5;
-  }
-  .glass-heavy {
-    @apply backdrop-blur-[20px] bg-black/60 border border-white/10 shadow-2xl;
-  }
-  .glass-ultra {
-    @apply backdrop-blur-[40px] bg-[#0a0e27]/40 border border-[#FFD700]/20 shadow-[0_0_50px_rgba(255,215,0,0.1)];
-  }
-  
-  /* Gold Prestige Text */
-  .text-gold-gradient {
-    @apply text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-[#B8860B];
-  }
-}
-
-html.lenis {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
 
 :root {
-  --background: #020202; /* Deep Obsidian */
-  --foreground: #E5E4E2; /* Platinum */
+  /* Brutalist Color System */
+  --space-black: #e5e5e5; /* Background */
+  --surface-dark: #f0f0f0; /* Slightly off-white for cards */
+  --deep-surface: #ffffff; /* Pure white for contrast areas */
+  
+  --neon-cyan: #ff6b00; /* Reusing the variable name but making it orange */
+  --plasma-purple: #000000; /* Contrast black */
+  
+  --text-primary: #111111; /* Deep black text */
+  --text-secondary: #333333; /* Dark gray text */
+  --text-muted: #555555; /* Medium gray text */
+  
+  --border-color: rgba(0, 0, 0, 0.15); /* Solid dark border */
+  --border-active: rgba(255, 107, 0, 1); /* Solid orange border */
+
+  --background: var(--space-black);
+  --foreground: var(--text-primary);
 }
 
 @theme inline {
@@ -50,33 +26,147 @@ html.lenis {
   --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
   --font-mono: var(--font-jetbrains-mono);
+  
+  --color-space-black: var(--space-black);
+  --color-surface-dark: var(--surface-dark);
+  --color-deep-surface: var(--deep-surface);
+  --color-neon-cyan: var(--neon-cyan);
+  --color-plasma-purple: var(--plasma-purple);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Admin Dashboard Custom Scrollbar */
-.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 215, 0, 0.3); }
+/* Lenis Smooth Scroll Fixes */
+html.lenis {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
 
-/* Admin Dashboard Input Fields */
+@layer utilities {
+  /* Mobile Typography Hardening */
+  .text-7xl {
+    font-size: clamp(3rem, 6vw, 4.5rem) !important;
+  }
+  .text-8xl {
+    font-size: clamp(3.5rem, 8vw, 6rem) !important;
+  }
+  .text-\[100px\] {
+    font-size: clamp(4rem, 10vw, 100px) !important;
+  }
+
+  /* Brutalist Panels */
+  .brutalist-panel {
+    background: var(--surface-dark);
+    border: 1px solid var(--border-color);
+  }
+
+  .brutalist-panel-white {
+    background: var(--deep-surface);
+    border: 1px solid var(--border-color);
+  }
+
+  /* Sharp Borders */
+  .brutalist-border {
+    border: 1px solid var(--border-color);
+  }
+  
+  .brutalist-border-active {
+    border: 1px solid var(--border-active);
+  }
+
+  /* Technical Typography */
+  .text-gradient {
+    /* No gradients in brutalism! Flat solid color */
+    color: var(--text-primary);
+  }
+  
+  .text-gradient-cyan {
+    /* Map to solid orange */
+    color: var(--neon-cyan);
+  }
+
+  .technical-label {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+  }
+
+  /* Indicators */
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 0; /* Square for brutalist */
+    background-color: var(--neon-cyan);
+  }
+
+  /* Backgrounds */
+  .grid-background {
+    background-size: 80px 80px; /* Larger grid for brutalist feel */
+    background-image: 
+      linear-gradient(to right, rgba(0,0,0,0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px);
+    background-position: center;
+    animation: scrollGrid 20s linear infinite;
+  }
+}
+
+/* Animations */
+@keyframes scrollGrid {
+  0% {
+    background-position: 0px 0px;
+  }
+  100% {
+    background-position: 80px 80px;
+  }
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--space-black);
+  border-left: 1px solid var(--border-color);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Custom inputs */
 .input-field {
   width: 100%;
-  background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 0.75rem;
+  background: var(--deep-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 0;
   padding: 0.75rem 1rem;
-  color: white;
+  color: var(--text-primary);
   outline: none;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  font-family: var(--font-mono), monospace;
   font-size: 0.875rem;
 }
 .input-field:focus {
-  border-color: rgba(255,215,0,0.5);
-  background: rgba(0,0,0,0.6);
-  box-shadow: 0 0 20px rgba(255,215,0,0.1);
+  border-color: var(--border-active);
 }

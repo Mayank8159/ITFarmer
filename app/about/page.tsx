@@ -2,25 +2,12 @@
 
 import React, { useState, useEffect, JSX } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { 
-  Mail, Github as GithubIcon, Linkedin as LinkedinIcon, Phone, Server, ShieldCheck, Zap, 
-  Globe, Users, Cpu, ArrowRight, Database, Lock, Layers, BarChart3, Loader2
-} from "lucide-react";
-
-/* COMPONENTS */
-import TopBrandHeader from "@/components/TopBrandHeader";
-import SideNav from "@/components/SideNav";
-import OrbitChat from "@/components/orbit/OrbitChat";
-import SmokeBackground from "@/components/SmokeBackground";
-import CircularWorkflow from "@/components/about/CircularWorkflow";
-import VersatilityGraph from "@/components/about/VersatilityGraph";
-import HubSpokeGraph from "@/components/about/HubSpokeGraph";
+import { Mail, Github as GithubIcon, Linkedin as LinkedinIcon, ArrowRight, Loader2, Server, Users, Zap } from "lucide-react";
+import BrutalistCard from "@/components/cards/BrutalistCard";
 
 export default function AboutPage(): JSX.Element {
-  const router = useRouter();
   const [founders, setFounders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -38,203 +25,258 @@ export default function AboutPage(): JSX.Element {
   }, []);
 
   return (
-      <main className="relative min-h-screen bg-transparent text-[#E5E4E2] selection:bg-[#FFD700]/30 overflow-x-hidden">
+    <main className="relative min-h-screen bg-[#e5e5e5] text-black overflow-x-hidden pt-28">
+      
+      {/* GRID OVERLAY */}
+      <div className="absolute inset-0 grid-background opacity-100 pointer-events-none z-0" />
 
-        {/* BACKGROUND LAYER */}
-        <SmokeBackground />
+      <div className="relative z-10 max-w-[1600px] mx-auto px-6 pb-20">
+        
+        {/* 1. HERO SECTION */}
+        <section className="relative min-h-[60vh] flex flex-col items-start justify-center border-b border-black pb-16">
+          <div className="border border-black px-3 py-1 mb-8 bg-white inline-flex items-center gap-2">
+            <div className="w-2 h-2 bg-[#ff6b00]" />
+            <span className="font-mono text-[10px] uppercase tracking-widest text-black font-bold">RESEARCH DIVISION</span>
+          </div>
 
-        <div className="relative z-10">
-          <TopBrandHeader />
-      <SideNav />
-          <OrbitChat />
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.9] text-black"
+          >
+            ARCHITECTING <br /> <span className="text-[#ff6b00]">DIGITAL POWER.</span>
+          </motion.h1>
 
-          {/* SUBTLE OVERLAY GRID */}
-          <div className="absolute inset-0 bg-[radial-gradient(#ffffff05_1px,transparent_1px)] bg-size-[40px_40px] pointer-events-none" />
+          <motion.p 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            transition={{ delay: 0.2 }} 
+            className="mt-8 max-w-3xl text-black/70 font-mono text-lg leading-relaxed border-l-4 border-black pl-6 bg-white p-6 border-r border-y shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+          >
+            A high-performance engineering powerhouse deploying elite multi-domain squads to solve complex technological challenges. We are a specialized infrastructure designed for the centralized leadership of decentralized elite engineering squads.
+          </motion.p>
+        </section>
 
-          {/* 1. HERO SECTION */}
-          <section className="relative min-h-[80vh] md:min-h-[90vh] flex flex-col items-center justify-center text-center px-4 pt-32 pb-16">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-150 md:h-150 bg-[#FFD700]/5 blur-[80px] md:blur-[120px] rounded-full pointer-events-none"
-            />
-            
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 px-4 py-1 border border-[#FFD700]/30 bg-[#FFD700]/5 rounded-full backdrop-blur-md">
-              <span className="text-[9px] md:text-[10px] font-mono uppercase tracking-[0.4em] text-[#FFD700]">Global IT Delivery Organization</span>
-            </motion.div>
+        {/* 2. CORE PILLARS */}
+        <section className="py-20 border-b border-black">
+          <div className="mb-12">
+            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4 text-black">
+              Execution Logic
+            </h2>
+          </div>
 
-            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="text-4xl sm:text-6xl md:text-9xl font-black italic uppercase tracking-tighter leading-[0.9] font-serif text-white">
-              Architecting <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-[#B8860B]">Digital Power.</span>
-            </motion.h1>
-
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mt-8 max-w-2xl text-[#E5E4E2]/80 font-light text-base md:text-xl leading-relaxed mx-auto px-4 font-sans">
-              A high-performance engineering powerhouse deploying elite multi-domain squads to solve complex technological challenges.
-            </motion.p>
-          </section>
-
-          {/* 2. IDENTITY // THE IT FARM */}
-          <section className="max-w-7xl mx-auto px-6 py-10 md:py-20">
-            <div className="grid lg:grid-cols-2 gap-12 md:gap-20 items-center">
-              <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                <h2 className="text-[#FFD700] font-mono text-xs uppercase tracking-[0.4em] mb-4">Identity // Core</h2>
-                <h3 className="text-3xl md:text-6xl font-black italic uppercase tracking-tighter mb-6 text-white font-serif">The IT Farm.</h3>
-                <p className="text-[#E5E4E2]/80 text-lg font-light leading-relaxed mb-8">
-                  We are a specialized infrastructure designed for the centralized leadership of decentralized elite engineering squads. 
-                </p>
-                
-                <HubSpokeGraph />
-              </motion.div>
-
-              <AnimatedBorderCard>
-                <div className="space-y-8">
-                  {[
-                    { icon: Server, title: "Central Governance", desc: "Strategic management from our primary operations hub." },
-                    { icon: Users, title: "Elite Squads", desc: "Hand-picked task forces for domain-specific execution." },
-                    { icon: Zap, title: "High-Velocity", desc: "Rapid resource allocation to match enterprise pace." }
-                  ].map((item, i) => (
-                    <div key={i} className="flex gap-5">
-                      <div className="p-3 bg-[#FFD700]/5 border border-[#FFD700]/10 rounded-2xl shrink-0 h-fit"><item.icon className="w-5 h-5 text-[#FFD700]" /></div>
-                      <div>
-                        <h4 className="font-bold text-white text-base">{item.title}</h4>
-                        <p className="text-[#E5E4E2]/60 text-sm leading-relaxed">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: Server, title: "Central Governance", desc: "Strategic management from our primary operations hub." },
+              { icon: Users, title: "Elite Squads", desc: "Hand-picked task forces for domain-specific execution." },
+              { icon: Zap, title: "High-Velocity", desc: "Rapid resource allocation to match enterprise pace." }
+            ].map((item, i) => (
+              <BrutalistCard key={i} whiteBg>
+                <div className="w-12 h-12 bg-black flex items-center justify-center mb-6">
+                  <item.icon className="w-6 h-6 text-white" />
                 </div>
-              </AnimatedBorderCard>
-            </div>
-          </section>
+                <h4 className="font-black text-2xl text-black uppercase mb-3">{item.title}</h4>
+                <p className="text-black/70 font-mono text-sm leading-relaxed">{item.desc}</p>
+              </BrutalistCard>
+            ))}
+          </div>
+        </section>
 
-          {/* 3. EXECUTION LOGIC */}
-          <section className="px-6 py-10 md:py-20">
-            <CircularWorkflow />
-          </section>
-
-          {/* 4. DOMAIN EXPERTISE & CAPABILITY */}
-          <section className="py-10 md:py-20 bg-[#020202]/50 border-y border-white/5 backdrop-blur-xl relative">
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
-            <VersatilityGraph />
-          </section>
-
-          {/* 6. FOUNDERS (DYNAMIC CMS) */}
-          <section className="max-w-6xl mx-auto px-6 py-16 md:py-24">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter font-serif text-white">The <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-[#B8860B]">Commanders.</span></h2>
-            </div>
-            
-            {isLoading ? (
-               <div className="flex justify-center items-center py-20">
-                 <Loader2 className="w-8 h-8 animate-spin text-[#FFD700]" />
-               </div>
-            ) : (
-              <div className="grid md:grid-cols-2 gap-8 md:gap-10">
-                {founders.map((founder, idx) => (
-                  <FounderCard
-                    key={idx}
-                    name={founder.name}
-                    role={founder.role}
-                    email="team.techserve55@gmail.com"
-                    phone="Restricted Access"
-                    githubUrl="#"
-                    linkedinUrl="#"
-                    imageSrc={founder.image || "/founders/placeholder.png"}
-                    description={founder.description}
-                  />
-                ))}
+        {/* 3. CAPABILITIES MATRIX */}
+        <section className="py-20 border-b border-black">
+          <div className="mb-12">
+            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4 text-black">
+              Capabilities Matrix
+            </h2>
+            <p className="text-black/70 font-mono text-sm max-w-2xl">
+              High-ticket agency services designed to attract enterprise clients and funded startups.
+            </p>
+          </div>
+          
+          <div className="flex flex-col border-4 border-black bg-white shadow-[16px_16px_0px_0px_rgba(0,0,0,1)]">
+            <div className="grid grid-cols-1 md:grid-cols-3 border-b-4 border-black group hover:bg-black transition-colors cursor-crosshair">
+              <div className="col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center bg-[#ff6b00] group-hover:bg-[#ff6b00] transition-colors relative overflow-hidden">
+                <h3 className="font-black text-xl uppercase text-black relative z-10 group-hover:translate-x-2 transition-transform">Multi-Agent AI Pipelines</h3>
               </div>
-            )}
-          </section>
+              <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
+                <p className="font-mono text-sm text-black/80 group-hover:text-white leading-relaxed font-bold transition-colors">
+                  Autonomous agentic workflows, RAG systems, and custom FastAPI inference orchestration.
+                </p>
+              </div>
+            </div>
 
-          {/* 7. CTA */}
-          <section className="max-w-7xl mx-auto px-6 pb-20 mt-10">
-            <motion.div whileHover={{ scale: 1.01 }} className="relative rounded-[2.5rem] md:rounded-[3.5rem] p-10 md:p-16 overflow-hidden border border-white/10 bg-[#020202]/40 backdrop-blur-3xl text-center group">
-               <div className="absolute inset-0 bg-[#FFD700]/5 group-hover:bg-[#FFD700]/10 transition-colors" />
-               <h2 className="relative text-3xl md:text-7xl font-black italic uppercase tracking-tighter mb-10 leading-tight font-serif text-white">Ready to Deploy Your <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-[#B8860B]">Elite Squad?</span></h2>
-               <Link href="/services">
-                 <button 
-                 className="relative px-12 py-6 bg-white text-[#0a0e27] rounded-full font-black uppercase text-xs tracking-[0.2em] flex items-center gap-3 mx-auto group active:scale-95 shadow-[0_0_30px_rgba(255,215,0,0.2)] hover:shadow-[0_0_50px_rgba(255,215,0,0.5)] transition-all">
-                   Start Build <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform text-[#0a0e27]" />
-                 </button>
-               </Link>
-            </motion.div>
-          </section>
+            <div className="grid grid-cols-1 md:grid-cols-3 border-b-4 border-black group hover:bg-black transition-colors cursor-crosshair">
+              <div className="col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center bg-[#f0f0f0] group-hover:bg-black transition-colors">
+                <h3 className="font-black text-xl uppercase text-black group-hover:text-[#ff6b00] group-hover:translate-x-2 transition-all">GPU & Infrastructure Porting</h3>
+              </div>
+              <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
+                <p className="font-mono text-sm text-black/80 group-hover:text-white/80 leading-relaxed font-bold transition-colors">
+                  Automated CUDA-to-HIP code translation, hardware abstraction, and compute layer benchmarking.
+                </p>
+              </div>
+            </div>
 
-          <footer className="py-10 text-center border-t border-white/5 text-[9px] font-mono text-[#E5E4E2]/40 uppercase tracking-widest">
-            © 2026 IT FARM GLOBAL DELIVERY NETWORK.
-          </footer>
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 border-b-4 border-black group hover:bg-black transition-colors cursor-crosshair">
+              <div className="col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center bg-[#f0f0f0] group-hover:bg-black transition-colors">
+                <h3 className="font-black text-xl uppercase text-black group-hover:text-[#ff6b00] group-hover:translate-x-2 transition-all">High-Throughput Web Systems</h3>
+              </div>
+              <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
+                <p className="font-mono text-sm text-black/80 group-hover:text-white/80 leading-relaxed font-bold transition-colors">
+                  Next.js 16 / React 19 platforms, real-time WebSockets, and stateful client architectures.
+                </p>
+              </div>
+            </div>
 
-        <style jsx global>{`
-          @keyframes shimmer {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-          }
-          .animate-shimmer {
-            animation: shimmer 6s linear infinite;
-          }
-          @keyframes border-glow {
-            0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); border-color: rgba(255, 215, 0, 0.3); }
-            50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); border-color: rgba(255, 255, 255, 0.8); }
-          }
-          .glow-border {
-            animation: border-glow 3s ease-in-out infinite;
-          }
-        `}</style>
-      </main>
-  );
-}
+            <div className="grid grid-cols-1 md:grid-cols-3 border-b-4 border-black group hover:bg-black transition-colors cursor-crosshair">
+              <div className="col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center bg-[#f0f0f0] group-hover:bg-black transition-colors">
+                <h3 className="font-black text-xl uppercase text-black group-hover:text-[#ff6b00] group-hover:translate-x-2 transition-all">Production Microservices</h3>
+              </div>
+              <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
+                <p className="font-mono text-sm text-black/80 group-hover:text-white/80 leading-relaxed font-bold transition-colors">
+                  Dockerized backends, secure JWT/OAuth flows, and high-concurrency database layer engineering.
+                </p>
+              </div>
+            </div>
 
-/* SUB-COMPONENTS */
+            <div className="grid grid-cols-1 md:grid-cols-3 group hover:bg-black transition-colors cursor-crosshair">
+              <div className="col-span-1 border-b md:border-b-0 md:border-r-4 border-black p-6 flex items-center bg-[#f0f0f0] group-hover:bg-black transition-colors">
+                <h3 className="font-black text-xl uppercase text-black group-hover:text-[#ff6b00] group-hover:translate-x-2 transition-all">Hardware & Embedded Systems</h3>
+              </div>
+              <div className="col-span-2 p-6 flex items-center bg-white group-hover:bg-black transition-colors">
+                <p className="font-mono text-sm text-black/80 group-hover:text-white/80 leading-relaxed font-bold transition-colors">
+                  Microcontroller interfaces, sensor telemetry, and real-time robotics signal controllers.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-function AnimatedBorderCard({ children }: { children: React.ReactNode }) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative rounded-4xl p-[1px] overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent,rgba(255,215,0,0.3),transparent)] bg-size-[200%_100%] animate-shimmer" />
-      <div className="relative bg-[#0a0e27]/90 border border-white/10 rounded-4xl p-8 md:p-12 backdrop-blur-2xl">
-        {children}
+        {/* 4. THE HORIZON PROTOCOL */}
+        <section className="py-20 border-b border-black">
+          <div className="mb-12">
+            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4 text-black">
+              The Horizon Protocol
+            </h2>
+            <p className="text-black/70 font-mono text-sm max-w-2xl">
+              Continuous innovation pipeline. What we are doing now, and what comes next.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 relative">
+            <div className="hidden md:block absolute top-[45%] left-[20%] right-[20%] h-1 bg-black z-0 border-y border-white" />
+            
+            {/* CURRENT */}
+            <div className="relative z-10 bg-white border-2 border-black p-6 flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform">
+              <div className="bg-black text-white text-[10px] font-mono uppercase tracking-widest py-1 px-3 mb-4 w-fit font-bold">
+                [ CURRENT FOCUS ]
+              </div>
+              <h3 className="font-black text-xl uppercase text-black mb-3 border-b border-black pb-2">Multi-Agent Frameworks</h3>
+              <p className="text-sm font-mono text-black/70 flex-1">
+                Refining custom multi-agent orchestration engines that allow autonomous AI nodes to execute multi-step software and research tasks.
+              </p>
+            </div>
+
+            {/* NEXT */}
+            <div className="relative z-10 bg-[#ff6b00] border-2 border-black p-6 flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform">
+              <div className="bg-black text-white text-[10px] font-mono uppercase tracking-widest py-1 px-3 mb-4 w-fit font-bold">
+                [ NEXT PHASE ]
+              </div>
+              <h3 className="font-black text-xl uppercase text-black mb-3 border-b border-black pb-2">Zero-Latency Edge</h3>
+              <p className="text-sm font-mono text-black flex-1 font-medium">
+                Benchmarking local open-weights LLM deployments on custom hardware clusters to achieve sub-100ms inference response times.
+              </p>
+            </div>
+
+            {/* VISION */}
+            <div className="relative z-10 bg-[#f0f0f0] border-2 border-black p-6 flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform">
+              <div className="bg-black text-white text-[10px] font-mono uppercase tracking-widest py-1 px-3 mb-4 w-fit font-bold">
+                [ LONG-TERM VISION ]
+              </div>
+              <h3 className="font-black text-xl uppercase text-black mb-3 border-b border-black pb-2">Autonomous Hubs</h3>
+              <p className="text-sm font-mono text-black/70 flex-1">
+                Building modular, plug-and-play AI microservice infrastructure that any company can integrate into their existing stack within minutes.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. FOUNDERS */}
+        <section className="py-20 border-b border-black">
+          <div className="mb-12 flex items-end justify-between">
+            <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-black leading-[0.9]">
+              THE <span className="text-[#ff6b00]">COMMANDERS.</span>
+            </h2>
+          </div>
+          
+          {isLoading ? (
+             <div className="flex justify-center items-center py-20 bg-white border border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+               <Loader2 className="w-8 h-8 animate-spin text-black" />
+             </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-8">
+              {founders.map((founder, idx) => (
+                <BrutalistCard key={idx} whiteBg className="flex flex-col h-full group/founder">
+                  <div className="flex items-center gap-6 mb-8 border-b border-black pb-6">
+                    <div className="relative h-20 w-20 md:h-24 md:w-24 border-4 border-black bg-black overflow-hidden flex-shrink-0">
+                      <Image 
+                        src={founder.image || "/founders/placeholder.png"} 
+                        alt={founder.name} 
+                        fill 
+                        className="object-contain object-center grayscale group-hover/founder:grayscale-0 transition-all duration-500 bg-black" 
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl md:text-3xl font-black text-black uppercase leading-tight mb-2">{founder.name}</h3>
+                      <p className="bg-[#ff6b00] text-white px-2 py-1 text-[10px] font-mono uppercase tracking-widest inline-block font-bold">
+                        {founder.role}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <p className="text-black/70 text-sm font-mono leading-relaxed mb-8 flex-1 border-l-2 border-black pl-4 bg-[#f0f0f0] p-4 italic">
+                    "{founder.description}"
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-black">
+                    <div className="flex flex-col gap-2 w-full">
+                      <a href={`mailto:team.techserve55@gmail.com`} className="text-[10px] font-mono font-bold text-black hover:text-[#ff6b00] flex items-center gap-2">
+                        <Mail className="w-4 h-4" /> team.techserve55@gmail.com
+                      </a>
+                    </div>
+                    <div className="flex gap-4">
+                      {founder.github && (
+                        <a href={founder.github} target="_blank" rel="noopener noreferrer" className="p-2 border border-black hover:bg-black hover:text-white transition-colors bg-white">
+                          <GithubIcon className="w-5 h-5" />
+                        </a>
+                      )}
+                      {founder.linkedin && (
+                        <a href={founder.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 border border-black hover:bg-black hover:text-white transition-colors bg-white">
+                          <LinkedinIcon className="w-5 h-5" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </BrutalistCard>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* 4. CTA */}
+        <section className="py-20 flex justify-center">
+          <div className="bg-white border-4 border-black p-12 text-center max-w-3xl shadow-[16px_16px_0px_0px_rgba(0,0,0,1)]">
+             <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-8 leading-[0.9] text-black">
+               Deploy Your <br /> <span className="text-[#ff6b00]">Elite Squad.</span>
+             </h2>
+             <Link href="/services">
+               <button className="px-10 py-5 bg-black text-white font-mono text-sm uppercase tracking-widest flex items-center gap-3 mx-auto hover:bg-[#ff6b00] transition-colors border-2 border-black font-bold group">
+                 Start Build <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+               </button>
+             </Link>
+          </div>
+        </section>
+
       </div>
-    </motion.div>
-  );
-}
-
-interface FounderCardProps {
-  name: string;
-  role: string;
-  email: string;
-  phone: string;
-  description: string;
-  imageSrc: string;
-  githubUrl: string;
-  linkedinUrl: string;
-}
-
-function FounderCard({ name, role, email, phone, description, imageSrc, githubUrl, linkedinUrl }: FounderCardProps) {
-  return (
-    <AnimatedBorderCard>
-      <div className="flex items-center gap-5 mb-6">
-        <div className="relative h-16 w-16 md:h-20 md:w-20 rounded-full glow-border border-2 overflow-hidden bg-white/10 p-0.5">
-          <Image 
-            src={imageSrc} 
-            alt={name} 
-            fill 
-            className="object-cover rounded-full transition-transform duration-500 hover:scale-110" 
-          />
-        </div>
-        <div>
-          <h3 className="text-lg md:text-xl font-bold text-white">{name}</h3>
-          <p className="text-[#FFD700] text-[10px] font-mono uppercase tracking-widest">{role}</p>
-        </div>
-      </div>
-      <p className="text-[#E5E4E2]/80 text-sm font-light italic mb-8 h-14">&quot;{description}&quot;</p>
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-white/5">
-        <div className="flex flex-col gap-2 w-full">
-          <a href={`mailto:${email}`} className="text-[10px] md:text-[11px] font-mono text-[#E5E4E2]/50 hover:text-white flex items-center gap-2"><Mail className="w-3 h-3" /> {email}</a>
-        </div>
-        <div className="flex gap-4">
-          <a href={githubUrl} target="_blank" className="p-2 bg-white/5 rounded-lg hover:bg-[#FFD700]/20 transition-colors"><GithubIcon className="w-5 h-5 text-[#E5E4E2]/50 hover:text-[#FFD700]" /></a>
-          <a href={linkedinUrl} target="_blank" className="p-2 bg-white/5 rounded-lg hover:bg-[#FFD700]/20 transition-colors"><LinkedinIcon className="w-5 h-5 text-[#E5E4E2]/50 hover:text-[#FFD700]" /></a>
-        </div>
-      </div>
-    </AnimatedBorderCard>
+    </main>
   );
 }

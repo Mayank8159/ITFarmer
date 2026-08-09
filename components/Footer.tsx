@@ -1,0 +1,143 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { Terminal, Github, Twitter, Disc, X } from "lucide-react";
+import DistortedText from "@/components/DistortedText";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function Footer() {
+  const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | null>(null);
+
+  return (
+    <>
+      <footer className="w-full bg-[#f0f0f0] border-t-4 border-black relative z-10">
+        <div className="max-w-[1600px] mx-auto px-6 pt-20 pb-10">
+          
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-10 mb-16">
+            
+            {/* Brand Column */}
+            <div className="col-span-2 md:col-span-2 flex flex-col items-start">
+              <Link href="/" className="flex items-center gap-3 mb-6 bg-black text-white px-4 py-2 hover:bg-[#ff6b00] transition-colors border border-black">
+                <Terminal className="w-5 h-5" />
+                <span className="font-bold tracking-tight uppercase">Neural Forge Hub</span>
+              </Link>
+              <p className="text-black/70 text-sm font-mono leading-relaxed max-w-xs mb-6">
+                Advanced AI infrastructure and computational resources for the next generation of autonomous networks.
+              </p>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-black w-fit">
+                <div className="w-2 h-2 bg-[#ff6b00]" />
+                <span className="text-[10px] font-mono font-bold text-black uppercase tracking-widest">SYSTEMS OPERATIONAL</span>
+              </div>
+            </div>
+
+            {/* Links Columns */}
+            <div className="flex flex-col gap-4">
+              <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">PLATFORM</h4>
+              <a href="/#agents" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2 block">Agents</a>
+              <a href="/#infrastructure" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2 block">Infrastructure</a>
+              <Link href="/services" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Pricing</Link>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">DEVELOPERS</h4>
+              <Link href="/posts" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Documentation</Link>
+              <Link href="/services" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">API Reference</Link>
+              <a href="https://github.com/Techserve55" target="_blank" rel="noopener noreferrer" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">GitHub Repository</a>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">RESOURCES</h4>
+              <Link href="/about" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Research</Link>
+              <Link href="/posts" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Blog</Link>
+              <a href="mailto:team.techserve55@gmail.com" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Contact</a>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">SOCIAL</h4>
+              <div className="flex gap-4">
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
+                  <Twitter className="w-5 h-5" />
+                </a>
+                <a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
+                  <Disc className="w-5 h-5" />
+                </a>
+                <a href="https://github.com/Techserve55" target="_blank" rel="noopener noreferrer" className="text-black hover:text-[#ff6b00] transition-colors border border-black bg-white p-2">
+                  <Github className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="pt-8 border-t border-black flex flex-col md:flex-row items-center justify-between gap-4 mb-16">
+            <p className="text-black/60 text-xs font-mono font-bold">
+              © 2026 NEURAL FORGE HUB. ALL RIGHTS RESERVED.
+            </p>
+            <div className="flex gap-6 text-black/60 text-xs font-mono font-bold">
+              <button onClick={() => setLegalModal('privacy')} className="hover:text-black transition-colors uppercase tracking-widest">PRIVACY POLICY</button>
+              <button onClick={() => setLegalModal('terms')} className="hover:text-black transition-colors uppercase tracking-widest">TERMS OF SERVICE</button>
+            </div>
+          </div>
+          
+          {/* Extreme Footer Text Distortion */}
+          <DistortedText text="FORGE" />
+        </div>
+      </footer>
+
+      {/* Brutalist Legal Modal */}
+      <AnimatePresence>
+        {legalModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-[#e5e5e5] border-4 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] w-full max-w-4xl max-h-[80vh] flex flex-col"
+            >
+              <div className="flex justify-between items-center p-6 border-b-4 border-black bg-white">
+                <h2 className="text-3xl font-black uppercase tracking-tighter">
+                  {legalModal === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
+                </h2>
+                <button 
+                  onClick={() => setLegalModal(null)} 
+                  className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#ff6b00] hover:text-white transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="p-8 overflow-y-auto font-mono text-sm leading-relaxed text-black/80">
+                <p className="mb-4">
+                  <strong>Effective Date: {new Date().toLocaleDateString()}</strong>
+                </p>
+                {legalModal === 'privacy' ? (
+                  <>
+                    <p className="mb-4">This Privacy Policy details how Neural Forge Hub ("we," "us," or "our") collects, uses, and protects your proprietary data and models.</p>
+                    <p className="mb-4">1. <strong>Air-Gapped Telemetry:</strong> Enterprise clusters deployed via our platform default to a strict zero-telemetry protocol. No neural weights, gradients, or inference payloads are stored on edge nodes after processing.</p>
+                    <p className="mb-4">2. <strong>Swarm Logs:</strong> Temporary logs generated by autonomous agents are cryptographically hashed and automatically purged after 24 hours.</p>
+                    <p className="mb-4">3. <strong>Third-Party Processors:</strong> We do not sell or share computational usage metrics to external entities. Network bandwidth logs are kept purely for billing cycles.</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="mb-4">These Terms of Service govern your access to the Neural Forge GPU clusters and Autonomous Swarm APIs.</p>
+                    <p className="mb-4">1. <strong>Acceptable Use:</strong> Users are prohibited from deploying intelligent agents designed to orchestrate denial-of-service attacks, scrape copyrighted PII, or execute unauthorized smart contract exploits.</p>
+                    <p className="mb-4">2. <strong>Compute Quotas:</strong> Intensive cluster tasks that exceed the PFLOP/s limit of your active tier will be dynamically throttled. We reserve the right to preempt idle instances to maintain network integrity.</p>
+                    <p className="mb-4">3. <strong>Liability:</strong> Neural Forge Hub is not responsible for the downstream actions of autonomous agents you compile and deploy. The engineer assumes all liability for swarm behaviors.</p>
+                  </>
+                )}
+                <div className="mt-8 pt-4 border-t-2 border-black/20 text-xs opacity-70">
+                  By closing this window, you acknowledge and accept these terms as a binding protocol.
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

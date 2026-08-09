@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Terminal, Activity, Bot, Cpu, ShieldCheck, Zap } from "lucide-react";
 
 type Role = "system" | "user" | "assistant";
@@ -15,26 +15,11 @@ interface Message {
 export default function OrbitChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [history, setHistory] = useState<Message[]>([
-    { id: "init", role: "assistant", content: "ORBIT CORE ONLINE. Biometric uplink verified. State objective." }
+    { id: "init", role: "assistant", content: "ORBIT CORE ONLINE. Terminal uplink verified. State objective." }
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Motion values for 3D tilt effect
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseXSpring = useSpring(x, { stiffness: 100, damping: 30 });
-  const mouseYSpring = useSpring(y, { stiffness: 100, damping: 30 });
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (window.innerWidth < 768) return; // Skip tilt on mobile
-    const rect = e.currentTarget.getBoundingClientRect();
-    x.set((e.clientX - rect.left) / rect.width - 0.5);
-    y.set((e.clientY - rect.top) / rect.height - 0.5);
-  };
 
   // Scroll chat to bottom
   useEffect(() => {
@@ -47,27 +32,47 @@ export default function OrbitChat() {
     if (!inputValue.trim()) return;
 
     const userMessage: Message = { id: Math.random().toString(), role: "user", content: inputValue };
-    setHistory((prev) => [...prev, userMessage]);
+    const newHistory = [...history, userMessage];
+    setHistory(newHistory);
 
     setInputValue("");
     setIsTyping(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/chat", {
+      const messagesPayload = newHistory.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: inputValue })
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_GROQ_API_KEY}`
+        },
+        body: JSON.stringify({ 
+          model: "llama3-8b-8192", 
+          messages: messagesPayload 
+        })
       });
 
+      if (!res.ok) {
+        throw new Error("Failed to fetch response");
+      }
+
       const data = await res.json();
-      const botMessage: Message = { id: Math.random().toString(), role: "assistant", content: data.reply };
+      const botMessage: Message = { 
+        id: Math.random().toString(), 
+        role: "assistant", 
+        content: data.choices?.[0]?.message?.content || "No response received." 
+      };
       setHistory((prev) => [...prev, botMessage]);
     } catch (err) {
       console.error(err);
       const errorMessage: Message = {
         id: Math.random().toString(),
         role: "assistant",
-        content: "Error: could not connect to server."
+        content: "ERROR: COULD NOT CONNECT TO SERVER."
       };
       setHistory((prev) => [...prev, errorMessage]);
     } finally {
@@ -83,19 +88,17 @@ export default function OrbitChat() {
           <motion.div layoutId="orbit-container" className="fixed bottom-6 right-6 z-[9999]">
             <motion.button
               onClick={() => setIsOpen(true)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center transform-gpu group"
+              whileHover={{ scale: 1.05, boxShadow: "8px 8px 0px 0px rgba(0,0,0,1)" }}
+              whileTap={{ scale: 0.95 }}
+              className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group transition-all"
             >
-              <div className="absolute inset-0 bg-[#FFD700]/20 blur-xl rounded-full animate-pulse group-hover:bg-[#FFD700]/40 transition-colors" />
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 border-2 border-dashed border-[#FFD700]/40 rounded-full"
-              />
-              <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[#020202] border border-[#FFD700]/60 flex items-center justify-center shadow-[0_0_30px_rgba(255,215,0,0.5)] backdrop-blur-xl transition-all">
-                <Bot className="w-7 h-7 md:w-8 md:h-8 text-[#FFD700]" />
-              </div>
+              <div className="absolute top-1 left-1 w-1 h-1 bg-black" />
+              <div className="absolute top-1 right-1 w-1 h-1 bg-black" />
+              <div className="absolute bottom-1 left-1 w-1 h-1 bg-black" />
+              <div className="absolute bottom-1 right-1 w-1 h-1 bg-black" />
+              
+              <Bot className="w-8 h-8 text-black group-hover:text-[#ff6b00] transition-colors" />
+              <div className="absolute -top-2 -right-2 w-4 h-4 bg-[#ff6b00] border border-black animate-pulse" />
             </motion.button>
           </motion.div>
         )}
@@ -106,37 +109,41 @@ export default function OrbitChat() {
         {isOpen && (
           <motion.div
             layoutId="orbit-container"
-            onMouseMove={handleMouseMove}
-            style={{ rotateX, rotateY, perspective: 1000, transformStyle: "preserve-3d" }}
-            initial={{ opacity: 0, scale: 0.8, y: 40 }}
+            initial={{ opacity: 0, scale: 0.9, y: 40 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 40 }}
-            className="fixed bottom-6 right-6 w-[85vw] md:w-[400px] h-[500px] md:h-[600px] bg-[#020202]/60 border border-white/10 rounded-[2rem] md:rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-[40px] z-[9999] flex flex-col overflow-hidden ring-1 ring-[#FFD700]/30 transform-gpu will-change-transform"
+            exit={{ opacity: 0, scale: 0.9, y: 40 }}
+            className="fixed bottom-6 right-6 w-[90vw] md:w-[450px] h-[600px] md:h-[700px] bg-[#f0f0f0] border-4 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] z-[9999] flex flex-col overflow-hidden"
           >
+            {/* BACKGROUND GRID */}
+            <div className="absolute inset-0 grid-background opacity-50 pointer-events-none" />
+
             {/* HEADER */}
-            <div className="relative p-5 border-b border-white/10 bg-white/5 flex items-center justify-between z-10">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#FFD700]/10 border border-[#FFD700]/20 flex items-center justify-center">
-                  <Cpu className="w-5 h-5 text-[#FFD700]" />
-                  <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <div className="relative p-4 border-b-4 border-black bg-white flex items-center justify-between z-10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-black border-2 border-[#ff6b00] flex items-center justify-center relative">
+                  <Cpu className="w-6 h-6 text-[#ff6b00]" />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-white border-2 border-black" />
                 </div>
                 <div>
-                  <h3 className="font-mono text-[10px] md:text-xs font-bold text-[#E5E4E2] tracking-[0.2em] uppercase">
-                    Orbit // Live
+                  <h3 className="font-black text-xl text-black uppercase leading-none">
+                    ORBIT CORE
                   </h3>
-                  <p className="text-[8px] font-mono text-[#FFD700]/60 uppercase">Uplink Stable</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="w-2 h-2 bg-[#ff6b00] animate-pulse" />
+                    <p className="text-[10px] font-mono text-black font-bold uppercase tracking-widest">Uplink Stable</p>
+                  </div>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors text-zinc-500 hover:text-white"
+                className="p-2 border-2 border-black bg-[#f0f0f0] hover:bg-[#ff6b00] hover:text-white transition-colors text-black"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* CHAT FEED */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-6 scrollbar-hide bg-[radial-gradient(circle_at_50%_-20%,rgba(255,215,0,0.05),transparent)]">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide relative z-10">
               {history.map((msg) => (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -146,14 +153,14 @@ export default function OrbitChat() {
                 >
                   <div className={`max-w-[85%] ${msg.role === "user" ? "text-right" : "text-left"}`}>
                     <div
-                      className={`relative p-4 rounded-2xl font-mono text-[11px] md:text-sm leading-relaxed transform-gpu ${
+                      className={`relative p-4 font-mono text-sm leading-relaxed border-2 border-black ${
                         msg.role === "user"
-                          ? "bg-[#FFD700]/20 text-[#FFD700] shadow-lg border border-[#FFD700]/30 backdrop-blur-md"
-                          : "bg-white/5 border border-white/10 text-zinc-200 backdrop-blur-md"
+                          ? "bg-black text-white"
+                          : "bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
                       }`}
                     >
                       {msg.role === "assistant" && (
-                        <span className="text-[#FFD700] mr-2 animate-pulse">{">"}</span>
+                        <span className="text-[#ff6b00] mr-2 font-black animate-pulse">{">"}</span>
                       )}
                       {msg.content}
                     </div>
@@ -162,9 +169,9 @@ export default function OrbitChat() {
               ))}
 
               {isTyping && (
-                <div className="flex items-center gap-3 text-[#FFD700] font-mono text-[10px] p-2">
-                  <Activity className="w-4 h-4 animate-spin" />
-                  <span className="animate-pulse tracking-widest">ANALYZING...</span>
+                <div className="flex items-center gap-3 text-black font-mono font-bold text-xs p-4 bg-white border-2 border-black w-fit shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <Activity className="w-4 h-4 animate-spin text-[#ff6b00]" />
+                  <span className="animate-pulse tracking-widest uppercase">ANALYZING...</span>
                 </div>
               )}
 
@@ -172,31 +179,31 @@ export default function OrbitChat() {
             </div>
 
             {/* INPUT */}
-            <div className="p-6 bg-[#020202]/80 border-t border-white/5 backdrop-blur-3xl">
-              <form onSubmit={handleCommand} className="relative group">
-                <div className="relative flex items-center bg-black/50 border border-white/20 rounded-xl overflow-hidden focus-within:border-[#FFD700] transition-all shadow-inner">
+            <div className="p-4 bg-white border-t-4 border-black relative z-10">
+              <form onSubmit={handleCommand} className="relative">
+                <div className="relative flex items-center bg-[#f0f0f0] border-2 border-black focus-within:border-[#ff6b00] transition-colors">
                   <div className="pl-4">
-                    <Terminal className="w-4 h-4 text-[#FFD700]" />
+                    <Terminal className="w-5 h-5 text-black" />
                   </div>
                   <input
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="Command..."
-                    className="flex-1 bg-transparent py-4 px-3 text-sm font-mono text-white outline-none placeholder:text-zinc-600"
+                    placeholder="ENTER COMMAND..."
+                    className="flex-1 bg-transparent py-4 px-3 text-sm font-mono font-bold text-black outline-none placeholder:text-black/40 uppercase"
                     disabled={isTyping}
                   />
-                  <button type="submit" className="pr-4 text-[#FFD700]/50 hover:text-[#FFD700] transition-colors">
+                  <button type="submit" className="p-4 bg-black text-white hover:bg-[#ff6b00] transition-colors border-l-2 border-black">
                     <Send className="w-5 h-5" />
                   </button>
                 </div>
               </form>
 
-              <div className="mt-4 flex justify-between items-center px-1 opacity-30">
+              <div className="mt-3 flex justify-between items-center px-1">
                 <div className="flex gap-4">
-                  <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
-                  <Zap className="w-3.5 h-3.5 text-zinc-400" />
+                  <ShieldCheck className="w-4 h-4 text-black" />
+                  <Zap className="w-4 h-4 text-black" />
                 </div>
-                <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest">V4-Quantum</span>
+                <span className="text-[10px] font-mono font-bold text-black/50 uppercase tracking-widest border border-black/20 px-2 py-0.5">V4-Quantum Node</span>
               </div>
             </div>
           </motion.div>

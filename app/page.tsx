@@ -1,10 +1,15 @@
-"use client"; // Smooth scroll requires client-side execution
+"use client";
 
 import { JSX } from "react";
-import TopBrandHeader from "@/components/TopBrandHeader";
-import SideNav from "@/components/SideNav";
 import HeroPage from "@/components/Hero";
-import NextSection from "@/components/Body";
+import MetricsStrip from "@/components/sections/MetricsStrip";
+import BentoGrid from "@/components/sections/BentoGrid";
+import ApiPlayground from "@/components/sections/ApiPlayground";
+import AgentEcosystem from "@/components/sections/AgentEcosystem";
+import ResearchSection from "@/components/sections/ResearchSection";
+import TestimonialsSection from "@/components/sections/TestimonialsSection";
+import FaqSection from "@/components/sections/FaqSection";
+import FinalCTA from "@/components/sections/FinalCTA";
 import dynamic from "next/dynamic";
 
 const SmokeBackground = dynamic(() => import("@/components/SmokeBackground"), { ssr: false });
@@ -12,18 +17,18 @@ const OrbitChat = dynamic(() => import("@/components/orbit/OrbitChat"), { ssr: f
 
 export default function HomePage(): JSX.Element {
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-transparent">
-
-      {/* SMOKE LAYER (BACKGROUND) */}
-      <SmokeBackground />
+    <main className="relative min-h-screen overflow-x-hidden bg-transparent flex flex-col">
 
       {/* UI LAYERS */}
-      <TopBrandHeader />
-      <SideNav />
       <HeroPage />
-      <NextSection />
-      <OrbitChat />
-
+      <MetricsStrip />
+      <AgentEcosystem />
+      <BentoGrid />
+      <ApiPlayground />
+      <ResearchSection />
+      <TestimonialsSection />
+      <FaqSection />
+      <FinalCTA />
     </main>
   );
 }

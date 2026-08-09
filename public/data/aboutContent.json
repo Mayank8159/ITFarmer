@@ -1,23 +1,29 @@
 [
   {
     "id": "1",
-    "name": "Mayank",
+    "name": "Mayank Kumar Sharma",
     "role": "Founder & DevOps Architect",
     "image": "/founders/Mayank.png",
-    "description": "Architecting unbreakable cloud infrastructures and CI/CD pipelines."
+    "description": "Architecting unbreakable cloud infrastructures and CI/CD pipelines.",
+    "github": "https://github.com/Mayank8159",
+    "linkedin": "https://www.linkedin.com/in/mayank-kumar-sharma-900318318/"
   },
   {
     "id": "2",
-    "name": "Priyanshu",
+    "name": "Priyanshu Roy",
     "role": "Co-Founder & Lead AI/ML Engineer",
     "image": "/founders/Priyanshu.jpg",
-    "description": "Engineering predictive models and state-of-the-art LLM architectures."
+    "description": "Engineering predictive models and state-of-the-art LLM architectures.",
+    "github": "https://github.com/priyanshu-ogdev",
+    "linkedin": "https://www.linkedin.com/in/priyanshu-roy-25b91a31a/"
   },
   {
     "id": "3",
-    "name": "Shreyan",
+    "name": "Shreyan Mitra",
     "role": "Co-Founder & Full Stack Architect",
-    "image": "/founders/shreyan.jpeg",
-    "description": "Building high-performance, seamless end-to-end web applications."
+    "image": "/founders/Shreyan_v2.jpeg",
+    "description": "Building high-performance, seamless end-to-end web applications.",
+    "github": "https://github.com/MURPHIOP",
+    "linkedin": "https://www.linkedin.com/in/shreyan-mitra/"
   }
 ]
