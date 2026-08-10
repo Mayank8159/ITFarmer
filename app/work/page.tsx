@@ -22,7 +22,8 @@ export default function ArchivesPage(): JSX.Element {
       });
   }, []);
 
-  const projects = posts.filter(p => p.category === "Work");
+  const safePosts = Array.isArray(posts) ? posts : [];
+  const projects = safePosts.filter(p => p.category === "Work");
   
   if (isLoading) {
     return (
@@ -66,13 +67,24 @@ export default function ArchivesPage(): JSX.Element {
 
         {/* PROJECT GRID */}
         <div className="grid grid-cols-1 gap-16">
-          {projects.map((project, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-            >
+          {projects.length === 0 && !isLoading ? (
+            <div className="text-center py-20 bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <h3 className="text-3xl font-black uppercase mb-4 text-black">[ SYSTEM STATUS: INDEXING ARCHIVES ]</h3>
+              <p className="font-mono text-sm text-black/70 mb-8 max-w-md mx-auto">
+                We are currently compiling our recent production builds. In the meantime, book a call and we'll walk you through our recent engineering work.
+              </p>
+              <a href="/contact" className="px-6 py-3 bg-[#ff6b00] text-black font-black uppercase tracking-widest text-xs border-2 border-black inline-block hover:bg-black hover:text-white transition-colors">
+                Review Your Architecture
+              </a>
+            </div>
+          ) : (
+            projects.map((project, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+              >
               <BrutalistCard whiteBg className="flex flex-col hover:border-[#ff6b00] transition-colors group p-0 overflow-hidden">
                 
                 {/* PROJECT HEADER */}
@@ -164,7 +176,7 @@ export default function ArchivesPage(): JSX.Element {
 
               </BrutalistCard>
             </motion.div>
-          ))}
+          )))}
         </div>
 
         </div>

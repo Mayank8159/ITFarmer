@@ -1,7 +1,7 @@
 {
   "executionLogic": [
     { "icon": "Server", "title": "Central Governance", "desc": "Strategic management from our primary operations hub." },
-    { "icon": "Users", "title": "Elite Squads", "desc": "Hand-picked task forces for domain-specific execution." },
+    { "icon": "Users", "title": "Core Contributors", "desc": "Domain-specific engineers executing complex architectures." },
     { "icon": "Zap", "title": "High-Velocity", "desc": "Rapid resource allocation to match enterprise pace." }
   ],
   "capabilities": [

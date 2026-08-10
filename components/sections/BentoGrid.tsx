@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import BrutalistCard from "@/components/cards/BrutalistCard";
-import { Cpu, Network, Zap, Code2, Server } from "lucide-react";
+import { Cpu, Network, Zap, Code2, Server, GitMerge } from "lucide-react";
+import RagPipelineGraph from "./RagPipelineGraph";
 
 export default function BentoGrid() {
   const [config, setConfig] = useState<any>(null);
@@ -205,23 +206,13 @@ export default function BentoGrid() {
             className="md:col-span-3 md:row-span-1"
           >
             <BrutalistCard whiteBg className="h-full flex flex-col justify-between">
-              <div className="flex items-center gap-3 mb-6 border-b border-black/15 pb-4">
-                <Cpu className="w-5 h-5 text-black" />
-                <h3 className="text-xl font-black text-black uppercase">{config?.card3Title || "Execution Pipeline"}</h3>
+              <div className="flex items-center gap-3 mb-2 border-b border-black/15 pb-4">
+                <GitMerge className="w-5 h-5 text-black" />
+                <h3 className="text-xl font-black text-black uppercase">Interactive RAG Pipeline</h3>
               </div>
               
-              <div className="flex items-center justify-between w-full mt-4 px-2 relative">
-                {/* Connector line */}
-                <div className="absolute top-[40%] left-10 right-10 h-[2px] bg-black/15 -z-0" />
-                
-                {['INPUT', 'PROCESS', 'INFER', 'OUTPUT'].map((step, i) => (
-                  <div key={step} className="flex flex-col items-center gap-3 relative z-10 bg-white">
-                    <div className="w-12 h-12 bg-white border-2 border-black flex items-center justify-center text-black font-black hover:bg-black hover:text-white transition-colors cursor-default">
-                      <span>0{i+1}</span>
-                    </div>
-                    <span className="font-mono text-[10px] font-bold tracking-widest uppercase">{step}</span>
-                  </div>
-                ))}
+              <div className="flex-1 flex flex-col justify-center">
+                <RagPipelineGraph />
               </div>
             </BrutalistCard>
           </motion.div>
@@ -238,7 +229,7 @@ export default function BentoGrid() {
               <div className="p-8 pb-4">
                 <div className="flex items-center gap-3 mb-2">
                   <Code2 className="w-5 h-5 text-black" />
-                  <h3 className="text-xl font-black text-black uppercase">{config?.card4Title || "Developer API"}</h3>
+                  <h3 className="text-xl font-black text-black uppercase">{config?.card4Title || "Example API Layer"}</h3>
                 </div>
               </div>
               

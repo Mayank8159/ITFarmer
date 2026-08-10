@@ -25,8 +25,8 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.neuralforgehub.tech'),
   title: "Neural Forge Hub | AI & Software Engineering Studio",
-  description: "We're the engineering team you wish you had in-house — we build production AI and software, not prototypes.",
-  keywords: ["AI Studio", "Software Engineering", "AI Agents", "Web Applications", "Production ML", "Automation", "Full-Stack"],
+  description: "Production AI Development and Full-Stack AI Agency. We architect enterprise system architecture and custom machine learning solutions. Delivering production-ready, working products beyond prototypes through rigorous system design.",
+  keywords: ["AI & Software Engineering Studio", "Production AI Development", "Full-Stack AI Agency", "Custom Machine Learning Solutions", "Enterprise System Architecture", "Custom RAG Pipelines", "YOLO Object Detection", "Autonomous AI Agents", "Zero-Exfiltration Pipelines", "Next.js", "Native Android", "Windows Software", "Hardware-to-Software Integration"],
   alternates: {
     canonical: '/',
   },

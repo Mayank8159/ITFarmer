@@ -93,7 +93,7 @@ export default function HeroPage() {
             transition={{ duration: 0.5, delay: 0.6 }}
             className="text-lg sm:text-xl text-black/70 max-w-xl font-mono leading-[1.6] tracking-wide mt-8 border-l-4 border-[#ff6b00] pl-6"
           >
-            {heroData?.subheadline || "Advanced AI infrastructure laboratory engineered for researchers, developers, and autonomous agents. Scale GPU computation and deploy specialized inference networks with uncompromised velocity."}
+            {heroData?.subheadline || "We build production-ready AI software, native mobile apps, and robust web applications for technical founders and engineering teams."}
           </motion.p>
 
           <motion.div
@@ -159,12 +159,12 @@ export default function HeroPage() {
       <div className="absolute bottom-0 left-0 w-full z-20">
         <BrutalistMarquee 
           items={[
-            "AUTONOMOUS AGENTS ONLINE",
-            "GPU CLUSTERS ALLOCATED",
-            "NEURAL PIPELINES ACTIVE",
-            "C++ KERNELS COMPILED",
-            "HIPAA COMPLIANT TELEMETRY",
-            "SUB-10MS LATENCY"
+            "TRANSFORMERS",
+            "RAG PIPELINES",
+            "NEXT.JS",
+            "COMPUTER VISION",
+            "OPEN-SOURCE ORCHESTRATION",
+            "ANDROID/WINDOWS NATIVE"
           ]}
           speed={30}
         />

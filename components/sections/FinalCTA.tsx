@@ -61,7 +61,7 @@ export default function FinalCTA() {
             className="w-full sm:w-auto px-10 py-5 bg-[#ff6b00] text-white font-mono text-sm uppercase tracking-widest border-2 border-black hover:bg-black transition-colors flex items-center justify-center gap-3 font-bold"
           >
             <Terminal className="w-4 h-4" />
-            <span>Book a Strategy Call</span>
+            <span>Book a Technical Strategy Call</span>
           </Link>
 
           <Link

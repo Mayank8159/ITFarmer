@@ -48,7 +48,7 @@ export default function InstagramLandingPage() {
               className="w-full block px-8 py-5 bg-[#ff6b00] text-black font-black uppercase tracking-widest text-lg border-4 border-black hover:bg-black hover:text-white transition-colors shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-2 hover:translate-y-2 flex items-center justify-center gap-3"
             >
               <Terminal className="w-5 h-5" />
-              Book a Strategy Call
+              Book a Technical Strategy Call
             </Link>
           </motion.div>
         </div>
@@ -98,7 +98,7 @@ export default function InstagramLandingPage() {
             href="/contact" 
             className="w-full md:w-auto px-12 py-6 bg-black text-white font-black uppercase tracking-widest text-lg hover:bg-[#ff6b00] hover:text-black transition-colors border-4 border-black flex items-center justify-center gap-3"
           >
-            Book a Strategy Call <ArrowRight className="w-5 h-5" />
+            Book a Technical Strategy Call <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </div>

@@ -12,7 +12,7 @@ async function getSwarmTelemetry() {
     if (project.healthEndpoint) {
       try {
         const start = Date.now();
-        const res = await fetch(project.healthEndpoint, { next: { revalidate: 0 } });
+        const res = await fetch(project.healthEndpoint, { next: { revalidate: 300 } });
         const latency = Date.now() - start;
         if (res.ok) {
           const contentType = res.headers.get('content-type');

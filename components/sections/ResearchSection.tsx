@@ -42,20 +42,20 @@ export default function ResearchSection() {
             className="sticky top-32"
           >
             <div className="border border-black px-3 py-1 mb-6 bg-white inline-flex items-center gap-2">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-black font-bold">R&D LABORATORY</span>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-black font-bold">CURRENT PIPELINE</span>
             </div>
             
             <h2 className="text-4xl md:text-5xl font-serif tracking-tighter text-black mb-6 leading-[0.9] uppercase font-black">
               Pushing the boundaries of <span className="text-[#ff6b00]">applied AI.</span>
             </h2>
             <p className="text-black/70 font-mono text-sm leading-relaxed mb-8 border-l-4 border-black pl-4">
-              Neural Forge Hub maintains an active research division focused on bridging the gap between theoretical AI models and production-ready infrastructure.
+              Neural Forge Hub maintains an active engineering pipeline focused on bridging the gap between theoretical AI models and production-ready infrastructure.
             </p>
             <Link 
               href="/about"
               className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-mono text-xs uppercase tracking-widest hover:bg-[#ff6b00] transition-colors group"
             >
-              Read Publications 
+              View Recent Work 
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>

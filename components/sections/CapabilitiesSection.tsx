@@ -6,26 +6,26 @@ import BrutalistCard from '@/components/cards/BrutalistCard';
 const SERVICES = [
   {
     id: "01",
-    title: "AI/ML Engineering",
-    outcome: "Transformers, RAG pipelines, computer vision, text encoders, and model fine-tuning.",
+    title: "AI & ML Engineering",
+    outcome: "Custom RAG Pipelines, Text Encoders, Custom Transformers, Model Quantization. YOLO Object Detection, CNNs, Video Inference. Synchronized Vision-Language Models, Real-Time Speech-to-Text.",
     icon: <BrainCircuit className="w-8 h-8 text-[#ff6b00]" />
   },
   {
     id: "02",
-    title: "AI Agents & Automation",
-    outcome: "Agent orchestration, AI workflow integration, and open-source model integration.",
+    title: "Agents & Automation",
+    outcome: "Autonomous AI Agents, Multi-Agent Orchestration, Tool-Use Integration. Zero-Exfiltration Pipelines, On-Premise AI Deployment, Semantic Policy Auditing. Automated Engagement AI.",
     icon: <Cpu className="w-8 h-8 text-[#ff6b00]" />
   },
   {
     id: "03",
     title: "Web Applications",
-    outcome: "Full-stack development, Next.js architecture, CI/CD, and robust maintenance.",
+    outcome: "Next.js High-Performance Interfaces, React, Liquid UI/UX. Full-Stack SaaS Architecture, Server-Side Caching (ISR), Supabase, PostgreSQL. Vercel Edge Deployment, Zero-Bloat State Management.",
     icon: <Code2 className="w-8 h-8 text-[#ff6b00]" />
   },
   {
     id: "04",
-    title: "Apps & Software",
-    outcome: "Android, Windows (.exe), cross-platform deployment, and proper system design.",
+    title: "Apps & Systems Software",
+    outcome: "Native Android Applications (.apk), Windows Desktop Software (.exe). Hardware-to-Software Integration, Edge Compute Deployment, OS-Level System Architecture, Cyber-Physical Systems.",
     icon: <Smartphone className="w-8 h-8 text-[#ff6b00]" />
   }
 ];
@@ -67,7 +67,7 @@ export default function CapabilitiesSection() {
                 </p>
 
                 <Link href="/work" className="font-mono text-xs font-bold uppercase tracking-widest text-[#ff6b00] flex items-center gap-2 hover:text-black transition-colors group">
-                  View Case Studies <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  View Live Deployment <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </BrutalistCard>
             </div>

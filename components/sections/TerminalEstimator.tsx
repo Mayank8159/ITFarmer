@@ -17,6 +17,7 @@ export default function TerminalEstimator() {
     email: "", 
     startDate: "", 
     endDate: "", 
+    company: "",
     details: "" 
   });
 
@@ -42,7 +43,7 @@ export default function TerminalEstimator() {
   const { formatBudget } = useCurrency();
 
   const SCOPES = [
-    { id: "01", label: "Automated Engagement AI" },
+    { id: "01", label: "AI Agents & Automation" },
     { id: "02", label: "Production ML Automation" },
     { id: "03", label: "Custom Full-Stack Web Application" },
     { id: "04", label: "Apps & Software Engineering" },
@@ -62,7 +63,7 @@ export default function TerminalEstimator() {
 
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.startDate || !formData.endDate || !formData.details) return;
+    if (!formData.name || !formData.email || !formData.company || !formData.startDate || !formData.endDate || !formData.details) return;
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
@@ -96,6 +97,7 @@ export default function TerminalEstimator() {
           name: formData.name,
           email: formData.email,
           subject: `New Lead: ${SCOPES.find(s => s.id === selectedScope)?.label}`,
+          company: formData.company,
           scope: selectedScope,
           budget: selectedBudget === "CUSTOM" ? customBudget : selectedBudget,
           startDate: formData.startDate,
@@ -116,7 +118,7 @@ export default function TerminalEstimator() {
       }
     } catch (error) {
       console.error(error);
-      const mailtoUrl = `mailto:services@neuralforgehub.tech?subject=Project%20Estimate:%20${encodeURIComponent(SCOPES.find(s => s.id === selectedScope)?.label || "")}&body=Name:%20${encodeURIComponent(formData.name)}%0AEmail:%20${encodeURIComponent(formData.email)}%0AScope:%20${encodeURIComponent(selectedScope || "")}%0ABudget:%20${encodeURIComponent(selectedBudget === "CUSTOM" ? customBudget : selectedBudget || "")}%0ADetails:%20${encodeURIComponent(formData.details)}`;
+      const mailtoUrl = `mailto:services@neuralforgehub.tech?subject=Project%20Estimate:%20${encodeURIComponent(SCOPES.find(s => s.id === selectedScope)?.label || "")}&body=Name:%20${encodeURIComponent(formData.name)}%0AEmail:%20${encodeURIComponent(formData.email)}%0ACompany:%20${encodeURIComponent(formData.company)}%0AScope:%20${encodeURIComponent(selectedScope || "")}%0ABudget:%20${encodeURIComponent(selectedBudget === "CUSTOM" ? customBudget : selectedBudget || "")}%0ADetails:%20${encodeURIComponent(formData.details)}`;
       window.location.href = mailtoUrl;
       setStep("success");
     }
@@ -252,6 +254,14 @@ export default function TerminalEstimator() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30"
+                  />
+                  <input 
+                    type="text" 
+                    placeholder="COMPANY_OR_ORGANIZATION" 
+                    required
+                    value={formData.company}
+                    onChange={(e) => setFormData({...formData, company: e.target.value})}
                     className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30"
                   />
                   <div className="flex flex-col md:flex-row gap-4">

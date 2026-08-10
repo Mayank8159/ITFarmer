@@ -23,7 +23,8 @@ export default function EngineeringLogPage() {
       });
   }, []);
 
-  const logs = posts.filter(p => p.category === "Post");
+  const safePosts = Array.isArray(posts) ? posts : [];
+  const logs = safePosts.filter(p => p.category === "Post");
 
   if (isLoading) {
     return (
@@ -110,9 +111,12 @@ export default function EngineeringLogPage() {
               </div>
             </motion.div>
           ))}
-          {logs.length === 0 && (
-            <div className="text-center p-12 border-4 border-black bg-white font-mono text-sm text-black/50 uppercase tracking-widest">
-              [ NO INTEL LOGS FOUND IN DATABASE ]
+          {logs.length === 0 && !isLoading && (
+            <div className="text-center p-12 border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <h3 className="text-3xl font-black uppercase mb-4 text-black">[ SYSTEM STATUS: INDEXING LOGS ]</h3>
+              <p className="font-mono text-sm text-black/70 mb-8 max-w-md mx-auto">
+                Engineering logs are currently being compiled and will be published shortly.
+              </p>
             </div>
           )}
         </div>

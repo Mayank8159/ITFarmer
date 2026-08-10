@@ -19,9 +19,9 @@ export default function Footer() {
 
   const contact = config?.contact || {
     email: "services@neuralforgehub.tech",
-    instagram: "https://instagram.com",
-    twitter: "https://twitter.com",
-    linkedin: "https://linkedin.com"
+    instagram: "#",
+    twitter: "#",
+    linkedin: "#"
   };
 
   return (

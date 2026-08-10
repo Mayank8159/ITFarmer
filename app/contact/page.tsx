@@ -30,7 +30,7 @@ export default function ContactPage() {
             SECURE COMM CHANNEL
           </div>
           <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] text-white mb-6">
-            BOOK A <br /><span className="text-[#ff6b00]">STRATEGY CALL.</span>
+            BOOK A <br /><span className="text-[#ff6b00]">TECHNICAL STRATEGY CALL.</span>
           </h1>
           <p className="text-white/60 font-mono text-sm max-w-lg mx-auto">
             Discuss your architecture, technical constraints, and engineering requirements directly with a core engineer.

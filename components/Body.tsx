@@ -344,7 +344,7 @@ export default function NextSection(): JSX.Element {
       {/* BOTTOM CTA */}
       <motion.div id="onboarding" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="flex flex-col items-center justify-center text-center relative z-10 pt-20">
         <div className="w-px h-24 bg-gradient-to-b from-[#FFD700] to-transparent mb-12" />
-        <h4 className="text-2xl font-bold text-white mb-8 uppercase tracking-tighter">Ready to deploy your elite squad?</h4>
+        <h4 className="text-2xl font-bold text-white mb-8 uppercase tracking-tighter">Ready to deploy your engineering team?</h4>
         <Link href="/contact">
           <motion.button
             whileHover={{ scale: 1.05 }}

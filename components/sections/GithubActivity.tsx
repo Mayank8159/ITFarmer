@@ -25,7 +25,7 @@ async function getMultiFounderEvents() {
     // 1. Fetch Events (30 per founder)
     const promises = GITHUB_USERS.map(user => 
       fetch(`https://api.github.com/users/${user}/events/public`, {
-        next: { revalidate: 3600 }
+        next: { revalidate: 300 }
       }).then(async res => {
         if (!res.ok) throw new Error(`Failed to fetch ${user}`);
         return res.json();
@@ -61,7 +61,7 @@ async function getMultiFounderEvents() {
       const batch = repoNames.slice(i, i + 5);
       const batchPromises = batch.map(repo => 
         fetch(`https://api.github.com/repos/${repo}/readme`, {
-          next: { revalidate: 3600 }
+          next: { revalidate: 300 }
         }).then(async res => {
           if (res.ok) {
             const data = await res.json();
