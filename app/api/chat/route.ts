@@ -31,10 +31,10 @@ Keep answers concise, professional, and slightly brutalist/cyberpunk in tone.`
 
     const finalMessages = [systemPrompt, ...messages];
 
-    // Use string splitting to hide API key from GitHub secret scanner
-    const keyPart1 = "gsk_5BZMPQLdMTDJQ8MW";
-    const keyPart2 = "fmOwWGdyb3FYTTrVS0jC3LQ8w9k3Nb206Wrp";
-    const apiKey = keyPart1 + keyPart2;
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: "GROQ_API_KEY not configured" }, { status: 500 });
+    }
 
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
