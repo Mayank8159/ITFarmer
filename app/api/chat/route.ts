@@ -1,56 +1,21 @@
 import { NextResponse } from 'next/server';
 
-import fs from 'fs/promises';
-import path from 'path';
+import { BACKEND_URL } from '@/lib/backend';
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
 
-    // Read company data
-    const dataDir = path.join(process.cwd(), "public", "data");
-    let founders = [], capabilities = [], posts = [];
-    try {
-      founders = JSON.parse(await fs.readFile(path.join(dataDir, "aboutContent.json"), "utf-8"));
-      capabilities = JSON.parse(await fs.readFile(path.join(dataDir, "aboutConfig.json"), "utf-8")).capabilities || [];
-      posts = JSON.parse(await fs.readFile(path.join(dataDir, "postsContent.json"), "utf-8"));
-    } catch(e) {}
-
-    const founderNames = founders.map((f: any) => `${f.name} (${f.role})`).join(", ");
-    const capNames = capabilities.map((c: any) => c.title).join(", ");
-    const postTitles = posts.slice(0, 5).map((p: any) => p.title).join(", ");
-
-    const systemPrompt = {
-      role: "system",
-      content: `You are ORBIT CORE, the AI assistant for ITFarmer (or Neural/Horizon Protocol). 
-Company Founders: ${founderNames}.
-Core Capabilities: ${capNames}.
-Recent Updates/Projects: ${postTitles}.
-Keep answers concise, professional, and slightly brutalist/cyberpunk in tone.`
-    };
-
-    const finalMessages = [systemPrompt, ...messages];
-
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json({ error: "GROQ_API_KEY not configured" }, { status: 500 });
-    }
-
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const res = await fetch(`${BACKEND_URL}/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({
-        model: "llama-3.1-8b-instant",
-        messages: finalMessages,
-      }),
+      body: JSON.stringify(body),
     });
 
     if (!res.ok) {
-      const errorText = await res.text();
-      console.error("Groq API Error:", errorText);
+      console.error("Lambda chat API Error:", res.status, await res.text());
       return NextResponse.json({ error: "Failed to fetch from AI provider" }, { status: 500 });
     }
 
