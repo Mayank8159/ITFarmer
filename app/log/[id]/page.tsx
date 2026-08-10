@@ -1,15 +1,12 @@
 import { Metadata } from 'next';
-import fs from 'fs';
-import path from 'path';
 import Link from 'next/link';
 import { Terminal, ArrowLeft, ExternalLink, Calendar } from 'lucide-react';
+import { getPostsData } from '@/app/actions/adminActions';
 
 // Fetch specific post metadata for SEO
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const filePath = path.join(process.cwd(), 'public', 'data', 'postsContent.json');
   try {
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const posts = JSON.parse(fileContents);
+    const posts = await getPostsData();
     const post = posts.find((p: any) => p.id === params.id);
     
     if (post) {
@@ -32,13 +29,11 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default function LogPostPage({ params }: { params: { id: string } }) {
-  const filePath = path.join(process.cwd(), 'public', 'data', 'postsContent.json');
+export default async function LogPostPage({ params }: { params: { id: string } }) {
   let post = null;
   
   try {
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const posts = JSON.parse(fileContents);
+    const posts = await getPostsData();
     post = posts.find((p: any) => p.id === params.id);
   } catch (err) {
     console.error(err);

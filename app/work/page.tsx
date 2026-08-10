@@ -22,9 +22,8 @@ export default function ArchivesPage(): JSX.Element {
       });
   }, []);
 
-  const projects = posts.filter(p => p.category === "Project");
-  const updates = posts.filter(p => p.category === "Update" || p.category === "Team");
-
+  const projects = posts.filter(p => p.category === "Work");
+  
   if (isLoading) {
     return (
       <main className="relative min-h-screen bg-[#e5e5e5] text-black pt-32 pb-24 flex items-center justify-center">
@@ -81,7 +80,7 @@ export default function ArchivesPage(): JSX.Element {
                   <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
                     <div>
                       <div className="font-mono text-[10px] uppercase tracking-widest font-bold text-white bg-black px-3 py-1 mb-4 inline-block">
-                        {project.client || "Internal Project"} • {project.date}
+                        [{project.scope === "Client" ? "CLIENT BUILD" : "INTERNAL BUILD"}] • {project.client ? project.client : "Neural Forge Hub"} • {project.date}
                       </div>
                       <h2 className="text-4xl md:text-6xl font-black uppercase text-black leading-[0.9] tracking-tighter">
                         {project.title}
@@ -168,57 +167,7 @@ export default function ArchivesPage(): JSX.Element {
           ))}
         </div>
 
-        {/* LIVE UPDATES SECTION */}
-        <div className="mt-32 pt-20 border-t-4 border-black">
-          <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <div>
-              <div className="bg-[#ff6b00] text-white text-[10px] font-mono font-bold uppercase tracking-widest px-3 py-1 w-fit mb-6 animate-pulse">
-                LIVE FEED
-              </div>
-              <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] text-black">
-                SYSTEM <br />UPDATES.
-              </h2>
-            </div>
-          </div>
-
-          <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory w-full">
-            {updates.map((update, idx) => (
-              <motion.div
-                key={update.id || idx}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="min-w-[85vw] md:min-w-[600px] snap-start bg-white border-2 border-black p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all group flex flex-col md:flex-row gap-8"
-              >
-                {/* Meta */}
-                <div className="w-full md:w-48 flex-shrink-0 flex flex-col justify-between">
-                  <div>
-                    <div className="text-[10px] font-mono font-bold text-black/50 mb-2">{update.date}</div>
-                    <div className="text-[10px] font-mono font-bold text-white bg-black px-2 py-1 inline-block uppercase tracking-widest group-hover:bg-[#ff6b00] transition-colors">
-                      {update.category}
-                    </div>
-                  </div>
-                  {update.image && (
-                     <div className="mt-4 w-full h-24 border border-black/10 overflow-hidden">
-                        <img src={update.image} className="w-full h-full object-cover grayscale contrast-125" alt="" />
-                     </div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 border-l-2 border-black/10 pl-0 md:pl-8">
-                  <h3 className="font-black text-2xl uppercase text-black mb-4 group-hover:text-[#ff6b00] transition-colors">{update.title}</h3>
-                  <p className="font-mono text-sm text-black/70 leading-relaxed font-bold max-w-[500px] whitespace-pre-wrap">
-                    {update.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
         </div>
-
-      </div>
     </main>
   );
 }

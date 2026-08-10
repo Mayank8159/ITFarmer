@@ -84,7 +84,9 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceMono.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#e5e5e5] min-h-screen text-black cursor-none`}
       >
         {/* Meta Pixel Code */}
-        {process.env.NEXT_PUBLIC_META_PIXEL_ID && (
+        {process.env.NEXT_PUBLIC_META_PIXEL_ID && 
+         process.env.NEXT_PUBLIC_META_PIXEL_ID !== "null" && 
+         process.env.NEXT_PUBLIC_META_PIXEL_ID !== "undefined" && (
           <Script
             id="meta-pixel"
             strategy="afterInteractive"

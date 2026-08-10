@@ -311,12 +311,13 @@ export default function TerminalEstimator() {
                       </div>
                     )}
                     <button 
-                      onClick={handleSubmitForm}
+                      type="submit"
                       className="w-full md:w-auto px-8 py-4 bg-[#ff6b00] text-black font-black uppercase tracking-widest text-sm hover:bg-white transition-colors border-2 border-[#ff6b00] flex items-center justify-center gap-3"
                     >
                       COMMIT PAYLOAD <ArrowRight className="w-4 h-4" />
                     </button>
                     <button 
+                      type="button"
                       onClick={() => setStep("input")}
                       className="w-full md:w-auto px-8 py-4 bg-transparent text-white/50 font-mono text-xs uppercase tracking-widest hover:text-white transition-colors flex items-center justify-center gap-3"
                     >

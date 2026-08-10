@@ -99,6 +99,13 @@ functions:
           path: auth
           method: post
           cors: true
+  uploadFile:
+    handler: src/upload.handler
+    events:
+      - http:
+          path: upload
+          method: post
+          cors: true
 
 resources:
   Resources:
@@ -106,6 +113,11 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: itfarmer-content-${self:provider.stage}-${aws:accountId}
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
         VersioningConfiguration:
           Status: Enabled
         CorsConfiguration:
@@ -120,6 +132,17 @@ resources:
                 - HEAD
               AllowedHeaders:
                 - "*"
+    ContentBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref ContentBucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action: s3:GetObject
+              Resource: !Sub "${ContentBucket.Arn}/uploads/*"
     InquiriesTable:
       Type: AWS::DynamoDB::Table
       Properties:

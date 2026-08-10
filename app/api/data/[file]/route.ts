@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { BACKEND_URL } from '@/lib/backend';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,17 +7,20 @@ export async function GET(req: Request, { params }: { params: Promise<{ file: st
   try {
     const { file } = await params;
     
-    // basic validation to prevent directory traversal
     if (!/^[a-zA-Z0-9_-]+$/.test(file)) {
       return NextResponse.json({ error: "Invalid file name" }, { status: 400 });
     }
     
-    const dataDir = path.join(process.cwd(), "public", "data");
-    const filePath = path.join(dataDir, `${file}.json`);
+    const res = await fetch(`${BACKEND_URL}/data/${file}`, { 
+      next: { revalidate: 60, tags: [file] } 
+    });
+    if (!res.ok) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
     
-    const content = await fs.readFile(filePath, "utf-8");
-    return NextResponse.json(JSON.parse(content));
+    const data = await res.json();
+    return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

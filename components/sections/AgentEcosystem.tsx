@@ -2,31 +2,10 @@ import React from "react";
 import BrutalistCard from "@/components/cards/BrutalistCard";
 import { Terminal, Lock, Globe, Server, Activity } from "lucide-react";
 import SystemTelemetryFallback from "./SystemTelemetryFallback";
-import path from "path";
-import fs from "fs/promises";
-
-async function fetchEcosystemData() {
-  try {
-    const filePath = path.join(process.cwd(), 'public', 'data', 'ecosystemContent.json');
-    const fileContents = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(fileContents);
-  } catch (error) {
-    return [];
-  }
-}
-
-async function fetchProjectsData() {
-  try {
-    const filePath = path.join(process.cwd(), 'public', 'data', 'postsContent.json');
-    const fileContents = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(fileContents);
-  } catch (error) {
-    return [];
-  }
-}
+import { getEcosystemData, getPostsData } from "@/app/actions/adminActions";
 
 async function getSwarmTelemetry() {
-  const projects = await fetchProjectsData();
+  const projects = await getPostsData();
   
   // Priority 1: Health Endpoint (The Live Project API)
   for (const project of projects) {
@@ -76,7 +55,7 @@ async function getSwarmTelemetry() {
 }
 
 export default async function AgentEcosystem() {
-  const agents = await fetchEcosystemData();
+  const agents = await getEcosystemData();
   const telemetry = await getSwarmTelemetry();
 
   const getIcon = (type: string) => {

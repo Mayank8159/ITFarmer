@@ -43,7 +43,7 @@ const fallbackHero = {
   metrics: []
 };
 
-type ViewMode = "terminal" | "inquiries" | "hero" | "founders" | "posts" | "clients" | "faqs" | "ecosystem" | "system" | "about_cms";
+type ViewMode = "terminal" | "inquiries" | "hero" | "founders" | "works" | "posts" | "faqs" | "ecosystem" | "system" | "about_cms";
 
 interface HistoryLine {
   text: string;
@@ -247,8 +247,10 @@ export default function AdminDashboard() {
     const file = e.target.files?.[0];
     if (!file) return null;
     
-    // Client-side compression to prevent 5MB JSON string bloat
-    return new Promise((resolve) => {
+    setIsSaving(true);
+    
+    // Client-side compression
+    const compressedDataUrl = await new Promise<string>((resolve) => {
       const reader = new FileReader();
       reader.onload = (event) => {
         const img = new Image();
@@ -269,13 +271,38 @@ export default function AdminDashboard() {
           ctx?.drawImage(img, 0, 0, width, height);
           
           // Compress aggressively to 0.7 JPEG quality
-          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
-          resolve(compressedDataUrl);
+          resolve(canvas.toDataURL("image/jpeg", 0.7));
         };
         img.src = event.target?.result as string;
       };
       reader.readAsDataURL(file);
     });
+
+    try {
+      // Convert Data URL to Blob
+      const response = await fetch(compressedDataUrl);
+      const blob = await response.blob();
+      
+      // Create FormData and upload
+      const formData = new FormData();
+      formData.append("file", blob, file.name);
+      
+      const result = await uploadFile(formData);
+      
+      setIsSaving(false);
+      
+      if (result.success && result.filePath) {
+        triggerSuccess("File uploaded to AWS securely.");
+        return result.filePath;
+      } else {
+        alert("Upload failed: " + result.error);
+        return null;
+      }
+    } catch (error) {
+      setIsSaving(false);
+      alert("Upload failed: " + String(error));
+      return null;
+    }
   };
 
   // CRUD Operations
@@ -286,8 +313,11 @@ export default function AdminDashboard() {
     setAboutData(aboutData.filter(d => d.id !== id));
   };
 
+  const addWork = () => {
+    setPostsData([{ id: Date.now().toString(), title: "", description: "", category: "Work", scope: "Internal", date: new Date().toISOString().split('T')[0], image: "" }, ...postsData]);
+  };
   const addPost = () => {
-    setPostsData([{ id: Date.now().toString(), title: "", description: "", category: "Update", date: new Date().toISOString().split('T')[0], image: "" }, ...postsData]);
+    setPostsData([{ id: Date.now().toString(), title: "", description: "", category: "Post", scope: "Internal", date: new Date().toISOString().split('T')[0], image: "" }, ...postsData]);
   };
   const removePost = (id: string) => {
     setPostsData(postsData.filter(d => d.id !== id));
@@ -394,8 +424,8 @@ export default function AdminDashboard() {
           <div className="pt-6 pb-2 technical-label px-4 font-bold">Content System</div>
           <SidebarBtn active={viewMode === "hero"} onClick={() => setViewMode("hero")} icon={LayoutDashboard} label="Hero Editor" />
           <SidebarBtn active={viewMode === "founders"} onClick={() => setViewMode("founders")} icon={Users} label="Founders CMS" />
-          <SidebarBtn active={viewMode === "posts"} onClick={() => setViewMode("posts")} icon={FileText} label="Case Studies CMS" />
-          <SidebarBtn active={viewMode === "clients"} onClick={() => setViewMode("clients")} icon={Star} label="Clients CMS" />
+          <SidebarBtn active={viewMode === "works"} onClick={() => setViewMode("works")} icon={FileText} label="Works CMS" />
+          <SidebarBtn active={viewMode === "posts"} onClick={() => setViewMode("posts")} icon={Star} label="Posts CMS" />
           <SidebarBtn active={viewMode === "faqs"} onClick={() => setViewMode("faqs")} icon={Quote} label="FAQs CMS" />
           <SidebarBtn active={viewMode === "ecosystem"} onClick={() => setViewMode("ecosystem")} icon={Activity} label="Ecosystem CMS" />
           <SidebarBtn active={viewMode === "system"} onClick={() => setViewMode("system")} icon={Terminal} label="System Variables" />
@@ -641,206 +671,148 @@ export default function AdminDashboard() {
             )}
 
             {/* 5. POSTS EDITOR */}
-            {viewMode === "posts" && (
+            
+            {/* WORKS EDITOR */}
+            {viewMode === "works" && (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
-                <Header
-                  title="Intelligence Feed"
-                  onSave={onSavePosts}
-                  isSaving={isSaving}
-                  actionButton={
-                    <button onClick={addPost} className="flex items-center gap-2 px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest transition-colors shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
-                      <Plus className="w-4 h-4" /> Compose Briefing
-                    </button>
-                  }
-                />
-
-                {postsData.length === 0 ? (
+                <Header title="Works CMS" onSave={onSavePosts} isSaving={isSaving} actionButton={
+                  <button onClick={addWork} className="flex items-center gap-2 px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest transition-colors shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                    <Plus className="w-4 h-4" /> Add Work
+                  </button>
+                } />
+                {postsData.filter(p => p.category === "Work").length === 0 ? (
                   <div className="brutalist-panel-white brutalist-border p-12 text-center flex flex-col items-center justify-center shadow-[8px_8px_0px_var(--text-primary)]">
                     <FileText className="w-12 h-12 text-[var(--text-muted)] mb-4" />
-                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2 uppercase">No Intelligence Discovered</h3>
-                    <p className="text-[var(--text-muted)] text-sm mb-6 max-w-sm font-mono">The feed is currently empty. Broadcast a new mission update to the network.</p>
-                    <button onClick={addPost} className="flex items-center gap-2 px-6 py-3 bg-[var(--neon-cyan)] border border-[var(--text-primary)] text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest hover:bg-[var(--text-primary)] transition-all shadow-[4px_4px_0px_var(--text-primary)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
-                      <Plus className="w-4 h-4" /> Initialize Post
+                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2 uppercase">No Works Found</h3>
+                    <button onClick={addWork} className="mt-6 flex items-center gap-2 px-6 py-3 bg-[var(--neon-cyan)] border border-[var(--text-primary)] text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest hover:bg-[var(--text-primary)] transition-all shadow-[4px_4px_0px_var(--text-primary)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
+                      <Plus className="w-4 h-4" /> Add First Work
                     </button>
                   </div>
                 ) : (
                   <div className="grid lg:grid-cols-2 gap-6">
                     <AnimatePresence>
-                      {postsData.map((post, index) => (
-                        <motion.div
-                          layout
-                          key={post.id}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="brutalist-panel-white brutalist-border p-6 group hover:border-[var(--border-active)] transition-colors flex flex-col relative shadow-[4px_4px_0px_var(--border-color)] hover:shadow-[4px_4px_0px_var(--border-active)]"
-                        >
-                          <button
-                            onClick={() => removePost(post.id)}
-                            className="absolute top-4 right-4 z-10 p-2 bg-[var(--surface-dark)] border border-[var(--border-color)] text-[var(--text-primary)] opacity-0 group-hover:opacity-100 hover:bg-[var(--neon-cyan)] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none"
-                            title="Delete Post"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-
-                          <div className="mb-4">
-                            <Field label="COVER IMAGE PATH OR UPLOAD">
-                              <div className="flex gap-2">
-                                <input 
-                                  type="text" 
-                                  value={post.image || ""} 
-                                  onChange={e => { const n = [...postsData]; n[index].image = e.target.value; setPostsData(n); }} 
-                                  className={inputClass} 
-                                  placeholder="/projects/example.jpg" 
-                                />
-                                <label className="cursor-pointer bg-[var(--text-primary)] text-[var(--deep-surface)] px-4 py-3 flex items-center justify-center font-bold text-xs uppercase hover:bg-[var(--neon-cyan)] transition-colors shrink-0 shadow-[2px_2px_0px_var(--border-color)]">
-                                  Upload
-                                  <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                                    const path = await handleFileUpload(e, "posts");
-                                    if (path) { const n = [...postsData]; n[index].image = path; setPostsData(n); }
-                                  }} />
-                                </label>
-                              </div>
-                            </Field>
-                            {post.image && (
-                              <div className="w-full h-32 border border-[var(--border-color)] overflow-hidden mt-2 bg-[var(--surface-dark)]">
-                                <img src={post.image} className="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition-all" alt="Cover preview" />
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="space-y-4 flex-1 flex flex-col">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <Field label="TITLE"><input type="text" value={post.title || ""} onChange={e => { const n = [...postsData]; n[index].title = e.target.value; setPostsData(n); }} className={inputClass} placeholder="Zero Trust Infrastructure..." /></Field>
-                              <Field label="CLIENT"><input type="text" value={post.client || ""} onChange={e => { const n = [...postsData]; n[index].client = e.target.value; setPostsData(n); }} className={inputClass} placeholder="Acme Corp / Internal" /></Field>
-                            </div>
-                            <Field label="TECHNOLOGIES (Comma separated)"><input type="text" value={post.technologies || ""} onChange={e => { const n = [...postsData]; n[index].technologies = e.target.value; setPostsData(n); }} className={inputClass} placeholder="Next.js, Python, AWS" /></Field>
-                            <Field label="OVERVIEW / DESCRIPTION"><textarea value={post.description || ""} onChange={e => { const n = [...postsData]; n[index].description = e.target.value; setPostsData(n); }} className={textareaClass} placeholder="Detailed analysis of..." /></Field>
-                            
-                            {post.category === "Project" && (
-                              <>
-                                <Field label="THE CHALLENGE"><textarea value={post.challenge || ""} onChange={e => { const n = [...postsData]; n[index].challenge = e.target.value; setPostsData(n); }} className={textareaClass} placeholder="What was the core problem..." /></Field>
-                                <Field label="THE SOLUTION"><textarea value={post.solution || ""} onChange={e => { const n = [...postsData]; n[index].solution = e.target.value; setPostsData(n); }} className={textareaClass} placeholder="How we built it..." /></Field>
-                                <Field label="THE RESULTS"><textarea value={post.results || ""} onChange={e => { const n = [...postsData]; n[index].results = e.target.value; setPostsData(n); }} className={textareaClass} placeholder="Metrics and impact..." /></Field>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  <Field label="LIVE LINK / REPO"><input type="text" value={post.link || ""} onChange={e => { const n = [...postsData]; n[index].link = e.target.value; setPostsData(n); }} className={inputClass} placeholder="https://..." /></Field>
-                                  <Field label="ARCHITECTURE IMAGE URL">
-                                    <div className="flex gap-2">
-                                      <input type="text" value={post.architectureImage || ""} onChange={e => { const n = [...postsData]; n[index].architectureImage = e.target.value; setPostsData(n); }} className={inputClass} placeholder="/projects/arch.jpg" />
-                                      <label className="cursor-pointer bg-[var(--text-primary)] text-[var(--deep-surface)] px-4 py-3 flex items-center justify-center font-bold text-xs uppercase hover:bg-[var(--neon-cyan)] transition-colors shrink-0 shadow-[2px_2px_0px_var(--border-color)]">
-                                        Upload
-                                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                                          const path = await handleFileUpload(e, "posts");
-                                          if (path) { const n = [...postsData]; n[index].architectureImage = path; setPostsData(n); }
-                                        }} />
-                                      </label>
-                                    </div>
-                                  </Field>
+                      {postsData.filter(p => p.category === "Work").map((post) => {
+                        const globalIndex = postsData.findIndex(p => p.id === post.id);
+                        return (
+                          <motion.div layout key={post.id} className="brutalist-panel-white brutalist-border p-6 group flex flex-col relative shadow-[4px_4px_0px_var(--border-color)]">
+                            <button onClick={() => removePost(post.id)} className="absolute top-4 right-4 z-10 p-2 bg-[var(--surface-dark)] border border-[var(--border-color)] text-[var(--text-primary)] opacity-0 group-hover:opacity-100 hover:bg-[#ff0000] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)]">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                            <div className="mb-4">
+                              <Field label="COVER IMAGE">
+                                <div className="flex gap-2">
+                                  <input type="text" value={post.image || ""} onChange={e => { const n = [...postsData]; n[globalIndex].image = e.target.value; setPostsData(n); }} className={inputClass} placeholder="/projects/example.jpg" />
+                                  <label className="cursor-pointer bg-[var(--text-primary)] text-[var(--deep-surface)] px-4 py-3 flex items-center justify-center font-bold text-xs uppercase hover:bg-[var(--neon-cyan)] transition-colors shrink-0">
+                                    Upload
+                                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const path = await handleFileUpload(e, "posts"); if (path) { const n = [...postsData]; n[globalIndex].image = path; setPostsData(n); } }} />
+                                  </label>
                                 </div>
-                              </>
-                            )}
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <Field label="INSTAGRAM REEL LINK">
-                                <input type="text" value={post.reelUrl || ""} onChange={e => { const n = [...postsData]; n[index].reelUrl = e.target.value; setPostsData(n); }} className={inputClass} placeholder="https://instagram.com/reel/..." />
                               </Field>
                             </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 border-t border-[var(--border-color)] pt-4">
-                              <Field label="CATEGORY">
-                                <select value={post.category || "Update"} onChange={e => { const n = [...postsData]; n[index].category = e.target.value; setPostsData(n); }} className={`${inputClass} cursor-pointer`}>
-                                  <option value="Project">Project</option>
-                                  <option value="Team">Team</option>
-                                  <option value="Update">Update</option>
-                                  <option value="Technical Write-up">Technical Write-up</option>
-                                </select>
-                              </Field>
-                              <Field label="DATE"><input type="date" value={post.date || ""} onChange={e => { const n = [...postsData]; n[index].date = e.target.value; setPostsData(n); }} className={inputClass} /></Field>
+                            <div className="space-y-4 flex-1 flex flex-col">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Field label="TITLE"><input type="text" value={post.title || ""} onChange={e => { const n = [...postsData]; n[globalIndex].title = e.target.value; setPostsData(n); }} className={inputClass} /></Field>
+                                <Field label="SCOPE">
+                                  <select value={post.scope || "Internal"} onChange={e => { const n = [...postsData]; n[globalIndex].scope = e.target.value; setPostsData(n); }} className={inputClass}>
+                                    <option value="Internal">Internal Project</option>
+                                    <option value="Client">Client Build</option>
+                                  </select>
+                                </Field>
+                              </div>
+                              <Field label="CLIENT / ORG NAME"><input type="text" value={post.client || ""} onChange={e => { const n = [...postsData]; n[globalIndex].client = e.target.value; setPostsData(n); }} className={inputClass} placeholder="Leave empty for generic internal" /></Field>
+                              <Field label="TECHNOLOGIES"><input type="text" value={post.technologies || ""} onChange={e => { const n = [...postsData]; n[globalIndex].technologies = e.target.value; setPostsData(n); }} className={inputClass} /></Field>
+                              <Field label="OVERVIEW"><textarea value={post.description || ""} onChange={e => { const n = [...postsData]; n[globalIndex].description = e.target.value; setPostsData(n); }} className={textareaClass} /></Field>
+                              <Field label="THE CHALLENGE"><textarea value={post.challenge || ""} onChange={e => { const n = [...postsData]; n[globalIndex].challenge = e.target.value; setPostsData(n); }} className={textareaClass} /></Field>
+                              <Field label="THE SOLUTION"><textarea value={post.solution || ""} onChange={e => { const n = [...postsData]; n[globalIndex].solution = e.target.value; setPostsData(n); }} className={textareaClass} /></Field>
+                              <Field label="THE RESULTS"><textarea value={post.results || ""} onChange={e => { const n = [...postsData]; n[globalIndex].results = e.target.value; setPostsData(n); }} className={textareaClass} /></Field>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Field label="LIVE LINK / REPO"><input type="text" value={post.link || ""} onChange={e => { const n = [...postsData]; n[globalIndex].link = e.target.value; setPostsData(n); }} className={inputClass} /></Field>
+                                <Field label="ARCHITECTURE DIAGRAM">
+                                  <div className="flex gap-2">
+                                    <input type="text" value={post.architectureImage || ""} onChange={e => { const n = [...postsData]; n[globalIndex].architectureImage = e.target.value; setPostsData(n); }} className={inputClass} />
+                                    <label className="cursor-pointer bg-[var(--text-primary)] text-[var(--deep-surface)] px-4 py-3 flex items-center justify-center font-bold text-xs uppercase hover:bg-[var(--neon-cyan)] transition-colors shrink-0">
+                                      Upload
+                                      <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const path = await handleFileUpload(e, "posts"); if (path) { const n = [...postsData]; n[globalIndex].architectureImage = path; setPostsData(n); } }} />
+                                    </label>
+                                  </div>
+                                </Field>
+                              </div>
                             </div>
-                          </div>
-                        </motion.div>
-                      ))}
+                          </motion.div>
+                        );
+                      })}
                     </AnimatePresence>
                   </div>
                 )}
               </motion.div>
             )}
 
-            {/* 6. CLIENTS EDITOR */}
-            {viewMode === "clients" && (
+            {/* POSTS EDITOR */}
+            {viewMode === "posts" && (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
-                <Header
-                  title="Client Deployments"
-                  onSave={onSaveClients}
-                  isSaving={isSaving}
-                  actionButton={
-                    <button onClick={addClient} className="flex items-center gap-2 px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest transition-colors shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
-                      <Plus className="w-4 h-4" /> Add Client
-                    </button>
-                  }
-                />
-
-                {clientsData.length === 0 ? (
+                <Header title="Posts CMS" onSave={onSavePosts} isSaving={isSaving} actionButton={
+                  <button onClick={addPost} className="flex items-center gap-2 px-4 py-2 border border-[var(--text-primary)] bg-[var(--deep-surface)] text-[var(--text-primary)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest transition-colors shadow-[2px_2px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                    <Plus className="w-4 h-4" /> Compose Post
+                  </button>
+                } />
+                {postsData.filter(p => p.category === "Post").length === 0 ? (
                   <div className="brutalist-panel-white brutalist-border p-12 text-center flex flex-col items-center justify-center shadow-[8px_8px_0px_var(--text-primary)]">
-                    <Quote className="w-12 h-12 text-[var(--text-muted)] mb-4" />
-                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2 uppercase">No Client Data</h3>
-                    <p className="text-[var(--text-muted)] text-sm mb-6 max-w-sm font-mono">Your client roster is currently empty. Add a profile to populate the testimonials section.</p>
-                    <button onClick={addClient} className="flex items-center gap-2 px-6 py-3 bg-[var(--neon-cyan)] border border-[var(--text-primary)] text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest hover:bg-[var(--text-primary)] transition-all shadow-[4px_4px_0px_var(--text-primary)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none">
-                      <Plus className="w-4 h-4" /> Initialize First Client
+                    <Star className="w-12 h-12 text-[var(--text-muted)] mb-4" />
+                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2 uppercase">No Posts Found</h3>
+                    <button onClick={addPost} className="mt-6 flex items-center gap-2 px-6 py-3 bg-[var(--neon-cyan)] border border-[var(--text-primary)] text-[var(--deep-surface)] text-xs font-bold uppercase tracking-widest hover:bg-[var(--text-primary)] transition-all shadow-[4px_4px_0px_var(--text-primary)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                      <Plus className="w-4 h-4" /> Add First Post
                     </button>
                   </div>
                 ) : (
                   <div className="grid lg:grid-cols-2 gap-6">
                     <AnimatePresence>
-                      {clientsData.map((client, index) => (
-                        <motion.div
-                          layout
-                          key={client.id || index}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="brutalist-panel-white brutalist-border p-6 relative group hover:border-[var(--border-active)] transition-colors shadow-[4px_4px_0px_var(--border-color)] hover:shadow-[4px_4px_0px_var(--border-active)]"
-                        >
-                          <button
-                            onClick={() => removeClient(client.id)}
-                            className="absolute top-4 right-4 p-2 bg-[var(--surface-dark)] border border-[var(--border-color)] text-[var(--text-primary)] opacity-0 group-hover:opacity-100 hover:bg-[var(--neon-cyan)] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none z-10"
-                            title="Delete Client"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-
-                          <div className="flex flex-col md:flex-row items-start gap-6 mt-2">
-                            <div className="flex flex-col items-center gap-3 shrink-0">
-                              <div className="w-24 h-24 bg-[var(--surface-dark)] border border-[var(--border-color)] overflow-hidden flex items-center justify-center">
-                                {client.avatar ? <img src={client.avatar} className="w-full h-full object-cover grayscale contrast-125" alt="Client Avatar" /> : <ImageIcon className="w-6 h-6 text-[var(--text-muted)]" />}
+                      {postsData.filter(p => p.category === "Post").map((post) => {
+                        const globalIndex = postsData.findIndex(p => p.id === post.id);
+                        return (
+                          <motion.div layout key={post.id} className="brutalist-panel-white brutalist-border p-6 group flex flex-col relative shadow-[4px_4px_0px_var(--border-color)]">
+                            <button onClick={() => removePost(post.id)} className="absolute top-4 right-4 z-10 p-2 bg-[var(--surface-dark)] border border-[var(--border-color)] text-[var(--text-primary)] opacity-0 group-hover:opacity-100 hover:bg-[#ff0000] hover:text-white transition-all shadow-[2px_2px_0px_var(--border-color)]">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                            <div className="space-y-4 flex-1 flex flex-col">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Field label="TITLE"><input type="text" value={post.title || ""} onChange={e => { const n = [...postsData]; n[globalIndex].title = e.target.value; setPostsData(n); }} className={inputClass} /></Field>
+                                <Field label="SCOPE">
+                                  <select value={post.scope || "Internal"} onChange={e => { const n = [...postsData]; n[globalIndex].scope = e.target.value; setPostsData(n); }} className={inputClass}>
+                                    <option value="Internal">Internal Update</option>
+                                    <option value="Client">Client Announcement</option>
+                                  </select>
+                                </Field>
                               </div>
-                              <label className="cursor-pointer text-[9px] uppercase tracking-widest text-[var(--text-primary)] hover:bg-[var(--neon-cyan)] hover:text-white transition-colors border border-[var(--border-color)] px-3 py-1.5 bg-[var(--surface-dark)] text-center w-full font-bold shadow-[2px_2px_0px_var(--border-color)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
-                                Upload Photo
-                                <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                                  const path = await handleFileUpload(e, "clients");
-                                  if (path) { const n = [...clientsData]; n[index].avatar = path; setClientsData(n); }
-                                }} />
-                              </label>
+                              <Field label="CLIENT / ORG NAME"><input type="text" value={post.client || ""} onChange={e => { const n = [...postsData]; n[globalIndex].client = e.target.value; setPostsData(n); }} className={inputClass} placeholder="Only for client posts" /></Field>
+                              <Field label="CLIENT AVATAR / LOGO">
+                                <div className="flex gap-2">
+                                  <input type="text" value={post.clientPic || ""} onChange={e => { const n = [...postsData]; n[globalIndex].clientPic = e.target.value; setPostsData(n); }} className={inputClass} placeholder="/avatars/client.jpg" />
+                                  <label className="cursor-pointer bg-[var(--text-primary)] text-[var(--deep-surface)] px-4 py-3 flex items-center justify-center font-bold text-xs uppercase hover:bg-[var(--neon-cyan)] transition-colors shrink-0">
+                                    Upload
+                                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const path = await handleFileUpload(e, "posts"); if (path) { const n = [...postsData]; n[globalIndex].clientPic = path; setPostsData(n); } }} />
+                                  </label>
+                                </div>
+                              </Field>
+                              <Field label="POST CONTENT (Markdown supported)"><textarea value={post.description || ""} onChange={e => { const n = [...postsData]; n[globalIndex].description = e.target.value; setPostsData(n); }} className={textareaClass} /></Field>
+                              <Field label="ATTACHED IMAGE (Optional)">
+                                <div className="flex gap-2">
+                                  <input type="text" value={post.image || ""} onChange={e => { const n = [...postsData]; n[globalIndex].image = e.target.value; setPostsData(n); }} className={inputClass} />
+                                  <label className="cursor-pointer bg-[var(--text-primary)] text-[var(--deep-surface)] px-4 py-3 flex items-center justify-center font-bold text-xs uppercase hover:bg-[var(--neon-cyan)] transition-colors shrink-0">
+                                    Upload
+                                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const path = await handleFileUpload(e, "posts"); if (path) { const n = [...postsData]; n[globalIndex].image = path; setPostsData(n); } }} />
+                                  </label>
+                                </div>
+                              </Field>
                             </div>
-                            <div className="flex-1 w-full space-y-4">
-                              <Field label="NAME"><input type="text" value={client.name || ""} onChange={e => { const n = [...clientsData]; n[index].name = e.target.value; setClientsData(n); }} className={inputClass} placeholder="Alexander Volkov" /></Field>
-                              <Field label="ROLE"><input type="text" value={client.role || ""} onChange={e => { const n = [...clientsData]; n[index].role = e.target.value; setClientsData(n); }} className={inputClass} placeholder="CTO, Nexus Dynamics" /></Field>
-                              <Field label="CONTENT"><textarea value={client.content || ""} onChange={e => { const n = [...clientsData]; n[index].content = e.target.value; setClientsData(n); }} className={textareaClass} placeholder="Testimonial content..." /></Field>
-                              <Field label="ACCENT COLOR"><input type="text" value={client.glow || ""} onChange={e => { const n = [...clientsData]; n[index].glow = e.target.value; setClientsData(n); }} className={inputClass} placeholder="rgba(255, 107, 0, 1)" /></Field>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
+                          </motion.div>
+                        );
+                      })}
                     </AnimatePresence>
                   </div>
                 )}
               </motion.div>
             )}
-
-            {/* 7. FAQs EDITOR */}
-            {viewMode === "faqs" && (
+{viewMode === "faqs" && (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 pb-20">
                 <Header
                   title="FAQs Content"
