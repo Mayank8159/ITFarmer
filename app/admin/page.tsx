@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Terminal, Upload, Save, X, Activity, Image as ImageIcon,
   Inbox, LayoutDashboard, Users, FileText, LogOut, CheckCircle,
-  Plus, Trash2, ShieldAlert, Star, Quote, Server
+  Plus, Trash2, ShieldAlert, Star, Quote, Server, Eye, EyeOff
 } from "lucide-react";
 
 import {
@@ -30,7 +30,8 @@ import {
   saveSystemConfig,
   saveAboutConfig,
   getAboutConfig,
-  authenticateAdmin
+  authenticateAdmin,
+  finalizeAdminEdits
 } from "@/app/actions/adminActions";
 
 // Initial empty fallback data (Harmonized to support both 'text' and 'label' for CTAs)
@@ -61,6 +62,7 @@ export default function AdminDashboard() {
   // Auth State
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   // Terminal State
   const [history, setHistory] = useState<HistoryLine[]>([
@@ -384,14 +386,23 @@ export default function AdminDashboard() {
           <form onSubmit={handleLogin} className="flex flex-col gap-6">
             <div className="space-y-2">
               <label className="text-[10px] tracking-widest text-[var(--text-muted)] uppercase technical-label">Authorization Required</label>
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={e => setPasswordInput(e.target.value)}
-                autoFocus
-                className="w-full bg-[var(--surface-dark)] border border-[var(--border-color)] px-4 py-3 outline-none focus:border-[var(--neon-cyan)] text-[var(--text-primary)] font-mono focus:shadow-[4px_4px_0px_var(--border-color)] transition-all"
-                placeholder="Enter password..."
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={passwordInput}
+                  onChange={e => setPasswordInput(e.target.value)}
+                  autoFocus
+                  className="w-full bg-[var(--surface-dark)] border border-[var(--border-color)] px-4 py-3 outline-none focus:border-[var(--neon-cyan)] text-[var(--text-primary)] font-mono focus:shadow-[4px_4px_0px_var(--border-color)] transition-all pr-12"
+                  placeholder="Enter password..."
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)} 
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--neon-cyan)] transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
             <button type="submit" className="w-full bg-[var(--text-primary)] hover:bg-[var(--neon-cyan)] text-[var(--deep-surface)] py-3 tracking-widest text-sm font-bold transition-colors uppercase border border-[var(--text-primary)] shadow-[4px_4px_0px_var(--border-color)] active:shadow-none active:translate-y-[4px] active:translate-x-[4px]">
               AUTHENTICATE
@@ -434,7 +445,12 @@ export default function AdminDashboard() {
 
         <div className="p-4 border-t border-[var(--border-color)] bg-[var(--surface-dark)]">
           <button
-            onClick={() => { setIsAuthenticated(false); setPasswordInput(""); router.push("/"); }}
+            onClick={async () => { 
+              setIsAuthenticated(false); 
+              setPasswordInput(""); 
+              await finalizeAdminEdits();
+              router.push("/"); 
+            }}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[var(--text-primary)] bg-[var(--deep-surface)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] transition-colors text-xs font-bold uppercase tracking-widest shadow-[2px_2px_0px_var(--text-primary)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none"
           >
             <LogOut className="w-4 h-4" /> Disconnect

@@ -5,7 +5,7 @@ import { Terminal, GitCommit, GitPullRequest, GitMerge, FolderGit2, ExternalLink
 
 export default function GithubActivityClient({ initialEvents, totalVelocity }: { initialEvents: any[], totalVelocity: number }) {
   const [activeFounder, setActiveFounder] = useState<string | null>(null);
-  const [timeFilter, setTimeFilter] = useState<'24h' | '20'>('24h');
+  const [timeFilter, setTimeFilter] = useState<'24h' | '20'>('20');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
   const toggleGroup = (groupId: string) => {
@@ -27,6 +27,8 @@ export default function GithubActivityClient({ initialEvents, totalVelocity }: {
   if (timeFilter === '24h') {
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).getTime();
     filteredEvents = filteredEvents.filter(e => new Date(e.created_at).getTime() >= twentyFourHoursAgo);
+  } else if (timeFilter === '20') {
+    filteredEvents = filteredEvents.slice(0, 20);
   }
 
   // GROUP EVENTS BY REPOSITORY & FOUNDER

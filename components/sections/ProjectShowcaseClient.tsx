@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Cpu } from "lucide-react";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight, Cpu, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 type Project = {
   id: string;
@@ -18,15 +19,10 @@ type Project = {
   results: string;
 };
 
-const BACKGROUND_TERMS = [
-  "IT_FARMER", "NEURAL_FORGE_HUB", "CYBER_SEC", "AI_PIPELINE", "ZERO_TRUST", 
-  "LLM_ORCHESTRATION", "EDGE_COMPUTING", "QUANTUM_RESISTANT", "AUTONOMOUS_AGENTS"
-];
-
 export default function ProjectShowcaseClient({ projects }: { projects: Project[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // We only show Works in the slider. Let's filter to be safe, though parent might have passed all.
+  // Filter to only show Work projects
   const displayProjects = projects.filter(p => p.category === "Work");
 
   const paginate = (newDirection: number) => {
@@ -38,19 +34,9 @@ export default function ProjectShowcaseClient({ projects }: { projects: Project[
     });
   };
 
-  // For dynamic background glitch text
-  const [glitchTerm, setGlitchTerm] = useState(BACKGROUND_TERMS[0]);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setGlitchTerm(BACKGROUND_TERMS[Math.floor(Math.random() * BACKGROUND_TERMS.length)]);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
   if (!displayProjects || displayProjects.length === 0) return null;
 
-  // We want to render the current, previous, and next slides.
-  // We'll calculate the array of 3 indices.
+  // Determine indices for 3D carousel effect
   const getVisibleIndices = () => {
     if (displayProjects.length === 1) return [0];
     if (displayProjects.length === 2) return [currentIndex, (currentIndex + 1) % 2];
@@ -62,61 +48,50 @@ export default function ProjectShowcaseClient({ projects }: { projects: Project[
   const visibleIndices = getVisibleIndices();
 
   return (
-    <section className="relative w-full py-24 bg-[#0a0a0a] overflow-hidden flex flex-col items-center border-t-4 border-b-4 border-black">
+    <section className="relative w-full py-24 bg-[#fafafa] overflow-hidden flex flex-col items-center border-t-4 border-b-4 border-black">
       
-      {/* Background Animated Terms */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none overflow-hidden z-0">
-        <motion.h1 
-          key={glitchTerm}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          className="text-[12vw] font-black uppercase text-white tracking-tighter whitespace-nowrap"
-        >
-          {glitchTerm}
-        </motion.h1>
-      </div>
+      {/* Background Grid Accent */}
+      <div className="absolute inset-0 grid-background opacity-100 pointer-events-none z-0" />
 
-      {/* Header */}
-      <div className="relative z-10 w-full max-w-7xl px-4 flex flex-col md:flex-row md:items-end justify-between mb-16 border-b-2 border-white/10 pb-6">
+      {/* Header (Light Brutalist) */}
+      <div className="relative z-10 w-full max-w-7xl px-4 flex flex-col md:flex-row md:items-end justify-between mb-16 border-b-4 border-black pb-6">
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <Cpu className="w-6 h-6 text-[#00ff41] animate-pulse" />
-            <h2 className="text-[#00ff41] font-mono text-sm font-bold tracking-widest uppercase">
-              Build Infrastructure
-            </h2>
+          <div className="border-4 border-black px-4 py-2 mb-4 bg-white inline-flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <Cpu className="w-4 h-4 text-[#ff6b00]" />
+            <span className="font-mono text-xs uppercase tracking-widest text-black font-black">
+              System Deployments
+            </span>
           </div>
-          <h3 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter">
-            Holographic <span className="text-[#00ff41]">Deployments</span>
+          <h3 className="text-5xl md:text-7xl font-black text-black uppercase tracking-tighter leading-[0.9]">
+            Production <span className="text-[#ff6b00]">Assets</span>
           </h3>
         </div>
         
         {/* Navigation Controls */}
-        <div className="flex items-center gap-4 mt-6 md:mt-0">
+        <div className="flex items-center gap-4 mt-8 md:mt-0">
           <button
             onClick={() => paginate(-1)}
-            className="w-12 h-12 flex items-center justify-center border-2 border-[#00ff41]/50 text-[#00ff41] hover:bg-[#00ff41] hover:text-black transition-all bg-black shadow-[4px_4px_0px_#00ff41]"
+            className="w-14 h-14 flex items-center justify-center border-4 border-black text-black hover:bg-[#ff6b00] hover:text-white transition-all bg-white shadow-[6px_6px_0px_rgba(0,0,0,1)] active:translate-x-[6px] active:translate-y-[6px] active:shadow-none"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-8 h-8 font-black" />
           </button>
           <button
             onClick={() => paginate(1)}
-            className="w-12 h-12 flex items-center justify-center border-2 border-[#00ff41]/50 text-[#00ff41] hover:bg-[#00ff41] hover:text-black transition-all bg-black shadow-[4px_4px_0px_#00ff41]"
+            className="w-14 h-14 flex items-center justify-center border-4 border-black text-black hover:bg-[#ff6b00] hover:text-white transition-all bg-white shadow-[6px_6px_0px_rgba(0,0,0,1)] active:translate-x-[6px] active:translate-y-[6px] active:shadow-none"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-8 h-8 font-black" />
           </button>
         </div>
       </div>
 
       {/* 3D Slider Container */}
-      <div className="relative w-full h-[600px] flex items-center justify-center z-10 perspective-1000">
+      <div className="relative w-full h-[650px] flex items-center justify-center z-10 perspective-1000">
         {displayProjects.map((project, idx) => {
-          // Determine position relative to current
-          let offset = 0; // default hidden
+          let offset = 0;
           if (idx === currentIndex) offset = 0;
-          else if (idx === visibleIndices[0]) offset = -1; // prev
-          else if (idx === visibleIndices[2]) offset = 1;  // next
-          else return null; // don't render others
+          else if (idx === visibleIndices[0]) offset = -1;
+          else if (idx === visibleIndices[2]) offset = 1;
+          else return null;
 
           const isCenter = offset === 0;
 
@@ -125,84 +100,118 @@ export default function ProjectShowcaseClient({ projects }: { projects: Project[
               key={project.id}
               animate={{
                 x: offset === 0 ? "0%" : offset === -1 ? "-60%" : "60%",
-                scale: offset === 0 ? 1 : 0.8,
-                opacity: offset === 0 ? 1 : 0.4,
+                scale: offset === 0 ? 1 : 0.85,
+                opacity: offset === 0 ? 1 : 0.7,
                 zIndex: offset === 0 ? 20 : 10,
                 rotateY: offset === 0 ? 0 : offset === -1 ? 15 : -15
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="absolute w-[90%] md:w-[800px] h-full bg-black border-2 border-[#00ff41]/50 shadow-[0_0_50px_rgba(0,255,65,0.15)] flex items-center justify-center overflow-hidden cursor-pointer group"
+              className={`absolute w-[90%] md:w-[850px] h-full bg-white border-4 border-black flex flex-col items-center justify-center overflow-hidden cursor-pointer group ${isCenter ? 'shadow-[16px_16px_0px_rgba(0,0,0,1)]' : 'shadow-[8px_8px_0px_rgba(0,0,0,1)]'}`}
               onClick={() => {
                 if (!isCenter) {
                   paginate(offset);
                 }
               }}
             >
-              {/* Main Image as Absolute Background */}
-              {project.image && (
-                <div className="absolute inset-0 w-full h-full">
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className="w-full h-full object-cover opacity-50 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-700"
-                  />
-                  <div className="absolute inset-0 bg-black/40" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50" />
+              {/* Top Bar Accent */}
+              <div className="w-full bg-black h-8 shrink-0 flex items-center px-4 gap-2">
+                <div className="w-3 h-3 bg-[#ff6b00] rounded-full" />
+                <div className="w-3 h-3 bg-white/20 rounded-full" />
+                <div className="w-3 h-3 bg-white/20 rounded-full" />
+                <span className="ml-auto font-mono text-[9px] text-white font-bold tracking-widest uppercase">
+                  ID: {project.id.slice(0,8)}
+                </span>
+              </div>
+
+              {/* Layout Split */}
+              <div className="flex flex-col md:flex-row w-full h-full flex-1">
+                {/* HOLOGRAPHIC Image Section */}
+                <div className="relative w-full md:w-1/2 h-48 md:h-full border-b-4 md:border-b-0 md:border-r-4 border-black bg-black shrink-0 overflow-hidden shadow-[inset_0_0_50px_rgba(0,255,65,0.15)] flex items-center justify-center">
+                  {project.image ? (
+                    <>
+                      <img 
+                        src={project.image} 
+                        alt={project.title} 
+                        className="w-full h-full object-cover opacity-60 mix-blend-luminosity group-hover:mix-blend-normal group-hover:scale-105 group-hover:opacity-100 transition-all duration-700"
+                      />
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all duration-700" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50" />
+                      
+                      {/* Holographic scanning line effect */}
+                      <div className="absolute top-0 left-0 w-full h-[2px] bg-[#00ff41]/50 shadow-[0_0_10px_#00ff41] animate-scan opacity-50" />
+                      
+                      {/* Holographic Corner Accents inside image */}
+                      <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-[#00ff41]" />
+                      <div className="absolute top-2 right-2 w-4 h-4 border-r-2 border-t-2 border-[#00ff41]" />
+                      <div className="absolute bottom-2 left-2 w-4 h-4 border-l-2 border-b-2 border-[#00ff41]" />
+                      <div className="absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-[#00ff41]" />
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center font-mono text-[#00ff41] font-bold uppercase tracking-widest relative">
+                      <div className="absolute inset-0 bg-[#00ff41]/5 animate-pulse" />
+                      <Cpu className="w-8 h-8 mb-2 opacity-50" />
+                      NO IMAGE DATA
+                    </div>
+                  )}
                 </div>
-              )}
 
-              {/* Holographic Box in the Middle */}
-              <motion.div 
-                animate={{
-                  scale: isCenter ? 1 : 0.9,
-                  opacity: isCenter ? 1 : 0,
-                  y: isCenter ? 0 : 20
-                }}
-                className="relative z-10 w-[85%] md:w-[600px] bg-black/60 backdrop-blur-md border border-[#00ff41] p-8 shadow-[0_0_30px_rgba(0,255,65,0.2)]"
-              >
-                {/* Holographic Corner Accents */}
-                <div className="absolute -top-1 -left-1 w-4 h-4 border-l-2 border-t-2 border-[#00ff41]" />
-                <div className="absolute -top-1 -right-1 w-4 h-4 border-r-2 border-t-2 border-[#00ff41]" />
-                <div className="absolute -bottom-1 -left-1 w-4 h-4 border-l-2 border-b-2 border-[#00ff41]" />
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 border-r-2 border-b-2 border-[#00ff41]" />
-
-                <div className="text-[#00ff41]/70 font-mono text-[10px] uppercase tracking-widest mb-4 flex justify-between">
-                  <span>CLIENT: {project.client || "INTERNAL"}</span>
-                  <span>{project.date}</span>
-                </div>
-                
-                <h4 className="text-3xl font-black uppercase text-white mb-4 tracking-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
-                  {project.title}
-                </h4>
-
-                <p className="font-mono text-sm text-white/80 leading-relaxed mb-6 line-clamp-3">
-                  {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies?.split(',').slice(0, 4).map((tech, i) => (
-                    <span 
-                      key={i} 
-                      className="px-2 py-1 bg-[#00ff41]/10 border border-[#00ff41]/30 text-[#00ff41] text-[10px] font-bold uppercase"
-                    >
-                      {tech.trim()}
+                {/* Content Section (Light Brutalist) */}
+                <motion.div 
+                  animate={{ opacity: isCenter ? 1 : 0.3 }}
+                  className="p-8 w-full md:w-1/2 flex flex-col h-full overflow-y-auto bg-white"
+                >
+                  <div className="flex justify-between items-center mb-6 pb-4 border-b-4 border-black">
+                    <span className="font-mono text-xs font-black uppercase text-black bg-[#ff6b00] px-2 py-1">
+                      {project.client || "INTERNAL"}
                     </span>
-                  ))}
-                </div>
-              </motion.div>
+                    <span className="font-mono text-xs font-black text-black">
+                      {project.date}
+                    </span>
+                  </div>
+                  
+                  <h4 className="text-4xl font-black uppercase text-black tracking-tighter mb-4 leading-none">
+                    {project.title}
+                  </h4>
+
+                  <p className="font-mono text-sm text-black font-bold leading-relaxed mb-8 flex-1">
+                    {project.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {project.technologies?.split(',').slice(0, 4).map((tech, i) => (
+                      <span 
+                        key={i} 
+                        className="px-3 py-1 bg-white border-2 border-black text-black text-[10px] font-black uppercase shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+                      >
+                        {tech.trim()}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Redirection CTA */}
+                  {isCenter && (
+                    <Link 
+                      href={`/work#${project.id}`}
+                      className="mt-auto px-6 py-4 bg-black text-white font-black uppercase tracking-widest text-xs hover:bg-[#ff6b00] hover:text-black transition-all border-4 border-transparent hover:border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-3 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                    >
+                      Expand Specs <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  )}
+                </motion.div>
+              </div>
             </motion.div>
           );
         })}
       </div>
       
-      {/* Indicator dots */}
-      <div className="relative z-10 flex items-center gap-2 mt-12">
+      {/* Indicator Tracker */}
+      <div className="relative z-10 flex items-center gap-3 mt-16">
         {displayProjects.map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrentIndex(idx)}
-            className={`h-2 transition-all duration-300 ${
-              idx === currentIndex ? "w-8 bg-[#00ff41] shadow-[0_0_10px_#00ff41]" : "w-2 bg-white/20 hover:bg-white/50"
+            className={`h-4 transition-all duration-300 border-2 border-black ${
+              idx === currentIndex ? "w-12 bg-[#ff6b00]" : "w-4 bg-white hover:bg-gray-200"
             }`}
           />
         ))}

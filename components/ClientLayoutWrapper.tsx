@@ -18,7 +18,7 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
 
   if (isAdmin) {
     return (
-      <div className="admin-layout-root bg-black min-h-screen">
+      <div className="admin-layout-root bg-[var(--background)] min-h-screen text-[var(--text-primary)]" style={{ cursor: 'auto' }}>
         {children}
       </div>
     );

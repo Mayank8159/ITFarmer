@@ -5,13 +5,16 @@ import Navbar from '@/components/navigation/Navbar';
 import Footer from '@/components/Footer';
 import WorkflowTimeline from '@/components/sections/WorkflowTimeline';
 import { ArrowRight, Mail, Globe, Github as GithubIcon, Linkedin as LinkedinIcon, Terminal } from 'lucide-react';
+import { getAboutData } from '@/app/actions/adminActions';
 
 export const metadata = {
   title: 'About | Neural Forge Hub',
   description: 'An AI & Software Engineering Studio specializing in production ML, computer vision, and full-stack applications.',
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const team = await getAboutData();
+
   return (
     <main className="relative min-h-screen bg-[#fafafa] text-black overflow-x-hidden pt-28">
       
@@ -128,115 +131,60 @@ export default function AboutPage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            
-            {/* Priyanshu */}
-            <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full group">
-              <div className="p-8 border-b-4 border-black flex items-center gap-6 bg-[#f0f0f0] group-hover:bg-[#ff6b00]/10 transition-colors">
-                <div className="relative h-24 w-24 border-4 border-black bg-black overflow-hidden flex-shrink-0 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                  <Image
-                    src="/founders/Priyanshu.jpg"
-                    alt="Priyanshu Roy"
-                    fill
-                    className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-500"
-                  />
+            {team && team.length > 0 ? team.map((member: any) => (
+              <div key={member.id} className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full group">
+                <div className="p-8 border-b-4 border-black flex items-center gap-6 bg-[#f0f0f0] group-hover:bg-[#ff6b00]/10 transition-colors">
+                  <div className="relative h-24 w-24 border-4 border-black bg-black flex-shrink-0 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center overflow-hidden">
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-500"
+                      />
+                    ) : (
+                      <span className="text-white font-mono text-xs">NO IMG</span>
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-black text-black uppercase leading-tight mb-2">{member.name}</h3>
+                    <p className="bg-black text-white px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest inline-block font-bold">
+                      {member.role}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-3xl font-black text-black uppercase leading-tight mb-2">Priyanshu Roy</h3>
-                  <p className="bg-black text-white px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest inline-block font-bold">
-                    Lead AI & Systems Engineer
+                <div className="p-8 flex-1">
+                  <p className="text-black/80 text-sm font-mono leading-relaxed font-bold border-l-4 border-[#ff6b00] pl-4 whitespace-pre-line">
+                    {member.description}
                   </p>
                 </div>
-              </div>
-              <div className="p-8 flex-1">
-                <p className="text-black/80 text-sm font-mono leading-relaxed font-bold border-l-4 border-[#ff6b00] pl-4">
-                  Specializing in the intersection of deep learning and production software. Extensive experience engineering custom RAG pipelines, deploying YOLO object detection models, and building autonomous agents. Focused on seamless system integration, ensuring that complex AI architectures are reliably packaged into cross-platform deployments and scalable web applications.
-                </p>
-              </div>
-              <div className="p-4 border-t-4 border-black flex flex-wrap gap-4 bg-[#f0f0f0]">
-                <a href="mailto:services@neuralforgehub.tech" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
-                  <Mail className="w-4 h-4" /> Contact
-                </a>
-                <a href="https://github.com/priyanshu-ogdev" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
-                  <GithubIcon className="w-4 h-4" /> GitHub
-                </a>
-                <a href="https://www.linkedin.com/in/priyanshu-roy-25b91a31a/" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
-                  <LinkedinIcon className="w-4 h-4" /> LinkedIn
-                </a>
-              </div>
-            </div>
-
-            {/* Mayank */}
-            <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full group">
-              <div className="p-8 border-b-4 border-black flex items-center gap-6 bg-[#f0f0f0] group-hover:bg-[#ff6b00]/10 transition-colors">
-                <div className="relative h-24 w-24 border-4 border-black bg-black overflow-hidden flex-shrink-0 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                  <Image
-                    src="/founders/Mayank.png"
-                    alt="Mayank Kumar Sharma"
-                    fill
-                    className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-500"
-                  />
-                </div>
-                <div>
-                  <h3 className="text-3xl font-black text-black uppercase leading-tight mb-2">Mayank Sharma</h3>
-                  <p className="bg-black text-white px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest inline-block font-bold">
-                    Founder & Systems Architect
-                  </p>
+                <div className="p-4 border-t-4 border-black flex flex-wrap gap-4 bg-[#f0f0f0]">
+                  {member.email && (
+                    <a href={`mailto:${member.email}`} className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
+                      <Mail className="w-4 h-4" /> Contact
+                    </a>
+                  )}
+                  {member.github && (
+                    <a href={member.github} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
+                      <GithubIcon className="w-4 h-4" /> GitHub
+                    </a>
+                  )}
+                  {member.linkedin && (
+                    <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
+                      <LinkedinIcon className="w-4 h-4" /> LinkedIn
+                    </a>
+                  )}
+                  {member.portfolio && (
+                    <a href={member.portfolio} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
+                      <Globe className="w-4 h-4" /> Portfolio
+                    </a>
+                  )}
                 </div>
               </div>
-              <div className="p-8 flex-1">
-                <p className="text-black/80 text-sm font-mono leading-relaxed font-bold border-l-4 border-[#ff6b00] pl-4">
-                  Architecting native applications (Android & Windows .exe), high-performance software, and rigorous enterprise system designs. Focused on building robust, scalable infrastructure that bridges the gap between raw intelligence and usable end-products.
-                </p>
+            )) : (
+              <div className="col-span-2 py-12 text-center text-black font-mono font-bold uppercase tracking-widest">
+                System initializing... Waiting for founder data.
               </div>
-              <div className="p-4 border-t-4 border-black flex flex-wrap gap-4 bg-[#f0f0f0]">
-                <a href="mailto:services@neuralforgehub.tech" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
-                  <Mail className="w-4 h-4" /> Contact
-                </a>
-                <a href="https://github.com/Mayank8159" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
-                  <GithubIcon className="w-4 h-4" /> GitHub
-                </a>
-                <a href="https://www.linkedin.com/in/mayank-kumar-sharma-900318318/" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
-                  <LinkedinIcon className="w-4 h-4" /> LinkedIn
-                </a>
-              </div>
-            </div>
-
-            {/* Shreyan */}
-            <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full group">
-              <div className="p-8 border-b-4 border-black flex items-center gap-6 bg-[#f0f0f0] group-hover:bg-[#ff6b00]/10 transition-colors">
-                <div className="relative h-24 w-24 border-4 border-black bg-black overflow-hidden flex-shrink-0 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                  <Image
-                    src="/founders/Shreyan_v2.jpeg"
-                    alt="Shreyan Mitra"
-                    fill
-                    className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-500"
-                  />
-                </div>
-                <div>
-                  <h3 className="text-3xl font-black text-black uppercase leading-tight mb-2">Shreyan Mitra</h3>
-                  <p className="bg-black text-white px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest inline-block font-bold">
-                    Co-Founder & Full Stack Architect
-                  </p>
-                </div>
-              </div>
-              <div className="p-8 flex-1">
-                <p className="text-black/80 text-sm font-mono leading-relaxed font-bold border-l-4 border-[#ff6b00] pl-4">
-                  Building high-quality web platforms, seamless UI architectures, and full-stack cloud workflows from the ground up. Focused on creating liquid, high-performance user interfaces and rock-solid backend infrastructure.
-                </p>
-              </div>
-              <div className="p-4 border-t-4 border-black flex flex-wrap gap-4 bg-[#f0f0f0]">
-                <a href="mailto:services@neuralforgehub.tech" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
-                  <Mail className="w-4 h-4" /> Contact
-                </a>
-                <a href="https://github.com/MURPHIOP" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
-                  <GithubIcon className="w-4 h-4" /> GitHub
-                </a>
-                <a href="https://www.linkedin.com/in/shreyan-mitra/" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
-                  <LinkedinIcon className="w-4 h-4" /> LinkedIn
-                </a>
-              </div>
-            </div>
-            
+            )}
           </div>
         </section>
 
