@@ -16,6 +16,13 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.history.scrollRestoration = "manual";
+      window.scrollTo(0, 0);
+    }
+  }, [pathname]);
+
   if (isAdmin) {
     return (
       <div className="admin-layout-root bg-[var(--background)] min-h-screen text-[var(--text-primary)]" style={{ cursor: 'auto' }}>

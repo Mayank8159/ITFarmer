@@ -449,7 +449,7 @@ export default function AdminDashboard() {
               setIsAuthenticated(false); 
               setPasswordInput(""); 
               await finalizeAdminEdits();
-              router.push("/"); 
+              window.location.href = "/"; 
             }}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[var(--text-primary)] bg-[var(--deep-surface)] hover:bg-[var(--text-primary)] hover:text-[var(--deep-surface)] transition-colors text-xs font-bold uppercase tracking-widest shadow-[2px_2px_0px_var(--text-primary)] active:translate-y-[2px] active:translate-x-[2px] active:shadow-none"
           >

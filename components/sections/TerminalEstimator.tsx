@@ -7,18 +7,18 @@ import { useCurrency } from "@/components/CurrencyContext";
 
 export default function TerminalEstimator() {
   const [step, setStep] = useState<"input" | "form" | "loading" | "success">("input");
-  
+
   const [selectedScope, setSelectedScope] = useState<string | null>(null);
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
   const [customBudget, setCustomBudget] = useState("");
-  
-  const [formData, setFormData] = useState({ 
-    name: "", 
-    email: "", 
-    startDate: "", 
-    endDate: "", 
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    startDate: "",
+    endDate: "",
     company: "",
-    details: "" 
+    details: ""
   });
 
   const [captchaParams, setCaptchaParams] = useState({ v1: 0, v2: 0 });
@@ -27,11 +27,11 @@ export default function TerminalEstimator() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setCaptchaParams({ 
-      v1: Math.floor(Math.random() * 10) + 1, 
-      v2: Math.floor(Math.random() * 10) + 1 
+    setCaptchaParams({
+      v1: Math.floor(Math.random() * 10) + 1,
+      v2: Math.floor(Math.random() * 10) + 1
     });
-    
+
     const params = new URLSearchParams(window.location.search);
     setUtmParams({
       source: params.get("utm_source") || "",
@@ -39,7 +39,7 @@ export default function TerminalEstimator() {
       campaign: params.get("utm_campaign") || ""
     });
   }, []);
-  
+
   const { formatBudget } = useCurrency();
 
   const SCOPES = [
@@ -64,7 +64,7 @@ export default function TerminalEstimator() {
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.company || !formData.startDate || !formData.endDate || !formData.details) return;
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError("[ERROR] Select a valid project scope to continue");
@@ -73,9 +73,9 @@ export default function TerminalEstimator() {
 
     if (parseInt(captchaInput) !== (captchaParams.v1 + captchaParams.v2)) {
       setError("[ERROR] Transmission failed. Retrying fallback email client...");
-      setCaptchaParams({ 
-        v1: Math.floor(Math.random() * 10) + 1, 
-        v2: Math.floor(Math.random() * 10) + 1 
+      setCaptchaParams({
+        v1: Math.floor(Math.random() * 10) + 1,
+        v2: Math.floor(Math.random() * 10) + 1
       });
       setCaptchaInput("");
       return;
@@ -84,7 +84,7 @@ export default function TerminalEstimator() {
     setError(null);
 
     setStep("loading");
-    
+
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
@@ -109,7 +109,7 @@ export default function TerminalEstimator() {
           utm_campaign: utmParams.campaign
         }),
       });
-      
+
       const result = await response.json();
       if (result.success) {
         setStep("success");
@@ -125,13 +125,13 @@ export default function TerminalEstimator() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className="relative z-10 w-full max-w-4xl px-4"
     >
       <div className="bg-[#0a0a0a] border-4 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] w-full overflow-hidden flex flex-col font-mono text-white">
-        
+
         <div className="bg-[#1a1a1a] border-b-4 border-black px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Terminal className="w-5 h-5 text-[#ff6b00]" />
@@ -147,7 +147,7 @@ export default function TerminalEstimator() {
         <div className="p-6 md:p-10 flex-1 min-h-[500px] flex flex-col relative">
           <AnimatePresence mode="wait">
             {step === "input" && (
-              <motion.div 
+              <motion.div
                 key="input"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -166,11 +166,10 @@ export default function TerminalEstimator() {
                     <button
                       key={scope.id}
                       onClick={() => setSelectedScope(scope.id)}
-                      className={`text-left p-4 border-2 transition-all duration-200 flex items-start gap-4 ${
-                        selectedScope === scope.id 
-                          ? "bg-[#ff6b00] border-[#ff6b00] text-black font-black" 
-                          : "bg-transparent border-white/20 text-white/80 hover:border-white/50"
-                      }`}
+                      className={`text-left p-4 border-2 transition-all duration-200 flex items-start gap-4 ${selectedScope === scope.id
+                        ? "bg-[#ff6b00] border-[#ff6b00] text-black font-black"
+                        : "bg-transparent border-white/20 text-white/80 hover:border-white/50"
+                        }`}
                     >
                       <span className="opacity-50">[{scope.id}]</span>
                       <span className="uppercase">{scope.label}</span>
@@ -187,11 +186,10 @@ export default function TerminalEstimator() {
                     <button
                       key={budget}
                       onClick={() => setSelectedBudget(budget)}
-                      className={`px-6 py-3 border-2 uppercase font-bold text-sm tracking-widest transition-all ${
-                        selectedBudget === budget
-                          ? "bg-white border-white text-black"
-                          : "bg-transparent border-white/20 text-white/80 hover:border-white/50"
-                      }`}
+                      className={`px-6 py-3 border-2 uppercase font-bold text-sm tracking-widest transition-all ${selectedBudget === budget
+                        ? "bg-white border-white text-black"
+                        : "bg-transparent border-white/20 text-white/80 hover:border-white/50"
+                        }`}
                     >
                       {formatBudget(budget)}
                     </button>
@@ -200,9 +198,9 @@ export default function TerminalEstimator() {
 
                 {selectedBudget === "CUSTOM" && (
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mb-12">
-                    <input 
-                      type="text" 
-                      placeholder="ENTER CUSTOM ALLOCATION..." 
+                    <input
+                      type="text"
+                      placeholder="ENTER CUSTOM ALLOCATION..."
                       value={customBudget}
                       onChange={(e) => setCustomBudget(e.target.value)}
                       className="w-full bg-black border-2 border-[#ff6b00] text-[#ff6b00] p-4 font-bold tracking-widest focus:outline-none placeholder:text-[#ff6b00]/30"
@@ -224,7 +222,7 @@ export default function TerminalEstimator() {
             )}
 
             {step === "form" && (
-              <motion.div 
+              <motion.div
                 key="form"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -240,71 +238,71 @@ export default function TerminalEstimator() {
 
                 <form onSubmit={handleSubmitForm} className="flex flex-col gap-4 mb-8">
                   <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
-                  <input 
-                    type="text" 
-                    placeholder="COMMANDER_NAME" 
+                  <input
+                    type="text"
+                    placeholder="NAME"
                     required
                     value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30"
                   />
-                  <input 
-                    type="email" 
-                    placeholder="SECURE_UPLINK (EMAIL)" 
+                  <input
+                    type="email"
+                    placeholder="EMAIL"
                     required
                     value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30"
                   />
-                  <input 
-                    type="text" 
-                    placeholder="COMPANY_OR_ORGANIZATION" 
+                  <input
+                    type="text"
+                    placeholder="COMPANY OR ORGANIZATION"
                     required
                     value={formData.company}
-                    onChange={(e) => setFormData({...formData, company: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30"
                   />
                   <div className="flex flex-col md:flex-row gap-4">
                     <div className="flex-1">
                       <label className="text-[#ff6b00] text-xs font-mono font-bold tracking-widest block mb-1">INITIALIZATION_DATE</label>
-                      <input 
-                        type="date" 
+                      <input
+                        type="date"
                         required
                         value={formData.startDate}
-                        onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                         className="w-full bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors [&::-webkit-calendar-picker-indicator]:invert"
                       />
                     </div>
                     <div className="flex-1">
                       <label className="text-[#ff6b00] text-xs font-mono font-bold tracking-widest block mb-1">TERMINATION_DATE</label>
-                      <input 
-                        type="date" 
+                      <input
+                        type="date"
                         required
                         value={formData.endDate}
-                        onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                         className="w-full bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors [&::-webkit-calendar-picker-indicator]:invert"
                       />
                     </div>
                   </div>
-                  <textarea 
-                    placeholder="PROJECT_PARAMETERS (DETAILS)..." 
+                  <textarea
+                    placeholder="PROJECT PARAMETERS (DETAILS)..."
                     required
                     rows={4}
                     value={formData.details}
-                    onChange={(e) => setFormData({...formData, details: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, details: e.target.value })}
                     className="bg-transparent border border-white/20 text-white p-4 focus:outline-none focus:border-[#ff6b00] transition-colors placeholder:text-white/30 resize-none"
                   />
 
                   <div className="mt-4 border-2 border-[#00ff41]/30 p-4 bg-[#00ff41]/5 flex flex-col md:flex-row md:items-center gap-4">
                     <div className="flex-1">
                       <p className="text-[#00ff41] font-bold text-xs uppercase tracking-widest">
-                        [SECURITY OVERRIDE] SYSTEM.CALCULATE
+                        [CAPTCHA] Verify
                       </p>
                       <p className="text-white/70 text-sm mt-1">
                         Solve equation: {captchaParams.v1} + {captchaParams.v2} = ?
                       </p>
                     </div>
-                    <input 
+                    <input
                       type="number"
                       required
                       placeholder="?"
@@ -320,13 +318,13 @@ export default function TerminalEstimator() {
                         {error}
                       </div>
                     )}
-                    <button 
+                    <button
                       type="submit"
                       className="w-full md:w-auto px-8 py-4 bg-[#ff6b00] text-black font-black uppercase tracking-widest text-sm hover:bg-white transition-colors border-2 border-[#ff6b00] flex items-center justify-center gap-3"
                     >
                       COMMIT PAYLOAD <ArrowRight className="w-4 h-4" />
                     </button>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setStep("input")}
                       className="w-full md:w-auto px-8 py-4 bg-transparent text-white/50 font-mono text-xs uppercase tracking-widest hover:text-white transition-colors flex items-center justify-center gap-3"
@@ -339,7 +337,7 @@ export default function TerminalEstimator() {
             )}
 
             {step === "loading" && (
-              <motion.div 
+              <motion.div
                 key="loading"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -355,7 +353,7 @@ export default function TerminalEstimator() {
             )}
 
             {step === "success" && (
-              <motion.div 
+              <motion.div
                 key="success"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}

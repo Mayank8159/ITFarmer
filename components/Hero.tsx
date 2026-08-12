@@ -27,7 +27,7 @@ export default function HeroPage() {
     <section 
       ref={heroRef}
       id="home"
-      className="relative min-h-screen w-full flex flex-col items-center justify-center text-black overflow-hidden pt-28 pb-10 z-10 border-b border-black/15 bg-[#e5e5e5]"
+      className="relative min-h-screen w-full flex flex-col items-center justify-center text-black overflow-hidden pt-28 pb-32 lg:pb-48 z-10 border-b border-black/15 bg-[#e5e5e5]"
     >
       {/* BACKGROUND EFFECTS */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -121,6 +121,23 @@ export default function HeroPage() {
               </Link>
             </motion.div>
           </motion.div>
+
+          {/* Animated Indicator */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.8 }}
+            className="hidden sm:flex items-center gap-3 mt-16 sm:mt-24"
+          >
+             <div className="w-px h-16 bg-black/10 relative overflow-hidden">
+                <motion.div 
+                  animate={{ y: ["-100%", "200%"] }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                  className="absolute inset-0 bg-[#ff6b00]"
+                />
+             </div>
+             <span className="font-mono text-[10px] uppercase tracking-widest text-black/40 rotate-180" style={{ writingMode: 'vertical-rl' }}>Initiate</span>
+          </motion.div>
         </div>
 
         {/* RIGHT COLUMN: Visual Anchor */}
@@ -155,8 +172,8 @@ export default function HeroPage() {
         
       </div>
 
-      {/* INFINITE MARQUEE STRIP */}
-      <div className="absolute bottom-0 left-0 w-full z-20">
+      {/* INFINITE MARQUEE STRIP - UPGRADED */}
+      <div className="absolute bottom-6 lg:bottom-10 -left-[5%] w-[110%] z-20 rotate-[-1deg] transform-gpu flex flex-col gap-2">
         <BrutalistMarquee 
           items={[
             "TRANSFORMERS",
@@ -166,8 +183,10 @@ export default function HeroPage() {
             "OPEN-SOURCE ORCHESTRATION",
             "ANDROID/WINDOWS NATIVE"
           ]}
-          speed={30}
+          speed={40}
+          className="shadow-[0_8px_0_0_rgba(0,0,0,0.1)]"
         />
+        <div className="w-full h-px bg-black/10" />
       </div>
     </section>
   );

@@ -21,8 +21,6 @@ export default async function AboutPage() {
       {/* GRID OVERLAY */}
       <div className="absolute inset-0 grid-background opacity-100 pointer-events-none z-0" />
 
-      <Navbar />
-
       <div className="relative z-10 max-w-[1600px] mx-auto px-6 pb-20">
 
         {/* 1. HERO SECTION */}
@@ -159,7 +157,7 @@ export default async function AboutPage() {
                 </div>
                 <div className="p-4 border-t-4 border-black flex flex-wrap gap-4 bg-[#f0f0f0]">
                   {member.email && (
-                    <a href={`mailto:${member.email}`} className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
+                    <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${member.email}`} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-black text-black hover:text-[#ff6b00] flex items-center gap-2 uppercase">
                       <Mail className="w-4 h-4" /> Contact
                     </a>
                   )}
@@ -210,8 +208,6 @@ export default async function AboutPage() {
         </section>
 
       </div>
-      
-      <Footer />
     </main>
   );
 }

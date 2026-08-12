@@ -22,8 +22,8 @@ type Project = {
 export default function ProjectShowcaseClient({ projects }: { projects: Project[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Filter to only show Work projects
-  const displayProjects = projects.filter(p => p.category === "Work");
+  // Show projects, filtering by Project or Work (or just taking top ones)
+  const displayProjects = projects.filter(p => p.category === "Work" || p.category === "Project");
 
   const paginate = (newDirection: number) => {
     setCurrentIndex((prevIndex) => {
@@ -48,10 +48,21 @@ export default function ProjectShowcaseClient({ projects }: { projects: Project[
   const visibleIndices = getVisibleIndices();
 
   return (
-    <section className="relative w-full py-24 bg-[#fafafa] overflow-hidden flex flex-col items-center border-t-4 border-b-4 border-black">
+    <section className="relative w-full py-24 bg-[#e5e5e5] overflow-hidden flex flex-col items-center border-b border-black/15">
       
       {/* Background Grid Accent */}
-      <div className="absolute inset-0 grid-background opacity-100 pointer-events-none z-0" />
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 grid-background opacity-100" />
+        
+        {/* Floating Brutalist Shapes (Synced with Hero) */}
+        <motion.div 
+          animate={{ rotate: -360 }}
+          transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
+          className="absolute top-1/4 right-[10%] w-32 h-32 border-2 border-dashed border-black/10 flex items-center justify-center"
+        >
+          <div className="w-16 h-16 border-4 border-black/5" />
+        </motion.div>
+      </div>
 
       {/* Header (Light Brutalist) */}
       <div className="relative z-10 w-full max-w-7xl px-4 flex flex-col md:flex-row md:items-end justify-between mb-16 border-b-4 border-black pb-6">
@@ -101,104 +112,102 @@ export default function ProjectShowcaseClient({ projects }: { projects: Project[
               animate={{
                 x: offset === 0 ? "0%" : offset === -1 ? "-60%" : "60%",
                 scale: offset === 0 ? 1 : 0.85,
-                opacity: offset === 0 ? 1 : 0.7,
+                opacity: offset === 0 ? 1 : 0.4,
                 zIndex: offset === 0 ? 20 : 10,
                 rotateY: offset === 0 ? 0 : offset === -1 ? 15 : -15
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className={`absolute w-[90%] md:w-[850px] h-full bg-white border-4 border-black flex flex-col items-center justify-center overflow-hidden cursor-pointer group ${isCenter ? 'shadow-[16px_16px_0px_rgba(0,0,0,1)]' : 'shadow-[8px_8px_0px_rgba(0,0,0,1)]'}`}
+              className={`absolute w-[90%] md:w-[900px] h-[550px] md:h-[600px] bg-black border-4 border-black overflow-hidden cursor-pointer group ${isCenter ? 'shadow-[16px_16px_0px_rgba(0,0,0,1)]' : 'shadow-[8px_8px_0px_rgba(0,0,0,1)]'}`}
               onClick={() => {
                 if (!isCenter) {
                   paginate(offset);
                 }
               }}
             >
+              {/* Background Image Layer */}
+              <div className="absolute inset-0 z-0">
+                {project.image ? (
+                  <img 
+                    src={project.image} 
+                    alt={project.title} 
+                    className="w-full h-full object-cover opacity-80 mix-blend-luminosity group-hover:mix-blend-normal group-hover:scale-105 transition-all duration-700"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-[#111] flex items-center justify-center">
+                    <Cpu className="w-16 h-16 text-[#00ff41] opacity-20" />
+                  </div>
+                )}
+                {/* Gradient Overlays for readability */}
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                
+                {/* Holographic scanning line effect */}
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-[#00ff41]/50 shadow-[0_0_10px_#00ff41] animate-scan opacity-30 group-hover:opacity-60" />
+              </div>
+
               {/* Top Bar Accent */}
-              <div className="w-full bg-black h-8 shrink-0 flex items-center px-4 gap-2">
-                <div className="w-3 h-3 bg-[#ff6b00] rounded-full" />
-                <div className="w-3 h-3 bg-white/20 rounded-full" />
-                <div className="w-3 h-3 bg-white/20 rounded-full" />
-                <span className="ml-auto font-mono text-[9px] text-white font-bold tracking-widest uppercase">
+              <div className="absolute top-0 left-0 w-full bg-black/80 backdrop-blur-sm h-8 flex items-center px-4 gap-2 z-20 border-b border-white/10">
+                <div className="w-3 h-3 bg-[#ff6b00]" />
+                <div className="w-3 h-3 bg-white/20" />
+                <div className="w-3 h-3 bg-white/20" />
+                <span className="ml-auto font-mono text-[9px] text-white/70 font-bold tracking-widest uppercase">
                   ID: {project.id.slice(0,8)}
                 </span>
               </div>
 
-              {/* Layout Split */}
-              <div className="flex flex-col md:flex-row w-full h-full flex-1">
-                {/* HOLOGRAPHIC Image Section */}
-                <div className="relative w-full md:w-1/2 h-48 md:h-full border-b-4 md:border-b-0 md:border-r-4 border-black bg-black shrink-0 overflow-hidden shadow-[inset_0_0_50px_rgba(0,255,65,0.15)] flex items-center justify-center">
-                  {project.image ? (
-                    <>
-                      <img 
-                        src={project.image} 
-                        alt={project.title} 
-                        className="w-full h-full object-cover opacity-60 mix-blend-luminosity group-hover:mix-blend-normal group-hover:scale-105 group-hover:opacity-100 transition-all duration-700"
-                      />
-                      <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all duration-700" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50" />
-                      
-                      {/* Holographic scanning line effect */}
-                      <div className="absolute top-0 left-0 w-full h-[2px] bg-[#00ff41]/50 shadow-[0_0_10px_#00ff41] animate-scan opacity-50" />
-                      
-                      {/* Holographic Corner Accents inside image */}
-                      <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-[#00ff41]" />
-                      <div className="absolute top-2 right-2 w-4 h-4 border-r-2 border-t-2 border-[#00ff41]" />
-                      <div className="absolute bottom-2 left-2 w-4 h-4 border-l-2 border-b-2 border-[#00ff41]" />
-                      <div className="absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-[#00ff41]" />
-                    </>
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center font-mono text-[#00ff41] font-bold uppercase tracking-widest relative">
-                      <div className="absolute inset-0 bg-[#00ff41]/5 animate-pulse" />
-                      <Cpu className="w-8 h-8 mb-2 opacity-50" />
-                      NO IMAGE DATA
-                    </div>
-                  )}
-                </div>
-
-                {/* Content Section (Light Brutalist) */}
+              {/* Holographic Info Card */}
+              {isCenter && (
                 <motion.div 
-                  animate={{ opacity: isCenter ? 1 : 0.3 }}
-                  className="p-8 w-full md:w-1/2 flex flex-col h-full overflow-y-auto bg-white"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="absolute bottom-6 left-6 md:left-10 w-[85%] md:w-[450px] p-6 bg-white/10 backdrop-blur-md border border-white/20 z-20 shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
                 >
-                  <div className="flex justify-between items-center mb-6 pb-4 border-b-4 border-black">
-                    <span className="font-mono text-xs font-black uppercase text-black bg-[#ff6b00] px-2 py-1">
+                  {/* Holographic Corner Accents */}
+                  <div className="absolute top-0 left-0 w-3 h-3 border-l-2 border-t-2 border-[#00ff41]" />
+                  <div className="absolute top-0 right-0 w-3 h-3 border-r-2 border-t-2 border-[#00ff41]" />
+                  <div className="absolute bottom-0 left-0 w-3 h-3 border-l-2 border-b-2 border-[#00ff41]" />
+                  <div className="absolute bottom-0 right-0 w-3 h-3 border-r-2 border-b-2 border-[#00ff41]" />
+                  
+                  <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/20">
+                    <span className="font-mono text-[10px] font-black uppercase text-black bg-[#00ff41] px-2 py-0.5">
                       {project.client || "INTERNAL"}
                     </span>
-                    <span className="font-mono text-xs font-black text-black">
+                    <span className="font-mono text-[10px] font-bold text-white/70 tracking-widest">
                       {project.date}
                     </span>
                   </div>
                   
-                  <h4 className="text-4xl font-black uppercase text-black tracking-tighter mb-4 leading-none">
+                  <h4 className="text-3xl md:text-4xl font-black uppercase text-white tracking-tighter mb-3 leading-none drop-shadow-md">
                     {project.title}
                   </h4>
 
-                  <p className="font-mono text-sm text-black font-bold leading-relaxed mb-8 flex-1">
+                  <p className="font-mono text-xs text-white/80 leading-relaxed mb-6 line-clamp-3">
                     {project.description}
                   </p>
 
-                  <div className="flex flex-wrap gap-2 mb-8">
-                    {project.technologies?.split(',').slice(0, 4).map((tech, i) => (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.technologies?.split(',').slice(0, 3).map((tech, i) => (
                       <span 
                         key={i} 
-                        className="px-3 py-1 bg-white border-2 border-black text-black text-[10px] font-black uppercase shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+                        className="px-2 py-1 bg-black/40 border border-white/20 text-white text-[9px] font-bold uppercase"
                       >
                         {tech.trim()}
                       </span>
                     ))}
                   </div>
 
-                  {/* Redirection CTA */}
-                  {isCenter && (
+                  {/* Expand Button at Bottom Right */}
+                  <div className="absolute -bottom-4 -right-4 md:-bottom-5 md:-right-5">
                     <Link 
                       href={`/work#${project.id}`}
-                      className="mt-auto px-6 py-4 bg-black text-white font-black uppercase tracking-widest text-xs hover:bg-[#ff6b00] hover:text-black transition-all border-4 border-transparent hover:border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-3 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                      className="w-12 h-12 md:w-16 md:h-16 bg-[#ff6b00] border-2 border-white flex items-center justify-center shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all group/btn"
                     >
-                      Expand Specs <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-5 h-5 md:w-6 md:h-6 text-white group-hover/btn:-rotate-45 transition-transform duration-300" />
                     </Link>
-                  )}
+                  </div>
                 </motion.div>
-              </div>
+              )}
             </motion.div>
           );
         })}
