@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Terminal, ShieldCheck, Zap, ArrowRight, Loader2, Check } from "lucide-react";
 import { useCurrency } from "@/components/CurrencyContext";
+import { submitInquiry } from "@/app/actions/adminActions";
 
 export default function TerminalEstimator() {
   const [step, setStep] = useState<"input" | "form" | "loading" | "success">("input");
@@ -86,35 +87,21 @@ export default function TerminalEstimator() {
     setStep("loading");
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY",
-          name: formData.name,
-          email: formData.email,
-          subject: `New Lead: ${SCOPES.find(s => s.id === selectedScope)?.label}`,
-          company: formData.company,
-          scope: selectedScope,
-          budget: selectedBudget === "CUSTOM" ? customBudget : selectedBudget,
-          startDate: formData.startDate,
-          endDate: formData.endDate,
-          details: formData.details,
-          botcheck: (document.getElementsByName("botcheck")[0] as HTMLInputElement)?.checked,
-          utm_source: utmParams.source,
-          utm_medium: utmParams.medium,
-          utm_campaign: utmParams.campaign
-        }),
+      const result = await submitInquiry({
+        name: formData.name,
+        email: formData.email,
+        company: formData.company,
+        service: SCOPES.find(s => s.id === selectedScope)?.label || "Unknown Scope",
+        budget: selectedBudget === "CUSTOM" ? customBudget : selectedBudget,
+        message: `Start: ${formData.startDate}\nEnd: ${formData.endDate}\nDetails: ${formData.details}\n\nUTM Source: ${utmParams.source}\nUTM Medium: ${utmParams.medium}\nUTM Campaign: ${utmParams.campaign}`,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
       });
 
-      const result = await response.json();
       if (result.success) {
         setStep("success");
       } else {
-        throw new Error("Web3Forms submission failed");
+        throw new Error(result.error || "Submission failed");
       }
     } catch (error) {
       console.error(error);

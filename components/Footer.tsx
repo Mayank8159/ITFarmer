@@ -33,10 +33,10 @@ export default function Footer() {
 
             {/* Brand Column */}
             <div className="col-span-2 md:col-span-2 flex flex-col items-start">
-              <Link href="/" className="flex items-center gap-3 mb-6 bg-black text-white px-4 py-2 hover:bg-[#ff6b00] transition-colors border border-black">
+              <a href="/" className="flex items-center gap-3 mb-6 bg-black text-white px-4 py-2 hover:bg-[#ff6b00] transition-colors border border-black">
                 <Terminal className="w-5 h-5" />
                 <span className="font-bold tracking-tight uppercase">Neural Forge Hub</span>
-              </Link>
+              </a>
               <p className="text-black/70 text-sm font-mono leading-relaxed max-w-xs mb-6">
                 We're the engineering team you wish you had in-house — we build production AI and software, not prototypes.
               </p>
@@ -49,13 +49,13 @@ export default function Footer() {
             {/* Links Columns */}
             <div className="flex flex-col gap-4">
               <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">EXPLORE</h4>
-              <Link href="/work" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Work</Link>
+              <a href="/work" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Work</a>
             </div>
 
             <div className="flex flex-col gap-4">
               <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">COMPANY</h4>
-              <Link href="/about" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">About</Link>
-              <a href={`mailto:${contact.email}`} className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Contact</a>
+              <a href="/about" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">About</a>
+              <a href="/contact" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Contact</a>
             </div>
 
             <div className="flex flex-col gap-4">

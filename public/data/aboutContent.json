@@ -7,7 +7,7 @@
     "description": "Architecting native applications (Android & Windows .exe), high-performance software, and rigorous enterprise system designs.",
     "github": "https://github.com/Mayank8159",
     "linkedin": "https://www.linkedin.com/in/mayank-kumar-sharma-900318318/",
-    "portfolio": ""
+    "portfolio": "https://mayank8159.github.io"
   },
   {
     "id": "2",
@@ -17,7 +17,7 @@
     "description": "Extensive experience building ML architectures (Transformers, RAG, Text Encoders), training computer vision models (YOLO, object detection), and orchestrating autonomous AI agents.",
     "github": "https://github.com/priyanshu-ogdev",
     "linkedin": "https://www.linkedin.com/in/priyanshu-roy-25b91a31a/",
-    "portfolio": ""
+    "portfolio": "https://priyanshu-ogdev.github.io"
   },
   {
     "id": "3",
@@ -27,6 +27,6 @@
     "description": "Building high-quality web platforms, seamless UI architectures, and full-stack cloud workflows from the ground up.",
     "github": "https://github.com/MURPHIOP",
     "linkedin": "https://www.linkedin.com/in/shreyan-mitra/",
-    "portfolio": ""
+    "portfolio": "https://murphiop.github.io"
   }
 ]

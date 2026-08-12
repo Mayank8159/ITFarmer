@@ -3,6 +3,7 @@
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Download, Loader2, Check, ArrowRight } from "lucide-react";
+import { submitInquiry } from "@/app/actions/adminActions";
 
 export default function LeadMagnetGate() {
   const [email, setEmail] = useState("");
@@ -14,23 +15,18 @@ export default function LeadMagnetGate() {
     if (!email) return;
 
     setStatus("loading");
-
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY",
-          email: email,
-          subject: "Lead Magnet Download: AI Prototype Blueprint",
-          botcheck: (document.getElementsByName("botcheck")[0] as HTMLInputElement)?.checked
-        }),
+      const result = await submitInquiry({
+        name: "Lead Magnet Download",
+        email: email,
+        company: "N/A",
+        service: "Blueprint Download",
+        budget: "-",
+        message: "User downloaded the AI Prototype Blueprint.",
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
       });
 
-      const result = await response.json();
       if (result.success) {
         setStatus("success");
         // Trigger download programmatically
@@ -38,7 +34,7 @@ export default function LeadMagnetGate() {
           downloadLinkRef.current.click();
         }
       } else {
-        throw new Error("Web3Forms submission failed");
+        throw new Error(result.error || "Submission failed");
       }
     } catch (error) {
       console.error(error);

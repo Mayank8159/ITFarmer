@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Terminal } from "lucide-react";
 import TerminalEstimator from "@/components/sections/TerminalEstimator";
+import CustomBookingForm from "@/components/sections/CustomBookingForm";
 
 export default function ContactPage() {
   const [mounted, setMounted] = useState(false);
@@ -37,32 +38,14 @@ export default function ContactPage() {
           </p>
         </motion.div>
 
-        {/* CALENDLY EMBED */}
+        {/* CUSTOM BOOKING FORM (REPLACED CAL.COM) */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="w-full max-w-6xl mx-auto bg-[#111] border-4 border-white/10 shadow-[16px_16px_0px_0px_rgba(255,107,0,0.3)] relative flex flex-col overflow-hidden"
-          style={{ height: "700px" }}
+          className="w-full max-w-4xl mx-auto"
         >
-          <div className="bg-[#1a1a1a] border-b border-white/10 px-4 py-3 flex items-center justify-between z-10 relative shrink-0">
-            <div className="flex items-center gap-4">
-              <Terminal className="w-5 h-5 text-[#ff6b00]" />
-              <span className="text-xs font-bold uppercase tracking-widest text-white/50">Schedule Event</span>
-            </div>
-          </div>
-          
-          <div className="flex-1 w-full relative z-0 overflow-hidden">
-            {mounted && (
-              <iframe
-                src="https://cal.com/neuralforge/strategy?theme=dark"
-                width="100%"
-                height="100%"
-                frameBorder="0"
-                className="w-full h-full absolute inset-0"
-              />
-            )}
-          </div>
+          {mounted && <CustomBookingForm />}
         </motion.div>
         </div>
       </section>

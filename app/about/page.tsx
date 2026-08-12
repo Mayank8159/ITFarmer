@@ -150,10 +150,54 @@ export default async function AboutPage() {
                     </p>
                   </div>
                 </div>
-                <div className="p-8 flex-1">
-                  <p className="text-black/80 text-sm font-mono leading-relaxed font-bold border-l-4 border-[#ff6b00] pl-4 whitespace-pre-line">
+                <div className="p-8 flex-1 flex flex-col">
+                  <p className="text-black/80 text-sm font-mono leading-relaxed font-bold border-l-4 border-[#ff6b00] pl-4 whitespace-pre-line mb-6">
                     {member.description}
                   </p>
+                  
+                  {/* Portfolio Preview Card */}
+                  {member.portfolio && (
+                    <div className="mt-auto">
+                      <a 
+                        href={member.portfolio} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="group relative block border-4 border-black bg-white overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(255,107,0,1)] hover:-translate-y-0.5 hover:-translate-x-0.5 transition-all"
+                      >
+                        {/* Browser-like header */}
+                        <div className="bg-black px-3 py-2 flex items-center gap-2 border-b-4 border-black">
+                          <div className="flex gap-1.5">
+                            <div className="w-2.5 h-2.5 bg-red-500 rounded-full"></div>
+                            <div className="w-2.5 h-2.5 bg-yellow-500 rounded-full"></div>
+                            <div className="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+                          </div>
+                          <div className="flex-1 text-center font-mono text-[10px] text-white/70 truncate px-2">
+                            {member.portfolio.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                          </div>
+                        </div>
+                        
+                        {/* Iframe Thumbnail Container */}
+                        <div className="h-32 relative bg-[#f0f0f0] overflow-hidden border-b-4 border-transparent">
+                          <iframe 
+                            src={member.portfolio}
+                            className="absolute top-0 left-0 w-[400%] h-[400%] origin-top-left pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0 duration-500"
+                            style={{ transform: 'scale(0.25)' }}
+                            tabIndex={-1}
+                            aria-hidden="true"
+                          />
+                          {/* Overlay to catch clicks and handle hover effect */}
+                          <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10" />
+                          
+                          {/* Floating "View" button on hover */}
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                            <span className="bg-[#ff6b00] text-black font-black font-mono text-xs px-3 py-1.5 border-2 border-black uppercase tracking-widest shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center gap-1">
+                              Open <ArrowRight className="w-3 h-3" />
+                            </span>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  )}
                 </div>
                 <div className="p-4 border-t-4 border-black flex flex-wrap gap-4 bg-[#f0f0f0]">
                   {member.email && (
