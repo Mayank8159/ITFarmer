@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: nfh_redis_queue
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  api:
+    build: .
+    container_name: nfh_v5_orchestrator
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-dummy_key_for_testing}
+      - SMARTLEAD_API_KEY=${SMARTLEAD_API_KEY:-dummy_smartlead_key}
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  redis_data:

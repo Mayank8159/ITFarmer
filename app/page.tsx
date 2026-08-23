@@ -11,6 +11,7 @@ import BentoGrid from "@/components/sections/BentoGrid";
 import ResearchSection from "@/components/sections/ResearchSection";
 import FaqSection from "@/components/sections/FaqSection";
 import FinalCTA from "@/components/sections/FinalCTA";
+import ForecastWidget from "@/components/sections/ForecastWidget";
 export default function HomePage(): JSX.Element {
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-transparent flex flex-col">
@@ -29,7 +30,7 @@ export default function HomePage(): JSX.Element {
       <div className="py-24 bg-[#e5e5e5]">
         <LeadMagnetGate />
       </div>
-
+      <ForecastWidget />
       <FinalCTA />
     </main>
   );

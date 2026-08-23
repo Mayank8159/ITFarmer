@@ -44,10 +44,17 @@ async function getMultiFounderEvents() {
     // Sort by created_at descending
     allEvents.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-    // Filter to only show relevant coding activity
-    const codingEvents = allEvents.filter(event => 
-      ['PushEvent', 'PullRequestEvent', 'CreateEvent'].includes(event.type)
-    );
+    // Filter to only show relevant coding activity, excluding learning-tier and ITFarmer repos
+    const excludedKeywords = [
+      'itfarmer', 'birthday', 'dice', 'weather', 'mood', 
+      'hackathon', 'boilerplate', 'auth', 'bio', 'dsa', 'exercise'
+    ];
+    const codingEvents = allEvents.filter(event => {
+      const isCoding = ['PushEvent', 'PullRequestEvent', 'CreateEvent'].includes(event.type);
+      const repoName = (event.repo?.name || "").toLowerCase();
+      const isExcluded = excludedKeywords.some(kw => repoName.includes(kw));
+      return isCoding && !isExcluded;
+    });
 
     // Get top 90 events to pass to client (to allow client-side filtering)
     const topEvents = codingEvents.slice(0, 90);

@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+langgraph
+langchain-core
+langchain-openai
+playwright
+httpx
+dnspython
+redis
+fakeredis

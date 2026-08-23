@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pydantic
+langgraph
+langchain-core
+langchain-openai
+fpdf2
+httpx
+redis
+fakeredis
