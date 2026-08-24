@@ -24,19 +24,44 @@ const getTheme = (category: string = "") => {
 
 export default function ProjectShowcaseClient({ projects }: { projects: Project[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [shuffledProjects, setShuffledProjects] = useState<Project[]>([]);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    // Shuffle and pick 6 random projects on client-side to avoid hydration mismatch
+    const shuffled = [...projects].sort(() => 0.5 - Math.random()).slice(0, 6);
+    setShuffledProjects(shuffled);
+  }, [projects]);
 
   const paginate = (newDirection: number) => {
-    let nextIndex = currentIndex + newDirection;
-    if (nextIndex < 0) nextIndex = projects.length - 1;
-    if (nextIndex >= projects.length) nextIndex = 0;
-    setCurrentIndex(nextIndex);
+    setCurrentIndex((prev) => {
+      let nextIndex = prev + newDirection;
+      if (nextIndex < 0) nextIndex = shuffledProjects.length - 1;
+      if (nextIndex >= shuffledProjects.length) nextIndex = 0;
+      return nextIndex;
+    });
   };
 
-  const project = projects[currentIndex];
+  useEffect(() => {
+    if (shuffledProjects.length === 0 || isHovered) return;
+    const timer = setInterval(() => {
+      paginate(1);
+    }, 4500); // Shift every 4.5 seconds
+    return () => clearInterval(timer);
+  }, [shuffledProjects, isHovered]);
+
+  // Prevent hydration mismatch by rendering skeleton
+  if (shuffledProjects.length === 0) {
+    return <section className="relative w-full py-16 bg-[#e5e5e5] z-10 min-h-[600px] flex items-center justify-center">
+      <div className="font-mono text-xs uppercase tracking-widest text-black/50 animate-pulse">Loading Featured Architecture...</div>
+    </section>;
+  }
+
+  const project = shuffledProjects[currentIndex];
   const theme = project ? getTheme(project.category) : getTheme("");
 
   return (
-    <section className="relative w-full py-16 bg-[#e5e5e5] z-10 overflow-hidden">
+    <section className="relative w-full py-16 bg-[#e5e5e5] z-10 overflow-hidden" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       {/* Background aesthetic */}
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-[#ff6b00]/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
 
@@ -137,7 +162,7 @@ export default function ProjectShowcaseClient({ projects }: { projects: Project[
         
         {/* Indicators */}
         <div className="flex justify-center items-center gap-2 mt-6">
-          {projects.map((_, idx) => (
+          {shuffledProjects.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
