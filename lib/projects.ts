@@ -1,18 +1,207 @@
 // lib/projects.ts
-import data from '../public/data/postsContent.json';
-
-export type Project = {
-  id: string;
+export interface Project {
+  slug: string;
+  index: string;
   title: string;
-  description: string;
-  image: string;
+  category: string;
+  summary: string;
+  overview: string;
+  architecture: string[];
   stack: string[];
-};
+  image: string;
+}
 
-export const verifiedProjects: Project[] = data.map((item: any) => ({
-  id: item.id,
-  title: item.title,
-  description: item.description,
-  image: item.image,
-  stack: item.technologies.split(',').map((t: string) => t.trim()),
-}));
+export const verifiedProjects: Project[] = [
+  {
+    slug: 'rocm-bridge',
+    index: '01',
+    title: 'ROCm Bridge',
+    category: 'GPU & Infrastructure',
+    summary: 'Automated CUDA-to-HIP transpilation pipeline that breaks proprietary hardware lock-in and enables true cross-vendor GPU portability.',
+    overview: 'ROCm Bridge is an automated code transformation pipeline that transpiles NVIDIA CUDA kernel calls into AMD HIP C++ code. It exists to solve one of the most expensive problems in compute engineering: vendor lock-in at the kernel level.\n\nInstead of hand-porting thousands of lines of CUDA, the pipeline maps kernel calls at the source level, translates them into HIP C++, and validates the output against the target architecture — giving infrastructure teams the freedom to move workloads between GPU vendors without rewriting their compute layer.',
+    architecture: [
+      'AST-level CUDA kernel call mapping',
+      'Automated CUDA-to-HIP C++ translation',
+      'Hardware abstraction layer benchmarking',
+      'Cross-vendor portability validation',
+    ],
+    stack: ['C++', 'Python', 'CUDA', 'HIP'],
+    image: '/projects/rocm-bridge.webp',
+  },
+  {
+    slug: 'zorvyn-finance',
+    index: '02',
+    title: 'Zorvyn Finance Engine',
+    category: 'Fintech & Microservices',
+    summary: 'High-concurrency financial routing API with custom JWT middleware, strict rate limiting, and fully async transactional pipelines.',
+    overview: 'Zorvyn is a production financial routing microservice built on FastAPI and MongoDB. It was engineered for high-concurrency transactional workloads where correctness, authentication, and throughput cannot trade off against each other.\n\nThe service layers custom JWT authentication middleware and strict rate limiting in front of fully asynchronous transaction pipelines, keeping the request path non-blocking end to end.',
+    architecture: [
+      'Custom JWT authentication middleware',
+      'Strict per-client rate limiting',
+      'Async transactional routing pipelines',
+      'Non-blocking MongoDB persistence layer',
+    ],
+    stack: ['Python', 'FastAPI', 'MongoDB', 'JWT'],
+    image: '/projects/zorvyn-finance.webp',
+  },
+  {
+    slug: 'trackchain',
+    index: '03',
+    title: 'TrackChain Telemetry',
+    category: 'Embedded & Telemetry',
+    summary: 'Railway track fault detection combining hardware sensor arrays with tamper-proof, ledger-backed inspection records.',
+    overview: 'TrackChain is a hardware-software tracking platform targeting railway track fault detection. Sensor arrays feed a telemetry pipeline that identifies fault signatures in the track surface and logs every inspection as a tamper-proof record.\n\nThe system synchronizes low-level hardware signals with application-level state, so an inspection result is not just a reading — it is a verifiable, ordered entry in an immutable inspection history.',
+    architecture: [
+      'Hardware sensor array telemetry capture',
+      'Real-time fault signature detection',
+      'Tamper-proof inspection ledger entries',
+      'Hardware-software signal synchronization',
+    ],
+    stack: ['Python', 'IoT', 'Hardware', 'Ledger'],
+    image: '/projects/trackchain.webp',
+  },
+  {
+    slug: 'vitalguard-ai',
+    index: '04',
+    title: 'VitalGuard-AI',
+    category: 'AI & Telemetry',
+    summary: 'Decoupled biometric telemetry microservices with predictive anomaly detection and sub-second WebSocket alerting.',
+    overview: 'VitalGuard-AI is a decoupled microservice telemetry system that captures continuous biometric metrics and runs automated anomaly detection over the stream.\n\nWhen a physiological deviation crosses the model threshold, the system pushes sub-second alerts over persistent WebSockets to a React dashboard — separating capture, inference, and alerting into independent services so no single failure mode can silence an alert.',
+    architecture: [
+      'Decoupled telemetry capture microservices',
+      'PyTorch anomaly detection pipeline',
+      'Sub-second WebSocket alert dispatch',
+      'Real-time React monitoring dashboard',
+    ],
+    stack: ['FastAPI', 'React', 'PyTorch', 'WebSockets'],
+    image: '/projects/vitalguard-ai.webp',
+  },
+  {
+    slug: 'prism-credit',
+    index: '05',
+    title: 'PRISM-CREDIT',
+    category: 'ML & Risk',
+    summary: 'Predictive credit risk analytics engine converting multi-variable financial data into probability-of-default scores and risk tiers.',
+    overview: 'PRISM-CREDIT is a predictive credit risk analytics engine powered by machine learning. It ingests multi-variable financial datasets and produces calibrated risk classifications rather than raw guesses.\n\nThe engine outputs probability-of-default scores mapped to explicit risk tiers, giving downstream lending workflows a stable, interpretable decision surface.',
+    architecture: [
+      'Multi-variable financial feature pipeline',
+      'ML-driven risk classification',
+      'Probability-of-default scoring',
+      'Explicit risk-tier mapping',
+    ],
+    stack: ['Python', 'ML', 'Risk Analytics'],
+    image: '/projects/prism-credit.webp',
+  },
+  {
+    slug: 'sleep-detector',
+    index: '06',
+    title: 'Vision Drowsiness System',
+    category: 'Computer Vision',
+    summary: 'Real-time driver drowsiness monitoring through webcam facial and eye-tracking with instant closure-state alerts.',
+    overview: 'The Vision Drowsiness System is a computer-vision pipeline that monitors driver alertness in real time using standard webcam input.\n\nFacial landmark and eye-tracking telemetry are evaluated continuously; blink-rate deviations and sustained eye closure are flagged as critical states and trigger immediate alerts — no specialized hardware required.',
+    architecture: [
+      'Real-time facial landmark tracking',
+      'Blink-rate telemetry analysis',
+      'Eye-closure state detection',
+      'Immediate alert triggering',
+    ],
+    stack: ['TypeScript', 'Computer Vision'],
+    image: '/projects/sleep-detector.webp',
+  },
+  {
+    slug: 'evolzen-world',
+    index: '07',
+    title: 'EvolZen World',
+    category: 'Agentic Systems',
+    summary: 'Exploratory AI ecosystem modeling evolutionary agent dynamics, fitness functions, and multi-agent state spaces.',
+    overview: 'EvolZen World is an exploratory AI environment for modeling evolutionary agent dynamics and artificial general intelligence state spaces.\n\nAutonomous agents interact inside a simulated ecosystem where fitness functions, mutation events, and communication pathways evolve across epochs — a research sandbox for studying how multi-agent systems adapt under pressure.',
+    architecture: [
+      'Multi-agent simulation environment',
+      'Fitness-function evaluation loops',
+      'Mutation and epoch tracking',
+      'Agent state-space dependency mapping',
+    ],
+    stack: ['Python', 'AGI', 'Multi-Agent'],
+    image: '/projects/evolzen-world.webp',
+  },
+  {
+    slug: 'avaani-ai',
+    index: '08',
+    title: 'LLM Context Architecture',
+    category: 'AI Systems',
+    summary: 'NLP assistant architecture orchestrating prompt workflows, context routing, and retrieval-ready conversational pipelines.',
+    overview: 'This system is an advanced NLP architecture managing natural-language prompt workflows and context routing across large context windows.\n\nIt structures conversational state, routes attention across context layers, and exposes retrieval hooks so domain knowledge can be injected at inference time — the foundation for production RAG-style assistants.',
+    architecture: [
+      'Prompt workflow orchestration',
+      'Context window state management',
+      'Retrieval-augmented generation hooks',
+      'Conversational state persistence',
+    ],
+    stack: ['LangGraph', 'RAG', 'Vector DB'],
+    image: '/projects/avaani-ai.webp',
+  },
+  {
+    slug: 'revexbot',
+    index: '09',
+    title: 'RevEx Autonomous Agent',
+    category: 'Autonomous Agents',
+    summary: 'Autonomous agent loop that parses code diff streams, flags structural defects, and gates approvals without human intervention.',
+    overview: 'RevExBot is an automated code review and execution assistant. It consumes diff streams from a repository, scans them for structural defects, and runs its review loop autonomously.\n\nFlagged segments are escalated through an approval gate, turning code review from a manual bottleneck into a continuous, agent-driven pipeline.',
+    architecture: [
+      'Diff stream parsing',
+      'Autonomous defect detection loop',
+      'Lint and structural validation passes',
+      'Approval gate escalation',
+    ],
+    stack: ['Python', 'LLM', 'CI/CD'],
+    image: '/projects/revexbot.webp',
+  },
+  {
+    slug: 'daytona',
+    index: '10',
+    title: 'Daytona Elastic Workspaces',
+    category: 'Infrastructure',
+    summary: 'Elastic containerized sandbox infrastructure for the safe, isolated execution of AI-generated code.',
+    overview: 'Daytona provides elastic workspace infrastructure for running AI-generated code safely. Every execution happens inside an isolated container sandbox with strict resource quotas.\n\nThe pool scales elastically: cold workspaces spawn on demand, live executions stay isolated, and nothing a generated program does can touch the host or its neighbors.',
+    architecture: [
+      'Isolated sandbox provisioning',
+      'Elastic cold-pool scaling',
+      'Strict execution resource quotas',
+      'Instant workspace spawning',
+    ],
+    stack: ['TypeScript', 'Docker', 'Infra'],
+    image: '/projects/daytona.webp',
+  },
+  {
+    slug: 'credit-risk-cpp',
+    index: '11',
+    title: 'C++ Risk Engine',
+    category: 'Core Systems',
+    summary: 'High-performance C++ backend engine for credit scoring — minimal-allocation, cache-friendly computation at the metal.',
+    overview: 'The C++ Risk Engine is a high-performance backend for credit scoring calculations, written to operate as close to the metal as the problem allows.\n\nMemory allocation is minimized and data layout kept cache-friendly so scoring matrices process at maximum throughput — the compute core behind interactive risk tooling.',
+    architecture: [
+      'Minimal-allocation scoring loops',
+      'Cache-friendly data layout',
+      'Clock-cycle level optimization',
+      'Throughput benchmarking harness',
+    ],
+    stack: ['C++', 'Algorithms', 'Low-Latency'],
+    image: '/projects/credit-risk-cpp.webp',
+  },
+  {
+    slug: 'smart-mirror',
+    index: '12',
+    title: 'Smart-Mirror IoT Hub',
+    category: 'IoT',
+    summary: 'Hardware-integrated IoT dashboard fusing live weather, news, and sensor feeds into a real-time edge display.',
+    overview: 'Smart-Mirror is a hardware-integrated IoT dashboard that fuses real-time widgets — weather, news, and sensor feeds — into a single edge display.\n\nA widget bus ingests asynchronous live feeds and refreshes the interface continuously, turning a passive mirror into a live telemetry surface.',
+    architecture: [
+      'Real-time widget bus',
+      'Asynchronous live feed ingestion',
+      'IoT hub orchestration',
+      'Edge display rendering',
+    ],
+    stack: ['TypeScript', 'IoT', 'Real-Time'],
+    image: '/projects/smart-mirror.webp',
+  },
+];
