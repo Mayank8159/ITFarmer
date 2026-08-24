@@ -1,97 +1,182 @@
 // app/works/page.tsx
-import { Metadata } from 'next';
-import Link from 'next/link';
-import Image from 'next/image';
-import { verifiedProjects, Project } from '@/lib/projects';
-
-export const metadata: Metadata = {
-  title: 'Selected Architecture | Neural Forge Hub',
-  description: 'A verified catalog of production-grade systems, autonomous agents, and high-throughput platforms engineered by Neural Forge Hub.',
-};
+"use client";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { verifiedProjects, Project } from "@/lib/projects";
 
 export default function WorksPage() {
+  const [selected, setSelected] = useState<Project | null>(null);
+
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setSelected(null);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [selected]);
+
   return (
-    <main className="bg-[#050505] text-[#F5F5F5] min-h-screen">
-      {/* HEADER — tight, no void */}
-      <section className="max-w-7xl mx-auto px-6 pt-32 pb-10">
-        <div className="flex flex-wrap items-end justify-between gap-6 border-b border-white/10 pb-10">
+    <main className="min-h-screen bg-[#e5e5e5] text-black pt-20">
+      {/* HEADER */}
+      <section className="max-w-7xl mx-auto px-6 pt-24 pb-10">
+        <div className="flex flex-wrap items-end justify-between gap-6 border-b border-black pb-8">
           <div>
-            <p className="font-mono text-[11px] tracking-widest text-[#FF6A00] uppercase mb-4">
-              {'// ARCHIVE_INDEX'}
+            <p className="font-mono text-[11px] tracking-widest text-[#ff6b00] uppercase mb-4">
+              {"// ARCHIVE_INDEX"}
             </p>
-            <h1 className="text-5xl md:text-7xl font-semibold tracking-tighter">
-              Selected <span className="text-[#FF6A00]">Architecture</span>
+            <h1 className="text-5xl md:text-7xl font-black tracking-tighter">
+              Selected <span className="text-[#ff6b00]">Architecture</span>
             </h1>
           </div>
-          <p className="font-mono text-xs text-[#66707A]">
-            {verifiedProjects.length} SYSTEMS // VERIFIED BUILDS // NO VAPORWARE
+          <p className="font-mono text-xs text-black/60 font-bold">
+            12 SYSTEMS // VERIFIED BUILDS // NO VAPORWARE
           </p>
         </div>
-        <p className="mt-8 max-w-2xl text-[#94A3B8] leading-relaxed">
-          A verified catalog of production-grade systems, autonomous agents, and high-throughput
-          platforms. No conceptual mockups. Only deployed engineering. Select any system to read
-          its full architecture breakdown.
+        <p className="mt-8 max-w-2xl text-black/80 leading-relaxed font-bold">
+          A verified catalog of production-grade systems, autonomous agents, and
+          high-throughput platforms. No conceptual mockups. Only deployed
+          engineering. Click any system to open its full architecture breakdown.
         </p>
       </section>
 
-      {/* GRID — 2 columns, editorial weight */}
+      {/* GRID */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {verifiedProjects.map((project) => (
-            <WorkCard key={project.slug} project={project} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {verifiedProjects.map((p) => (
+            <button
+              key={p.slug}
+              onClick={() => setSelected(p)}
+              className="group text-left bg-white border border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_#ff6b00] hover:-translate-y-1 hover:-translate-x-1 transition-all duration-200 overflow-hidden"
+            >
+              {/* Image plate — dark editorial print framed in brutalist card */}
+              <div className="relative w-full aspect-[16/9] border-b border-black bg-black overflow-hidden">
+                {p.image && (
+                  <Image
+                    src={p.image}
+                    alt={p.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                  />
+                )}
+                <span className="absolute top-3 left-4 font-mono text-xs text-[#ff6b00] bg-black px-2 py-1 border border-[#ff6b00]/30 font-bold">
+                  {p.index}
+                </span>
+              </div>
+
+              <div className="p-6">
+                <div className="flex items-start justify-between gap-4 mb-2">
+                  <h2 className="text-2xl font-black tracking-tight">{p.title}</h2>
+                  <span className="font-mono text-xs font-bold whitespace-nowrap mt-2 group-hover:text-[#ff6b00] transition-colors">
+                    OPEN +
+                  </span>
+                </div>
+                <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-black/60 mb-3">
+                  {p.category}
+                </p>
+                <p className="text-sm leading-relaxed text-black/80 mb-5 font-medium">{p.summary}</p>
+                <div className="flex flex-wrap gap-2">
+                  {p.stack.slice(0, 4).map((t) => (
+                    <span
+                      key={t}
+                      className="px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider bg-black text-white"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </button>
           ))}
         </div>
       </section>
+
+      {selected && <ProjectModal project={selected} onClose={() => setSelected(null)} />}
     </main>
   );
 }
 
-function WorkCard({ project }: { project: Project }) {
+/* ============ MODAL (seamless popup, no route change) ============ */
+function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
   return (
-    <Link
-      href={`/works/${project.slug}`}
-      className="group block bg-[#0B0D0F] border border-white/5 rounded-xl overflow-hidden hover:border-[#FF6A00]/40 transition-colors duration-300"
-    >
-      <div className="relative w-full aspect-[16/9] bg-[#030712] overflow-hidden">
-        {project.image ? (
-          <Image
-            src={project.image}
-            alt={project.title}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-          />
-        ) : (
-          <div className="absolute inset-0 grid place-items-center font-mono text-xs text-[#66707A]">
-            [ ASSET PENDING ]
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D0F] via-transparent to-transparent" />
-        <span className="absolute top-4 left-5 font-mono text-xs text-[#FF6A00]">{project.index}</span>
-        <span className="absolute top-4 right-5 font-mono text-[10px] tracking-widest text-[#66707A] uppercase">
-          {project.category}
-        </span>
-      </div>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8" role="dialog" aria-modal="true">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="p-6">
-        <div className="flex items-start justify-between gap-4 mb-3">
-          <h2 className="text-2xl font-semibold tracking-tight text-[#F5F5F5]">{project.title}</h2>
-          <span className="font-mono text-xs text-[#66707A] group-hover:text-[#FF6A00] transition-colors mt-2 whitespace-nowrap">
-            READ →
-          </span>
+      <div className="relative bg-[#f0f0f0] border border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-4xl max-h-[85vh] overflow-y-auto">
+        {/* Sticky top bar */}
+        <div className="sticky top-0 z-10 flex items-center justify-between bg-[#f0f0f0] border-b border-black px-6 py-4">
+          <p className="font-mono text-xs text-[#ff6b00] font-bold uppercase tracking-widest">
+            {project.index} {"//"} {project.category}
+          </p>
+          <button
+            onClick={onClose}
+            autoFocus
+            className="font-mono text-xs font-bold border border-black bg-white px-3 py-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#ff6b00] hover:text-white transition-colors"
+          >
+            CLOSE ✕
+          </button>
         </div>
-        <p className="text-sm leading-relaxed text-[#94A3B8] mb-5">{project.summary}</p>
-        <div className="flex flex-wrap gap-2">
-          {project.stack.slice(0, 4).map((tech) => (
-            <span
-              key={tech}
-              className="px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-[#FF6A00] bg-white/5 border border-white/5 rounded"
+
+        <div className="p-6 md:p-10">
+          <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4">{project.title}</h2>
+          <p className="text-base md:text-lg text-black/80 font-medium leading-relaxed mb-8">{project.summary}</p>
+
+          <div className="relative w-full aspect-[16/9] border border-black bg-black mb-10">
+            {project.image && (
+              <Image src={project.image} alt={project.title} fill sizes="100vw" className="object-cover" />
+            )}
+          </div>
+
+          <div className="grid md:grid-cols-5 gap-10">
+            <div className="md:col-span-3">
+              <h3 className="font-mono text-xs font-bold uppercase tracking-widest border-b border-black pb-2 mb-4">
+                Overview
+              </h3>
+              <p className="leading-relaxed font-medium whitespace-pre-line text-black/90">{project.overview}</p>
+            </div>
+
+            <div className="md:col-span-2">
+              <h3 className="font-mono text-xs font-bold uppercase tracking-widest border-b border-black pb-2 mb-4">
+                Architecture
+              </h3>
+              <ul className="space-y-3">
+                {project.architecture.map((a) => (
+                  <li key={a} className="flex gap-3 text-sm font-medium text-black/90 leading-relaxed">
+                    <span className="text-[#ff6b00] font-mono font-bold">▸</span>
+                    {a}
+                  </li>
+                ))}
+              </ul>
+
+              <h3 className="font-mono text-xs font-bold uppercase tracking-widest border-b border-black pb-2 mb-4 mt-8">
+                Stack
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {project.stack.map((t) => (
+                  <span key={t} className="px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider bg-black text-white">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10 border-t border-black pt-6 flex flex-wrap items-center justify-between gap-4">
+            <p className="font-mono text-xs font-bold text-black/60">VERIFIED BUILD {"//"} NEURAL FORGE ARCHIVE</p>
+            <a
+              href="https://cal.com/neural-forge-hub"
+              target="_blank"
+              rel="noreferrer"
+              className="bg-black text-white font-mono font-bold text-xs tracking-widest px-6 py-3 border border-black shadow-[4px_4px_0px_0px_#ff6b00] hover:bg-[#ff6b00] transition-colors"
             >
-              {tech}
-            </span>
-          ))}
+              BOOK STRATEGY CALL →
+            </a>
+          </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
