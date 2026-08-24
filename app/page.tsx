@@ -3,7 +3,6 @@ import { JSX } from "react";
 import HeroPage from "@/components/Hero";
 import CapabilitiesSection from "@/components/sections/CapabilitiesSection";
 import GithubActivity from "@/components/sections/GithubActivity";
-import ProjectShowcase from "@/components/sections/ProjectShowcase";
 import LeadMagnetGate from "@/components/sections/LeadMagnetGate";
 import AgentEcosystem from "@/components/sections/AgentEcosystem";
 import MarqueeStrip from "@/components/sections/MarqueeStrip";
@@ -19,7 +18,6 @@ export default function HomePage(): JSX.Element {
       {/* UI LAYERS */}
       <HeroPage />
       <CapabilitiesSection />
-      <ProjectShowcase />
       <AgentEcosystem />
       <MarqueeStrip />
       <BentoGrid />

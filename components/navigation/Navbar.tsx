@@ -9,7 +9,7 @@ import { useCurrency } from "@/components/CurrencyContext";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "Works", href: "/work" },
+  { label: "Works", href: "/works" },
   { label: "About", href: "/about" },
   { label: "Posts", href: "/log" },
   { label: "Contact", href: "/contact" },
