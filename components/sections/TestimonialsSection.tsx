@@ -36,14 +36,14 @@ export default function TestimonialsSection() {
 
   if (isLoading) {
     return (
-      <section className="relative w-full bg-[#e5e5e5] border-t-2 border-black py-24 z-10 overflow-hidden flex items-center justify-center min-h-[400px]">
+      <section className="relative w-full bg-[#e5e5e5] py-24 z-10 overflow-hidden flex items-center justify-center min-h-[400px]">
         <div className="font-mono text-xs uppercase tracking-widest text-black/50 animate-pulse">Loading Testimonials...</div>
       </section>
     );
   }
 
   return (
-    <section className="relative w-full bg-[#e5e5e5] border-t-2 border-black py-24 z-10 overflow-hidden">
+    <section className="relative w-full bg-[#e5e5e5] py-24 z-10 overflow-hidden">
       <div className="max-w-[1600px] mx-auto px-6">
         
         {/* Header Block */}

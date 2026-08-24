@@ -32,7 +32,7 @@ const SERVICES = [
 
 export default function CapabilitiesSection() {
   return (
-    <section className="relative w-full py-32 bg-[#e5e5e5] text-black border-b-4 border-black z-10">
+    <section className="relative w-full py-32 bg-[#e5e5e5] text-black z-10">
       <div className="absolute inset-0 grid-background opacity-50 pointer-events-none z-0" />
       <div className="max-w-[1400px] mx-auto px-6 relative z-10">
         <div className="mb-16 border-b-4 border-black pb-8 flex flex-col md:flex-row justify-between md:items-end gap-6">
@@ -66,7 +66,7 @@ export default function CapabilitiesSection() {
                   {service.outcome}
                 </p>
 
-                <Link href="/work" className="font-mono text-xs font-bold uppercase tracking-widest text-[#ff6b00] flex items-center gap-2 hover:text-black transition-colors group">
+                <Link href="/works" className="font-mono text-xs font-bold uppercase tracking-widest text-[#ff6b00] flex items-center gap-2 hover:text-black transition-colors group">
                   View Live Deployment <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </BrutalistCard>

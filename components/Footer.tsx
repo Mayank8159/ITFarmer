@@ -49,7 +49,7 @@ export default function Footer() {
             {/* Links Columns */}
             <div className="flex flex-col gap-4">
               <h4 className="text-black font-black text-sm mb-2 uppercase border-b border-black pb-2">EXPLORE</h4>
-              <a href="/work" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Work</a>
+              <a href="/works" className="text-black/70 font-mono text-xs uppercase hover:text-[#ff6b00] transition-colors hover:pl-2">Work</a>
             </div>
 
             <div className="flex flex-col gap-4">

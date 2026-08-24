@@ -27,7 +27,7 @@ export default function FaqSection() {
   };
 
   return (
-    <section className="relative w-full bg-[#f0f0f0] border-t-2 border-black py-24 z-10">
+    <section className="relative w-full bg-[#f0f0f0] py-24 z-10">
       <div className="max-w-[1600px] mx-auto px-6">
         
         <div className="flex flex-col lg:flex-row gap-16">

@@ -30,7 +30,7 @@ const RESEARCH_TOPICS = [
 
 export default function ResearchSection() {
   return (
-    <section className="relative w-full py-32 bg-[#e5e5e5] z-10 border-b border-black">
+    <section className="relative w-full py-32 bg-[#e5e5e5] z-10">
       <div className="max-w-[1600px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16">
         
         {/* Editorial Header */}

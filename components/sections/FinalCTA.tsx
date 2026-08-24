@@ -8,7 +8,7 @@ import Hero3DModel from "@/components/hero/Hero3DModel";
 
 export default function FinalCTA() {
   return (
-    <section className="relative w-full py-40 bg-[#f0f0f0] overflow-hidden flex items-center justify-center text-center z-10 border-b border-black">
+    <section className="relative w-full py-40 bg-[#f0f0f0] overflow-hidden flex items-center justify-center text-center z-10">
       
       {/* Grid overlay */}
       <div className="absolute inset-0 grid-background opacity-100 pointer-events-none" />
@@ -65,7 +65,7 @@ export default function FinalCTA() {
           </Link>
 
           <Link
-            href="/work"
+            href="/works"
             className="w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-5 bg-white border-2 border-black text-black font-mono text-sm uppercase tracking-widest hover:bg-[#e5e5e5] transition-colors font-bold group"
           >
             View Case Studies

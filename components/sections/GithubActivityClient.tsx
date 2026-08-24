@@ -66,7 +66,7 @@ export default function GithubActivityClient({ initialEvents, totalVelocity }: {
   groupedEvents = groupedEvents.slice(0, 12);
 
   return (
-    <section className="relative w-full py-24 bg-[#e5e5e5] text-black overflow-hidden border-b-4 border-black z-10">
+    <section className="relative w-full py-24 bg-[#e5e5e5] text-black overflow-hidden z-10">
       <div className="absolute inset-0 grid-background opacity-100 pointer-events-none" />
       
       <div className="max-w-[1600px] mx-auto px-6 relative z-10">

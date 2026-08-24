@@ -27,7 +27,7 @@ export default function HeroPage() {
     <section 
       ref={heroRef}
       id="home"
-      className="relative min-h-screen w-full flex flex-col items-center justify-center text-black overflow-hidden pt-28 pb-32 lg:pb-48 z-10 border-b border-black/15 bg-[#e5e5e5]"
+      className="relative min-h-screen w-full flex flex-col items-center justify-center text-black overflow-hidden pt-28 pb-32 lg:pb-48 z-10 bg-[#e5e5e5]"
     >
       {/* BACKGROUND EFFECTS */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">

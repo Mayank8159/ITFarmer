@@ -11,7 +11,7 @@ import MultiAgentWorkflowGraph from "./MultiAgentWorkflowGraph";
 
 export default function BentoGrid() {
   return (
-    <section id="infrastructure" className="relative w-full bg-[#f0f0f0] border-t border-black/15 py-32 z-10">
+    <section id="infrastructure" className="relative w-full bg-[#f0f0f0] py-32 z-10">
       
       <div className="max-w-[1600px] mx-auto px-6">
         {/* HEADER */}

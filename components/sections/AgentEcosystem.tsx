@@ -67,7 +67,7 @@ export default async function AgentEcosystem() {
   };
 
   return (
-    <section id="agents" className="relative w-full py-32 bg-[#f0f0f0] border-b border-black">
+    <section id="agents" className="relative w-full py-32 bg-[#f0f0f0]">
       <div className="max-w-[1600px] mx-auto px-6">
         <div className="mb-16 border-b border-black pb-8">
           <span className="font-mono text-xs uppercase tracking-widest text-[#ff6b00] mb-4 block font-bold">SWARM INTELLIGENCE</span>

@@ -101,11 +101,73 @@ export default function EngineeringLogPage() {
                     <p className="font-mono text-sm text-black/70 leading-relaxed font-bold whitespace-pre-wrap mb-6">
                       {log.description}
                     </p>
-                    {log.image && (
-                      <div className="w-full border-2 border-black mt-6">
-                         <img src={log.image} alt={log.title} className="w-full object-contain" />
-                      </div>
-                    )}
+                    {log.image && (() => {
+                      // Dynamically determine theme based on title keywords
+                      const titleLower = log.title?.toLowerCase() || "";
+                      let themeStr = "default";
+                      if (titleLower.includes("rag") || titleLower.includes("data") || titleLower.includes("architectures")) themeStr = "blueprint";
+                      if (titleLower.includes("security") || titleLower.includes("zero-leakage")) themeStr = "scanner";
+                      if (titleLower.includes("agent") || titleLower.includes("llm") || titleLower.includes("orchestration") || titleLower.includes("control")) themeStr = "matrix";
+
+                      return (
+                        <div className="w-full mt-6 relative overflow-hidden group/hud">
+                          {themeStr === "blueprint" && (
+                            <div className="relative w-full border-2 border-[#0055ff] bg-[#001133] p-1">
+                              {/* Blueprint overlays */}
+                              <div className="absolute inset-0 bg-[linear-gradient(rgba(0,85,255,0.2)_1px,transparent_1px),linear-gradient(90deg,rgba(0,85,255,0.2)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none z-10" />
+                              <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[#00aaff] z-20" />
+                              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-[#00aaff] z-20" />
+                              <div className="absolute top-2 left-3 z-20 font-mono text-[9px] text-[#00aaff] uppercase tracking-widest font-bold bg-[#001133]/80 px-1">
+                                SYS.ARCH // SCHEMATIC VIEW
+                              </div>
+                              <div className="relative w-full h-full bg-black">
+                                <img src={log.image} alt={log.title} className="w-full object-contain relative z-0 grayscale contrast-125 opacity-80" />
+                                <div className="absolute inset-0 mix-blend-color opacity-90 pointer-events-none" style={{ background: 'linear-gradient(to top right, black, #0055ff 60%, transparent)' }} />
+                                <div className="absolute inset-0 mix-blend-overlay opacity-50 pointer-events-none bg-[#0055ff]" />
+                              </div>
+                            </div>
+                          )}
+
+                          {themeStr === "scanner" && (
+                            <div className="relative w-full border-2 border-red-600 bg-[#220000] p-1">
+                              {/* Scanner overlays */}
+                              <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,0,0,0.1)_2px,rgba(255,0,0,0.1)_4px)] pointer-events-none z-10" />
+                              <div className="absolute top-1/2 left-0 w-full h-[2px] bg-red-500/50 shadow-[0_0_10px_red] z-20 animate-pulse" />
+                              <div className="absolute top-2 right-3 z-20 font-mono text-[9px] text-red-500 uppercase tracking-widest font-bold flex items-center gap-1 bg-[#220000]/80 px-1 border border-red-500/30">
+                                <Activity className="w-3 h-3" /> THREAT_ANALYSIS
+                              </div>
+                              <div className="relative w-full h-full bg-black">
+                                <img src={log.image} alt={log.title} className="w-full object-contain relative z-0 grayscale contrast-125 opacity-90" />
+                                <div className="absolute inset-0 mix-blend-color opacity-90 pointer-events-none" style={{ background: 'linear-gradient(to top right, black, #dc2626 60%, transparent)' }} />
+                                <div className="absolute inset-0 mix-blend-overlay opacity-50 pointer-events-none bg-red-600" />
+                              </div>
+                            </div>
+                          )}
+
+                          {themeStr === "matrix" && (
+                            <div className="relative w-full border-2 border-[#00ff41] bg-black p-1">
+                              {/* Matrix overlays */}
+                              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,rgba(0,255,65,0.15)_0%,transparent_100%)] pointer-events-none z-10" />
+                              <div className="absolute bottom-2 left-3 z-20 font-mono text-[9px] text-[#00ff41] uppercase tracking-widest font-bold bg-black/80 px-1">
+                                [ NEURAL_NODE_ACTIVE ]
+                              </div>
+                              <div className="relative w-full h-full bg-black">
+                                <img src={log.image} alt={log.title} className="w-full object-contain relative z-0 grayscale contrast-125 opacity-90" />
+                                <div className="absolute inset-0 mix-blend-color opacity-90 pointer-events-none" style={{ background: 'linear-gradient(to top right, black, #00ff41 60%, transparent)' }} />
+                                <div className="absolute inset-0 mix-blend-overlay opacity-40 pointer-events-none bg-[#00ff41]" />
+                              </div>
+                            </div>
+                          )}
+
+                          {themeStr === "default" && (
+                            <div className="w-full border-2 border-black bg-[#e5e5e5] p-1 relative">
+                              <div className="absolute top-2 right-2 bg-black text-white font-mono text-[9px] uppercase px-1 z-10">IMG_RAW</div>
+                              <img src={log.image} alt={log.title} className="w-full object-contain relative z-0 grayscale contrast-125 group-hover/hud:grayscale-0 transition-all duration-500" />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
