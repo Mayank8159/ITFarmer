@@ -75,8 +75,8 @@ export default function Navbar() {
         <div className="w-full max-w-[1600px] px-6 py-4 flex items-center justify-between relative z-10">
           {/* LEFT: Logo */}
           <Link href="/" className="flex items-center gap-3 group bg-white border border-black px-3 py-1.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:translate-x-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
-            <div className="w-6 h-6 bg-black flex items-center justify-center group-hover:bg-[#ff6b00] transition-colors">
-              <Terminal className="w-3 h-3 text-white" />
+            <div className="w-8 h-8 flex items-center justify-center relative overflow-hidden bg-black border border-black/20">
+              <img src="/logo.jpg" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
             </div>
             <div className="hidden sm:flex flex-col">
               <span className="font-black text-black text-sm tracking-tight uppercase leading-none group-hover:text-[#ff6b00] transition-colors">Neural Forge</span>
@@ -176,8 +176,8 @@ export default function Navbar() {
           >
             <div className="flex items-center justify-between mb-12">
               <Link href="/" className="flex items-center gap-3" onClick={() => setMobileMenuOpen(false)}>
-                <div className="w-10 h-10 bg-white border border-black/20 flex items-center justify-center">
-                  <Terminal className="w-5 h-5 text-black" />
+                <div className="w-10 h-10 border border-black/20 flex items-center justify-center overflow-hidden">
+                  <img src="/logo.jpg" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
                 </div>
                 <span className="font-bold text-black text-xl tracking-tight uppercase">Neural Forge</span>
               </Link>

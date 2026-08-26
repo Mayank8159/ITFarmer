@@ -22,22 +22,45 @@ exports.handler = async (event) => {
       return json(400, { error: "messages array required" });
     }
 
-    const founders = (await readJson("aboutContent.json")) || [];
-    const aboutConfig = (await readJson("aboutConfig.json")) || {};
-    const posts = (await readJson("postsContent.json")) || [];
-    const capabilities = aboutConfig.capabilities || [];
+    // Upgrade: Fetch ALL data from the AWS S3 database
+    const filesToFetch = [
+      "aboutConfig.json",
+      "aboutContent.json",
+      "clientsContent.json",
+      "ecosystemContent.json",
+      "faqContent.json",
+      "heroContent.json",
+      "postsContent.json",
+      "systemConfig.json"
+    ];
 
-    const founderNames = founders.map((f) => `${f.name} (${f.role})`).join(", ");
-    const capNames = capabilities.map((c) => c.title).join(", ");
-    const postTitles = posts.slice(0, 5).map((p) => p.title).join(", ");
+    const dataPromises = filesToFetch.map(async (file) => {
+      const data = await readJson(file);
+      return { file: file.replace('.json', ''), data };
+    });
+
+    const results = await Promise.all(dataPromises);
+    
+    let dbContext = "";
+    results.forEach(res => {
+      if (res.data) {
+        dbContext += `[${res.file.toUpperCase()} DATA]\n${JSON.stringify(res.data)}\n\n`;
+      }
+    });
+
+    // Clean up initial history if it includes 'ORBIT CORE ONLINE' to prevent sequence errors with Groq API
+    const safeMessages = messages.filter(
+      (msg) => !(msg.role === "assistant" && msg.content.includes("ORBIT CORE ONLINE"))
+    );
 
     const systemPrompt = {
       role: "system",
       content: `You are ORBIT CORE, the AI assistant for ITFarmer (or Neural/Horizon Protocol). 
-Company Founders: ${founderNames}.
-Core Capabilities: ${capNames}.
-Recent Updates/Projects: ${postTitles}.
-Keep answers concise, professional, and slightly brutalist/cyberpunk in tone.`,
+You have access to the complete company database below. Use this information to answer user inquiries accurately.
+Keep answers concise, professional, and slightly brutalist/cyberpunk in tone.
+
+DATABASE CONTENT:
+${dbContext}`,
     };
 
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -47,8 +70,8 @@ Keep answers concise, professional, and slightly brutalist/cyberpunk in tone.`,
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "llama-3.1-8b-instant",
-        messages: [systemPrompt, ...messages],
+        model: "llama3-8b-8192", // More stable model name for Groq
+        messages: [systemPrompt, ...safeMessages],
       }),
     });
 

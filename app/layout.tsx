@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     siteName: "Neural Forge Hub",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/logo.jpg",
         width: 1200,
         height: 630,
         alt: "Neural Forge Hub - Engineering Studio",
@@ -50,7 +50,11 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Neural Forge Hub",
     description: "AI & Software Engineering Studio",
-    images: ["/og-image.jpg"],
+    images: ["/logo.jpg"],
+  },
+  icons: {
+    icon: "/logo.jpg",
+    apple: "/logo.jpg",
   },
 };
 
@@ -65,7 +69,7 @@ export default function RootLayout({
     "@type": "Organization",
     "name": "Neural Forge Hub",
     "url": "https://www.neuralforgehub.tech",
-    "logo": "https://www.neuralforgehub.tech/favicon.ico",
+    "logo": "https://www.neuralforgehub.tech/logo.jpg",
     "description": "AI & Software Engineering Studio",
     "sameAs": []
   };
