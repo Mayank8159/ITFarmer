@@ -54,7 +54,9 @@ export default function CustomBookingForm() {
       {/* Browser Header */}
       <div className="bg-[#1a1a1a] border-b-4 border-[#ff6b00] px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Terminal className="w-5 h-5 text-[#ff6b00]" />
+          <div className="w-5 h-5 relative overflow-hidden bg-black border border-[#ff6b00]">
+            <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
+          </div>
           <span className="text-xs font-bold uppercase tracking-widest text-white/80">Strategy Call Scheduler</span>
         </div>
         <div className="flex gap-1.5">

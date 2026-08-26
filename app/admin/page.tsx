@@ -380,7 +380,9 @@ export default function AdminDashboard() {
       <main className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] font-mono flex items-center justify-center grid-background selection:bg-[var(--neon-cyan)] selection:text-white">
         <div className="max-w-md w-full p-8 brutalist-panel-white brutalist-border shadow-[8px_8px_0px_var(--text-primary)] relative">
           <div className="flex items-center gap-3 mb-8 justify-center border-b border-[var(--border-color)] pb-4">
-            <Terminal className="w-8 h-8 text-[var(--neon-cyan)]" />
+            <div className="w-8 h-8 relative overflow-hidden bg-black border border-[var(--neon-cyan)]">
+              <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
+            </div>
             <h1 className="text-2xl font-bold tracking-widest text-[var(--text-primary)] uppercase">IT_FARM_SYS</h1>
           </div>
           <form onSubmit={handleLogin} className="flex flex-col gap-6">
@@ -420,7 +422,9 @@ export default function AdminDashboard() {
       <aside className="w-64 border-r border-[var(--border-color)] bg-[var(--deep-surface)] flex flex-col shrink-0 shadow-[4px_0px_0px_var(--border-color)] relative z-20">
         <div className="p-6 border-b border-[var(--border-color)] bg-[var(--surface-dark)]">
           <div className="flex items-center gap-3">
-            <Terminal className="w-6 h-6 text-[var(--neon-cyan)]" />
+            <div className="w-6 h-6 relative overflow-hidden bg-black border border-[var(--neon-cyan)]">
+              <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
+            </div>
             <h1 className="text-lg font-bold tracking-widest text-[var(--text-primary)] font-sans uppercase">Command</h1>
           </div>
           <div className="mt-2 flex items-center gap-2 text-[9px] font-mono uppercase tracking-widest text-[var(--neon-cyan)]">
@@ -481,7 +485,9 @@ export default function AdminDashboard() {
             {viewMode === "terminal" && (
               <div className="flex-1 flex flex-col brutalist-panel-white brutalist-border shadow-[8px_8px_0px_var(--text-primary)] overflow-hidden font-mono">
                 <div className="bg-[var(--text-primary)] text-[var(--deep-surface)] px-4 py-3 border-b border-[var(--border-color)] text-[10px] tracking-widest uppercase flex items-center gap-2 font-bold">
-                  <Terminal className="w-3 h-3 text-[var(--neon-cyan)]" /> Root Console
+                  <div className="w-3 h-3 relative overflow-hidden bg-black border border-[var(--neon-cyan)]">
+                    <img src="/logo.jpg?v=2" alt="Logo" className="w-full h-full object-cover" />
+                  </div> Root Console
                 </div>
                 <div className="flex-1 overflow-y-auto p-6 bg-[var(--surface-dark)]" onClick={() => inputRef.current?.focus()}>
                   {history.map((line, idx) => (

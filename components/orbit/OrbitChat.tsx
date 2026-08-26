@@ -98,7 +98,9 @@ export default function OrbitChat() {
               <div className="absolute bottom-1 left-1 w-1 h-1 bg-black" />
               <div className="absolute bottom-1 right-1 w-1 h-1 bg-black" />
               
-              <Bot className="w-8 h-8 text-black group-hover:text-[#ff6b00] transition-colors" />
+              <div className="w-10 h-10 relative overflow-hidden bg-black border border-black/20 group-hover:border-[#ff6b00] transition-colors">
+                <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
+              </div>
               <div className="absolute -top-2 -right-2 w-4 h-4 bg-[#ff6b00] border border-black animate-pulse" />
             </motion.button>
           </motion.div>
@@ -121,9 +123,9 @@ export default function OrbitChat() {
             {/* HEADER */}
             <div className="relative p-4 border-b-4 border-black bg-white flex items-center justify-between z-10">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-black border-2 border-[#ff6b00] flex items-center justify-center relative">
-                  <Cpu className="w-6 h-6 text-[#ff6b00]" />
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-white border-2 border-black" />
+                <div className="w-12 h-12 bg-black border-2 border-[#ff6b00] flex items-center justify-center relative overflow-hidden">
+                  <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-white border-2 border-black z-10" />
                 </div>
                 <div>
                   <h3 className="font-black text-xl text-black uppercase leading-none">

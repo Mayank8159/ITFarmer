@@ -53,8 +53,8 @@ export const metadata: Metadata = {
     images: ["/logo.jpg"],
   },
   icons: {
-    icon: "/logo.jpg",
-    apple: "/logo.jpg",
+    icon: "/logo.jpg?v=2",
+    apple: "/logo.jpg?v=2",
   },
 };
 
@@ -78,6 +78,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="Mxww6WF0MmcbUdG2w9JmR1_mC-CzuxB1C315DrCmSSo" />
+        <link rel="icon" type="image/jpeg" href="/logo.jpg?v=2" />
+        <link rel="apple-touch-icon" href="/logo.jpg?v=2" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
