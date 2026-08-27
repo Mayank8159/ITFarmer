@@ -98,8 +98,8 @@ export default function OrbitChat() {
               <div className="absolute bottom-1 left-1 w-1 h-1 bg-black" />
               <div className="absolute bottom-1 right-1 w-1 h-1 bg-black" />
               
-              <div className="w-10 h-10 relative overflow-hidden bg-black border border-black/20 group-hover:border-[#ff6b00] transition-colors">
-                <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
+              <div className="w-10 h-10 relative overflow-hidden rounded-full ring-2 ring-[#ff6b00]/50 shadow-[0_0_15px_rgba(255,107,0,0.6)] bg-black group-hover:ring-[#ff6b00] group-hover:shadow-[0_0_20px_rgba(255,107,0,1)] transition-all">
+                <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover rounded-full" />
               </div>
               <div className="absolute -top-2 -right-2 w-4 h-4 bg-[#ff6b00] border border-black animate-pulse" />
             </motion.button>
@@ -123,9 +123,9 @@ export default function OrbitChat() {
             {/* HEADER */}
             <div className="relative p-4 border-b-4 border-black bg-white flex items-center justify-between z-10">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-black border-2 border-[#ff6b00] flex items-center justify-center relative overflow-hidden">
-                  <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-white border-2 border-black z-10" />
+                <div className="w-12 h-12 bg-black rounded-full ring-2 ring-[#ff6b00] shadow-[0_0_15px_rgba(255,107,0,0.5)] flex items-center justify-center relative overflow-hidden">
+                  <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover rounded-full" />
+                  <div className="absolute top-0 right-0 w-3 h-3 bg-white rounded-full border-2 border-black z-10" />
                 </div>
                 <div>
                   <h3 className="font-black text-xl text-black uppercase leading-none">

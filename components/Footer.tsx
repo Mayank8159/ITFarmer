@@ -34,8 +34,8 @@ export default function Footer() {
             {/* Brand Column */}
             <div className="col-span-2 md:col-span-2 flex flex-col items-start">
               <a href="/" className="flex items-center gap-3 mb-6 bg-black text-white px-4 py-2 hover:bg-[#ff6b00] transition-colors border border-black group">
-                <div className="w-6 h-6 relative overflow-hidden bg-white border border-black/20 group-hover:border-[#ff6b00]">
-                  <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
+                <div className="w-6 h-6 relative overflow-hidden rounded-full ring-2 ring-[#ff6b00]/30 shadow-[0_0_10px_rgba(255,107,0,0.4)] bg-black group-hover:ring-[#ff6b00] group-hover:shadow-[0_0_15px_rgba(255,107,0,0.8)] transition-all">
+                  <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover rounded-full" />
                 </div>
                 <span className="font-bold tracking-tight uppercase">Neural Forge Hub</span>
               </a>

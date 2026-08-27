@@ -14,8 +14,8 @@ export default function MinimalHeader() {
     >
       <div className="w-full max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3 bg-white border border-black px-3 py-1.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <div className="w-8 h-8 flex items-center justify-center relative overflow-hidden bg-black border border-black/20">
-            <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
+          <div className="w-8 h-8 flex items-center justify-center relative overflow-hidden rounded-full ring-2 ring-[#ff6b00]/30 shadow-[0_0_10px_rgba(255,107,0,0.4)] bg-black">
+            <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover rounded-full" />
           </div>
           <div className="flex flex-col">
             <span className="font-black text-black text-sm tracking-tight uppercase leading-none">Neural Forge</span>

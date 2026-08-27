@@ -75,8 +75,8 @@ export default function Navbar() {
         <div className="w-full max-w-[1600px] px-6 py-4 flex items-center justify-between relative z-10">
           {/* LEFT: Logo */}
           <Link href="/" className="flex items-center gap-3 group bg-white border border-black px-3 py-1.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] hover:translate-x-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
-            <div className="w-8 h-8 flex items-center justify-center relative overflow-hidden bg-black border border-black/20">
-              <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
+            <div className="w-8 h-8 flex items-center justify-center relative overflow-hidden rounded-full ring-2 ring-[#ff6b00]/30 shadow-[0_0_10px_rgba(255,107,0,0.4)] bg-black group-hover:ring-[#ff6b00] group-hover:shadow-[0_0_15px_rgba(255,107,0,0.8)] transition-all">
+              <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover rounded-full" />
             </div>
             <div className="hidden sm:flex flex-col">
               <span className="font-black text-black text-sm tracking-tight uppercase leading-none group-hover:text-[#ff6b00] transition-colors">Neural Forge</span>
@@ -176,8 +176,8 @@ export default function Navbar() {
           >
             <div className="flex items-center justify-between mb-12">
               <Link href="/" className="flex items-center gap-3" onClick={() => setMobileMenuOpen(false)}>
-                <div className="w-10 h-10 border border-black/20 flex items-center justify-center overflow-hidden">
-                  <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover" />
+                <div className="w-10 h-10 flex items-center justify-center relative overflow-hidden rounded-full ring-2 ring-[#ff6b00]/30 shadow-[0_0_10px_rgba(255,107,0,0.4)] bg-black">
+                  <img src="/logo.jpg?v=2" alt="Neural Forge Hub Logo" className="w-full h-full object-cover rounded-full" />
                 </div>
                 <span className="font-bold text-black text-xl tracking-tight uppercase">Neural Forge</span>
               </Link>
