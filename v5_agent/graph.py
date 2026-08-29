@@ -28,10 +28,27 @@ class AgentState(TypedDict):
 # ==========================================
 # 2. LLM INITIALIZATION
 # ==========================================
-# Use a fast, cost-effective model for routing/analysis, and a highly capable one for writing
-llm_analyst = ChatOpenAI(model="gpt-4o-mini", temperature=0.2)
-llm_architect = ChatOpenAI(model="gpt-4o", temperature=0.3)
-llm_scribe = ChatOpenAI(model="gpt-4o", temperature=0.1)
+# Use OmniRoute free tier for all LLM calls
+llm_analyst = ChatOpenAI(
+    model="groq/compound",
+    temperature=0.2,
+    api_key="omni",
+    base_url="http://localhost:20128/v1"
+).with_retry(stop_after_attempt=4)
+
+llm_architect = ChatOpenAI(
+    model="groq/compound",
+    temperature=0.3,
+    api_key="omni",
+    base_url="http://localhost:20128/v1"
+).with_retry(stop_after_attempt=4)
+
+llm_scribe = ChatOpenAI(
+    model="groq/compound",
+    temperature=0.1,
+    api_key="omni",
+    base_url="http://localhost:20128/v1"
+).with_retry(stop_after_attempt=4)
 
 # ==========================================
 # 3. NODE DEFINITIONS

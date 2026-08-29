@@ -1,76 +1,170 @@
+"""
+NFH Email Generation Script
+
+Standalone script to generate and optionally send emails for eligible leads.
+"""
+
+import os
 import time
-from prefect import flow, task, get_run_logger
-from prefect.client.schemas.schedules import IntervalSchedule
-from datetime import timedelta
+import asyncio
+import logging
+from dotenv import load_dotenv
 
-from db import get_connection, get_leads_for_email, store_generated_email, log_dead_letter
+load_dotenv()
+
+from db import (
+    init_db, get_connection, get_leads_for_email,
+    store_generated_email, log_dead_letter, return_connection
+)
 from graph import generate_email_for_lead
+from dispatcher import send_email, record_dispatch
 
-@task(retries=0)
-def generate_batch():
-    logger = get_run_logger()
-    conn = get_connection()
-    
-    # Run-summary counters
-    stats = {
-        "generated": 0,
-        "skipped_non_us": 0,  # Just for keeping the schema, our query already filters this via 'EMAIL_CAN_SPAM'
-        "skipped_no_tech": 0, # Our query already filters this
-        "dead_letter": 0
-    }
-    
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+
+async def process_lead(lead: dict) -> dict:
+    """
+    Generate and optionally send email for a single lead.
+
+    Args:
+        lead: Lead data from database
+
+    Returns:
+        Result dict with status and details
+    """
+    logger.info(f"Processing lead: {lead.get('domain', 'unknown')} ({lead['id']})")
+
+    # Generate email using LangGraph
     try:
-        leads = get_leads_for_email(conn, limit=30)
-        logger.info(f"Found {len(leads)} eligible leads for email generation.")
-        
-        for lead_row in leads:
-            lead_id, domain, tech_stack, intent_signals, sources = lead_row
-            
-            lead_data = {
-                "id": lead_id,
-                "domain": domain,
-                "tech_stack": tech_stack,
-                "intent_signals": intent_signals,
-                "sources": sources
-            }
-            
-            logger.info(f"Generating email for {domain} (Lead ID: {lead_id})")
-            
-            result = generate_email_for_lead(lead_data)
-            
-            if result["status"] == "success":
-                store_generated_email(
-                    conn,
-                    lead_id=lead_id,
-                    subject=result["final_subject"],
-                    body=result["final_body"],
-                    full_payload=result,
-                    sources_used=sources
-                )
-                logger.info(f"Successfully generated and stored email for {domain}")
-                stats["generated"] += 1
-            else:
-                log_dead_letter(conn, domain, f"Email generation failed: {result.get('error')}")
-                logger.error(f"Failed to generate email for {domain}. Logged to dead_letter.")
-                stats["dead_letter"] += 1
-            
-            # API Courtesy Delay
-            time.sleep(1)
-            
-        logger.info(f"Run Summary: {stats['generated']} generated | {stats['skipped_non_us']} skipped (non-US) | {stats['skipped_no_tech']} skipped (no tech) | {stats['dead_letter']} dead-letter")
-    finally:
-        conn.close()
+        result = await generate_email_for_lead(lead)
 
-@flow(name="Weekly Outbound Generation")
-def generate_outbound_emails():
+        if result.get("status") != "success":
+            logger.error(f"Email generation failed: {result.get('error')}")
+            log_dead_letter(lead["id"], "generation_failed", result.get("error", "Unknown"))
+            return {
+                "lead_id": lead["id"],
+                "domain": lead.get("domain"),
+                "status": "failed",
+                "error": result.get("error")
+            }
+
+        # Extract draft data
+        subject = result.get("email_draft", {}).get("subject", "Technical observation")
+        final_payload = result.get("final_payload", "")
+
+        # Store generated email
+        store_generated_email(
+            lead_id=lead["id"],
+            subject=subject,
+            body=final_payload,
+            sources_used=lead.get("sources", [])
+        )
+
+        logger.info(f"Email generated for {lead['domain']}")
+
+        # Optionally send email
+        dispatch_mode = os.getenv("DISPATCH_MODE", "dry_run")
+        if dispatch_mode != "skip":
+            dispatch_result = await send_email(lead, {
+                "subject": subject,
+                "final_payload": final_payload
+            })
+
+            record_dispatch(
+                lead_id=lead["id"],
+                subject=subject,
+                body=final_payload,
+                dispatch_result=dispatch_result,
+                dispatch_mode=dispatch_mode
+            )
+
+            logger.info(f"Dispatch result: {dispatch_result['status']}")
+        else:
+            logger.info("Email generation only (dispatch skipped)")
+
+        return {
+            "lead_id": lead["id"],
+            "domain": lead.get("domain"),
+            "status": "success",
+            "subject": subject
+        }
+
+    except Exception as e:
+        logger.error(f"Error processing lead {lead['id']}: {e}")
+        log_dead_letter(lead["id"], "processing_error", str(e))
+        return {
+            "lead_id": lead["id"],
+            "domain": lead.get("domain"),
+            "status": "failed",
+            "error": str(e)
+        }
+
+
+async def run_batch(limit: int = 30, batch_delay: float = 2.0) -> dict:
     """
-    Prefect flow that runs weekly, 24h after fingerprint flow.
-    Reads eligible leads and uses LangGraph to generate emails.
+    Process a batch of eligible leads.
+
+    Args:
+        limit: Maximum leads to process
+        batch_delay: Delay between leads in seconds
+
+    Returns:
+        Summary stats
     """
-    logger = get_run_logger()
-    logger.info("Starting Outbound Email Generation Pipeline...")
-    generate_batch()
-    logger.info("Outbound Email Generation Pipeline completed.")
+    logger.info(f"Starting email generation batch (limit={limit})")
+
+    # Get eligible leads
+    leads = get_leads_for_email(limit=limit)
+    logger.info(f"Found {len(leads)} eligible leads")
+
+    if not leads:
+        logger.info("No eligible leads found")
+        return {"processed": 0, "success": 0, "failed": 0}
+
+    # Process leads
+    stats = {"processed": 0, "success": 0, "failed": 0}
+
+    for lead in leads:
+        result = await process_lead(lead)
+        stats["processed"] += 1
+
+        if result["status"] == "success":
+            stats["success"] += 1
+        else:
+            stats["failed"] += 1
+
+        # Rate limiting delay
+        if lead != leads[-1]:
+            await asyncio.sleep(batch_delay)
+
+    logger.info(f"Batch complete: {stats}")
+    return stats
+
+
+def main():
+    """Main entry point."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Generate emails for eligible leads")
+    parser.add_argument("--limit", type=int, default=30, help="Max leads to process")
+    parser.add_argument("--delay", type=float, default=2.0, help="Delay between leads (seconds)")
+    parser.add_argument("--init-db", action="store_true", help="Initialize database first")
+
+    args = parser.parse_args()
+
+    # Initialize database if requested
+    if args.init_db:
+        logger.info("Initializing database...")
+        init_db()
+
+    # Run the batch
+    asyncio.run(run_batch(limit=args.limit, batch_delay=args.delay))
+
 
 if __name__ == "__main__":
-    generate_outbound_emails()
+    main()

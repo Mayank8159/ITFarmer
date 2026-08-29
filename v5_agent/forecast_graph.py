@@ -7,13 +7,12 @@ from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from forecast_models import ForecastRequest, compute_baseline
 
-def _build_llm():
-    xai = os.getenv("XAI_API_KEY")
-    if xai:
-        return ChatOpenAI(model="grok-3-mini", temperature=0.3, api_key=xai, base_url="https://api.x.ai/v1")
-    return ChatOpenAI(model="gpt-4o-mini", temperature=0.3, api_key=os.getenv("OPENAI_API_KEY"))
-
-llm = _build_llm()
+llm = ChatOpenAI(
+    model="groq/compound",
+    temperature=0.3,
+    api_key="omni",
+    base_url="http://localhost:20128/v1"
+).with_retry(stop_after_attempt=4)
 
 MOCK_MODE = False  # <--- SET TO False AND UPDATE MODEL STRING WHEN READY FOR LIVE
 

@@ -1,6 +1,18 @@
+"""
+NFH Lead Generation Pipeline v5.0 - Database Layer
+
+PostgreSQL connection and operations for:
+- Leads management
+- Generated emails
+- Dead letter queue
+- Suppression list
+- Inbound replies
+"""
+
 import os
 import psycopg2
-from psycopg2.extras import Json
+from psycopg2.extras import Json, execute_values
+from psycopg2 import pool
 from dotenv import load_dotenv
 import logging
 
@@ -8,60 +20,113 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-def get_connection():
-    """Get a connection to the PostgreSQL database."""
-    try:
-        conn = psycopg2.connect(
-            dbname=os.getenv("DB_NAME", "postgres"),
+# Connection pool for better performance
+_connection_pool = None
+
+
+def get_pool():
+    """Get or create the connection pool."""
+    global _connection_pool
+    if _connection_pool is None:
+        _connection_pool = pool.ThreadedConnectionPool(
+            minconn=1,
+            maxconn=10,
+            dbname=os.getenv("DB_NAME", "nfh_leads"),
             user=os.getenv("DB_USER", "postgres"),
             password=os.getenv("DB_PASSWORD", "postgres"),
             host=os.getenv("DB_HOST", "localhost"),
             port=os.getenv("DB_PORT", "5432")
         )
-        return conn
-    except Exception as e:
-        logger.error(f"Error connecting to database: {e}")
-        raise
+    return _connection_pool
+
+
+def get_connection():
+    """Get a connection from the pool."""
+    return get_pool().getconn()
+
+
+def return_connection(conn):
+    """Return a connection to the pool."""
+    get_pool().putconn(conn)
+
 
 def init_db():
     """Initialize the database schema."""
     conn = get_connection()
     try:
         with conn.cursor() as cur:
+            # Leads table
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS leads (
                     id SERIAL PRIMARY KEY,
-                    company_name VARCHAR(255),
-                    domain VARCHAR(255) UNIQUE NOT NULL,
-                    contact_name VARCHAR(255),
-                    contact_email VARCHAR(255),
-                    intent_signals JSONB,
+                    email TEXT UNIQUE NOT NULL,
+                    first_name TEXT,
+                    last_name TEXT,
+                    company_name TEXT,
+                    domain TEXT NOT NULL,
+                    contact_country_code TEXT,
+                    source TEXT,
+                    source_id TEXT,
+                    sources TEXT[] DEFAULT '{}',
+                    channel TEXT,
                     tech_stack JSONB,
-                    last_fetched_at TIMESTAMP WITH TIME ZONE,
-                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                    intent_signals JSONB,
+                    last_fetched_at TIMESTAMPTZ,
+                    last_email_generated_at TIMESTAMPTZ,
+                    last_email_sent_at TIMESTAMPTZ,
+                    created_at TIMESTAMPTZ DEFAULT NOW()
                 );
             """)
 
-            # Run ALTER TABLE to ensure existing DB has the new columns
+            # Generated emails table
             cur.execute("""
-                ALTER TABLE leads ADD COLUMN IF NOT EXISTS source TEXT;
-                ALTER TABLE leads ADD COLUMN IF NOT EXISTS source_id TEXT;
-                ALTER TABLE leads ADD COLUMN IF NOT EXISTS sources TEXT[] DEFAULT '{}';
-                ALTER TABLE leads ADD COLUMN IF NOT EXISTS channel TEXT;
-                ALTER TABLE leads ADD COLUMN IF NOT EXISTS country TEXT;
-                ALTER TABLE leads ADD COLUMN IF NOT EXISTS last_email_generated_at TIMESTAMP WITH TIME ZONE;
+                CREATE TABLE IF NOT EXISTS generated_emails (
+                    id SERIAL PRIMARY KEY,
+                    lead_id INTEGER REFERENCES leads(id),
+                    subject TEXT,
+                    body TEXT,
+                    full_payload TEXT,
+                    sources_used TEXT[] DEFAULT '{}',
+                    generated_at TIMESTAMPTZ DEFAULT NOW(),
+                    sent_at TIMESTAMPTZ,
+                    dispatch_mode TEXT,
+                    provider_email_id TEXT
+                );
             """)
 
+            # Dead letter table
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS dead_letter (
                     id SERIAL PRIMARY KEY,
-                    domain VARCHAR(255) NOT NULL,
-                    error_reason TEXT,
-                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                    lead_id INTEGER,
+                    error_type TEXT,
+                    error_message TEXT,
+                    logged_at TIMESTAMPTZ DEFAULT NOW()
                 );
             """)
-            
+
+            # Global suppression list
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS global_suppression (
+                    id SERIAL PRIMARY KEY,
+                    email TEXT UNIQUE,
+                    suppressed_at TIMESTAMPTZ DEFAULT NOW(),
+                    reason TEXT
+                );
+            """)
+
+            # Inbound replies
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS inbound_replies (
+                    id SERIAL PRIMARY KEY,
+                    lead_id INTEGER REFERENCES leads(id),
+                    reply_body TEXT,
+                    sentiment TEXT,
+                    replied_at TIMESTAMPTZ DEFAULT NOW()
+                );
+            """)
+
+            # Skipped sources log
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS skipped_sources (
                     id SERIAL PRIMARY KEY,
@@ -71,23 +136,15 @@ def init_db():
                 );
             """)
 
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS generated_emails (
-                    id SERIAL PRIMARY KEY,
-                    lead_id INTEGER REFERENCES leads(id),
-                    subject TEXT,
-                    body TEXT,
-                    full_payload JSONB,
-                    generated_at TIMESTAMPTZ DEFAULT NOW()
-                );
-            """)
-
-            cur.execute("""
-                ALTER TABLE generated_emails ADD COLUMN IF NOT EXISTS sources_used TEXT[] DEFAULT '{}';
-            """)
-
-            # Index for faster deduplication and lookups
+            # Indexes
             cur.execute("CREATE INDEX IF NOT EXISTS idx_leads_domain ON leads(domain);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_leads_channel ON leads(channel);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_leads_last_fetched ON leads(last_fetched_at);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_leads_email_can_spam ON leads(channel, tech_stack) WHERE channel = 'EMAIL_CAN_SPAM';")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_dead_letter_lead ON dead_letter(lead_id);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_suppression_email ON global_suppression(email);")
+
             conn.commit()
             logger.info("Database schema initialized successfully.")
     except Exception as e:
@@ -95,80 +152,293 @@ def init_db():
         logger.error(f"Error initializing database: {e}")
         raise
     finally:
-        conn.close()
+        return_connection(conn)
 
-def upsert_lead(conn, lead_data):
-    """
-    Insert a new lead or update an existing one based on the domain.
-    """
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO leads (company_name, domain, contact_name, contact_email, intent_signals)
-                VALUES (%s, %s, %s, %s, %s)
-                ON CONFLICT (domain) DO UPDATE SET
-                    company_name = EXCLUDED.company_name,
-                    contact_name = EXCLUDED.contact_name,
-                    contact_email = EXCLUDED.contact_email,
-                    intent_signals = EXCLUDED.intent_signals,
-                    updated_at = CURRENT_TIMESTAMP;
-            """, (
-                lead_data.get('company_name'),
-                lead_data.get('domain'),
-                lead_data.get('contact_name'),
-                lead_data.get('contact_email'),
-                Json(lead_data.get('intent_signals', {}))
-            ))
-            conn.commit()
-    except Exception as e:
-        conn.rollback()
-        logger.error(f"Error upserting lead for domain {lead_data.get('domain')}: {e}")
-        raise
 
-def upsert_lead_multi_source(conn, lead_data):
+# ============ Lead Operations ============
+
+def upsert_lead(lead_data: dict) -> int:
     """
-    Insert a new lead or update an existing one based on the domain.
-    On conflict, fills missing fields and appends the source to the sources array without duplicates.
+    Insert or update a lead based on email.
+    Returns the lead ID.
     """
+    conn = get_connection()
     try:
         with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO leads (
-                    company_name, domain, contact_name, contact_email, 
-                    intent_signals, source, source_id, sources, channel, country
+                    email, first_name, last_name, company_name, domain,
+                    contact_country_code, source, source_id, sources,
+                    channel, tech_stack, intent_signals
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, ARRAY[%s]::TEXT[], %s, %s)
-                ON CONFLICT (domain) DO UPDATE SET
-                    company_name = COALESCE(leads.company_name, EXCLUDED.company_name),
-                    contact_name = COALESCE(leads.contact_name, EXCLUDED.contact_name),
-                    contact_email = COALESCE(leads.contact_email, EXCLUDED.contact_email),
-                    intent_signals = COALESCE(leads.intent_signals, '{}'::jsonb) || COALESCE(EXCLUDED.intent_signals, '{}'::jsonb),
-                    country = COALESCE(leads.country, EXCLUDED.country),
-                    channel = COALESCE(leads.channel, EXCLUDED.channel),
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (email) DO UPDATE SET
+                    first_name = COALESCE(EXCLUDED.first_name, leads.first_name),
+                    last_name = COALESCE(EXCLUDED.last_name, leads.last_name),
+                    company_name = COALESCE(EXCLUDED.company_name, leads.company_name),
+                    domain = COALESCE(EXCLUDED.domain, leads.domain),
+                    contact_country_code = COALESCE(EXCLUDED.contact_country_code, leads.contact_country_code),
+                    channel = COALESCE(EXCLUDED.channel, leads.channel),
                     sources = (
-                        SELECT array_agg(DISTINCT src) FROM unnest(array_append(leads.sources, EXCLUDED.source)) as src
+                        SELECT array_agg(DISTINCT src)
+                        FROM unnest(COALESCE(leads.sources, '{}') || COALESCE(EXCLUDED.sources, '{}')) as src
                     ),
-                    updated_at = CURRENT_TIMESTAMP;
+                    intent_signals = COALESCE(leads.intent_signals, '{}'::jsonb) || COALESCE(EXCLUDED.intent_signals, '{}'::jsonb),
+                    updated_at = CURRENT_TIMESTAMP
+                RETURNING id;
             """, (
-                lead_data.get('company_name'),
-                lead_data.get('domain'),
-                lead_data.get('contact_name'),
-                lead_data.get('contact_email'),
-                Json(lead_data.get('intent_signals', {})),
-                lead_data.get('source'),
-                lead_data.get('source_id'),
-                lead_data.get('source'),
-                lead_data.get('channel'),
-                lead_data.get('country')
+                lead_data.get("email"),
+                lead_data.get("first_name"),
+                lead_data.get("last_name"),
+                lead_data.get("company_name"),
+                lead_data.get("domain"),
+                lead_data.get("contact_country_code"),
+                lead_data.get("source"),
+                lead_data.get("source_id"),
+                lead_data.get("sources", []),
+                lead_data.get("channel"),
+                Json(lead_data.get("tech_stack", {})),
+                Json(lead_data.get("intent_signals", {}))
             ))
+            result = cur.fetchone()
+            conn.commit()
+            return result[0] if result else None
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Error upserting lead: {e}")
+        raise
+    finally:
+        return_connection(conn)
+
+
+def get_lead_by_id(lead_id: int) -> dict:
+    """Fetch a single lead by ID."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM leads WHERE id = %s;", (lead_id,))
+            row = cur.fetchone()
+            if row:
+                cols = [desc[0] for desc in cur.description]
+                return dict(zip(cols, row))
+            return None
+    finally:
+        return_connection(conn)
+
+
+def get_lead_by_email(email: str) -> dict:
+    """Fetch a single lead by email."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM leads WHERE email = %s;", (email,))
+            row = cur.fetchone()
+            if row:
+                cols = [desc[0] for desc in cur.description]
+                return dict(zip(cols, row))
+            return None
+    finally:
+        return_connection(conn)
+
+
+# ============ Tech Stack Operations ============
+
+def update_lead_tech_stack(domain: str, tech_stack: dict) -> None:
+    """Update the tech stack for a lead."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE leads
+                SET tech_stack = %s, last_fetched_at = CURRENT_TIMESTAMP
+                WHERE domain = %s;
+            """, (Json(tech_stack), domain))
             conn.commit()
     except Exception as e:
         conn.rollback()
-        logger.error(f"Error upserting multi-source lead for domain {lead_data.get('domain')}: {e}")
+        logger.error(f"Error updating tech stack: {e}")
         raise
+    finally:
+        return_connection(conn)
 
-def log_skipped_source(conn, source_name, reason):
-    """Log a source that was skipped due to missing config or API absence."""
+
+def get_leads_to_fingerprint(limit: int = 100) -> list:
+    """Fetch leads that need fingerprinting."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT id, domain, last_fetched_at, tech_stack
+                FROM leads
+                WHERE tech_stack IS NULL
+                  AND domain IS NOT NULL
+                  AND (last_fetched_at IS NULL OR last_fetched_at < NOW() - INTERVAL '24 hours')
+                LIMIT %s;
+            """, (limit,))
+            return cur.fetchall()
+    finally:
+        return_connection(conn)
+
+
+# ============ Email Generation Operations ============
+
+def get_leads_for_email(limit: int = 30) -> list:
+    """
+    Fetch eligible leads for email generation.
+    Criteria:
+    - channel = 'EMAIL_CAN_SPAM'
+    - tech_stack IS NOT NULL
+    - intent_signals IS NOT NULL
+    - last_email_generated_at IS NULL OR < NOW() - INTERVAL '30 days'
+    """
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT id, email, first_name, company_name, domain,
+                       tech_stack, intent_signals, sources
+                FROM leads
+                WHERE channel = 'EMAIL_CAN_SPAM'
+                  AND tech_stack IS NOT NULL
+                  AND intent_signals IS NOT NULL
+                  AND email IS NOT NULL
+                  AND (last_email_generated_at IS NULL OR last_email_generated_at < NOW() - INTERVAL '30 days')
+                  AND email NOT IN (SELECT email FROM global_suppression)
+                LIMIT %s;
+            """, (limit,))
+            rows = cur.fetchall()
+            cols = [desc[0] for desc in cur.description]
+            return [dict(zip(cols, row)) for row in rows]
+    finally:
+        return_connection(conn)
+
+
+def store_generated_email(
+    lead_id: int,
+    subject: str,
+    body: str,
+    sources_used: list = None
+) -> int:
+    """Store a generated email and update the lead's timestamp."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO generated_emails (lead_id, subject, body, sources_used)
+                VALUES (%s, %s, %s, %s)
+                RETURNING id;
+            """, (lead_id, subject, body, sources_used or []))
+
+            cur.execute("""
+                UPDATE leads
+                SET last_email_generated_at = CURRENT_TIMESTAMP
+                WHERE id = %s;
+            """, (lead_id,))
+
+            conn.commit()
+            result = cur.fetchone()
+            return result[0] if result else None
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Error storing generated email: {e}")
+        raise
+    finally:
+        return_connection(conn)
+
+
+# ============ Dead Letter Operations ============
+
+def log_dead_letter(lead_id: int, error_type: str, error_message: str) -> None:
+    """Log a failure to the dead letter table."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO dead_letter (lead_id, error_type, error_message)
+                VALUES (%s, %s, %s);
+            """, (lead_id, error_type, error_message))
+            conn.commit()
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Error logging dead letter: {e}")
+    finally:
+        return_connection(conn)
+
+
+def get_dead_letters(limit: int = 100) -> list:
+    """Fetch recent dead letters for review."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT dl.*, l.domain, l.email
+                FROM dead_letter dl
+                LEFT JOIN leads l ON dl.lead_id = l.id
+                ORDER BY dl.logged_at DESC
+                LIMIT %s;
+            """, (limit,))
+            return cur.fetchall()
+    finally:
+        return_connection(conn)
+
+
+# ============ Suppression Operations ============
+
+def is_suppressed(email: str) -> bool:
+    """Check if an email is in the suppression list."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT 1 FROM global_suppression WHERE email = %s;
+            """, (email.lower(),))
+            return cur.fetchone() is not None
+    finally:
+        return_connection(conn)
+
+
+def add_to_suppression(email: str, reason: str = "manual") -> None:
+    """Add an email to the global suppression list."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO global_suppression (email, reason)
+                VALUES (%s, %s)
+                ON CONFLICT (email) DO UPDATE SET
+                    suppressed_at = CURRENT_TIMESTAMP,
+                    reason = EXCLUDED.reason;
+            """, (email.lower(), reason))
+            conn.commit()
+            logger.info(f"Added {email} to suppression list: {reason}")
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Error adding to suppression: {e}")
+    finally:
+        return_connection(conn)
+
+
+def remove_from_suppression(email: str) -> None:
+    """Remove an email from the suppression list."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                DELETE FROM global_suppression WHERE email = %s;
+            """, (email.lower(),))
+            conn.commit()
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Error removing from suppression: {e}")
+    finally:
+        return_connection(conn)
+
+
+# ============ Skipped Sources Logging ============
+
+def log_skipped_source(source_name: str, reason: str) -> None:
+    """Log a source that was skipped due to missing config."""
+    conn = get_connection()
     try:
         with conn.cursor() as cur:
             cur.execute("""
@@ -178,115 +448,31 @@ def log_skipped_source(conn, source_name, reason):
             conn.commit()
     except Exception as e:
         conn.rollback()
-        logger.error(f"Error logging skipped source {source_name}: {e}")
-        raise
+        logger.error(f"Error logging skipped source: {e}")
+    finally:
+        return_connection(conn)
 
-def update_lead_tech_stack(conn, domain, tech_stack):
-    """Update the tech stack for a given domain."""
+
+# ============ Inbound Replies ============
+
+def record_inbound_reply(lead_id: int, reply_body: str, sentiment: str = None) -> None:
+    """Record an inbound reply from a lead."""
+    conn = get_connection()
     try:
         with conn.cursor() as cur:
             cur.execute("""
-                UPDATE leads
-                SET tech_stack = %s, last_fetched_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
-                WHERE domain = %s;
-            """, (Json(tech_stack), domain))
+                INSERT INTO inbound_replies (lead_id, reply_body, sentiment)
+                VALUES (%s, %s, %s);
+            """, (lead_id, reply_body, sentiment))
             conn.commit()
     except Exception as e:
         conn.rollback()
-        logger.error(f"Error updating tech stack for {domain}: {e}")
-        raise
+        logger.error(f"Error recording reply: {e}")
+    finally:
+        return_connection(conn)
 
-def update_lead_last_fetched(conn, domain):
-    """Update the last_fetched_at timestamp for a given domain regardless of success/failure."""
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                UPDATE leads
-                SET last_fetched_at = CURRENT_TIMESTAMP
-                WHERE domain = %s;
-            """, (domain,))
-            conn.commit()
-    except Exception as e:
-        conn.rollback()
-        logger.error(f"Error updating last_fetched_at for {domain}: {e}")
-        raise
-
-def log_dead_letter(conn, domain, error_reason):
-    """Log a failed fingerprinting attempt to the dead letter table."""
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO dead_letter (domain, error_reason)
-                VALUES (%s, %s);
-            """, (domain, error_reason))
-            conn.commit()
-    except Exception as e:
-        conn.rollback()
-        logger.error(f"Error logging to dead letter for {domain}: {e}")
-        raise
-
-def get_leads_to_fingerprint(conn, limit=100):
-    """Fetch leads for fingerprinting, returning their ID, domain, and last_fetched_at."""
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, domain, last_fetched_at FROM leads
-                WHERE tech_stack IS NULL 
-                  AND (last_fetched_at IS NULL OR last_fetched_at < NOW() - INTERVAL '24 hours')
-                LIMIT %s;
-            """, (limit,))
-            return cur.fetchall()
-    except Exception as e:
-        logger.error(f"Error fetching leads: {e}")
-        raise
-
-def get_leads_for_email(conn, limit=30):
-    """
-    Fetch eligible leads for email generation.
-    Criteria:
-    - channel = 'EMAIL_CAN_SPAM'
-    - tech_stack IS NOT NULL
-    - intent_signals IS NOT NULL
-    - last_email_generated_at IS NULL OR < NOW() - INTERVAL '30 days'
-    """
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, domain, tech_stack, intent_signals, sources 
-                FROM leads
-                WHERE channel = 'EMAIL_CAN_SPAM'
-                  AND tech_stack IS NOT NULL
-                  AND intent_signals IS NOT NULL
-                  AND (last_email_generated_at IS NULL OR last_email_generated_at < NOW() - INTERVAL '30 days')
-                LIMIT %s;
-            """, (limit,))
-            return cur.fetchall()
-    except Exception as e:
-        logger.error(f"Error fetching leads for email generation: {e}")
-        raise
-
-def store_generated_email(conn, lead_id: int, subject: str, body: str, full_payload: dict, sources_used: list):
-    """
-    Store the generated email and update the lead's last_email_generated_at timestamp.
-    """
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO generated_emails (lead_id, subject, body, full_payload, sources_used)
-                VALUES (%s, %s, %s, %s, %s::TEXT[]);
-            """, (lead_id, subject, body, Json(full_payload), sources_used))
-            
-            cur.execute("""
-                UPDATE leads
-                SET last_email_generated_at = CURRENT_TIMESTAMP
-                WHERE id = %s;
-            """, (lead_id,))
-            conn.commit()
-    except Exception as e:
-        conn.rollback()
-        logger.error(f"Error storing generated email for lead {lead_id}: {e}")
-        raise
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     init_db()
+    logger.info("Database module loaded successfully.")
